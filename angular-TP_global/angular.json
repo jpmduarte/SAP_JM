@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-TP_global": {
+    "angular-TP_Global": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -27,7 +27,12 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "server": "src/main.server.ts",
+            "prerender": true,
+            "ssr": {
+              "entry": "server.ts"
+            }
           },
           "configurations": {
             "production": {
@@ -57,10 +62,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "angular-TP_global:build:production"
+              "buildTarget": "angular-TP_Global:build:production"
             },
             "development": {
-              "buildTarget": "angular-TP_global:build:development"
+              "buildTarget": "angular-TP_Global:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -68,7 +73,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "angular-TP_global:build"
+            "buildTarget": "angular-TP_Global:build"
           }
         },
         "test": {
@@ -91,5 +96,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "6cee38f3-657d-4938-8c47-c6901626812b"
   }
 }

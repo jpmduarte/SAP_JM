@@ -14,16 +14,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'angular-TP_global' title`, () => {
+  it(`should have the 'angular-TP_Global' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('angular-TP_global');
+    expect(app.title).toEqual('angular-TP_Global');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, angular-TP_global');
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, angular-TP_Global');
   });
 });
