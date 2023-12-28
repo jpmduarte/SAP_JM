@@ -1,1 +1,63 @@
-<p>login works!</p>
+<div class="container">
+    <div class="login-box">
+        <h1>SAP-JM</h1>
+        
+        <!-- Formulário de Login -->
+        <form *ngIf="showLoginForm">
+            <div class="input-container">
+                <label>Email</label>
+                <input type="email" placeholder="Digite seu email">
+            </div>
+            <div class="input-container">
+                <label>Password</label>
+                <input type="password" placeholder="Digite sua senha">
+            </div>
+            <button type="submit">Entrar</button>
+        </form>
+    
+        <p *ngIf="showLoginForm">
+            Não tem conta? <a href="" (click)="toggleForm($event)">Clique aqui</a> para se registrar
+        </p>
+    
+        <!-- Formulário de Registro -->
+        <form *ngIf="!showLoginForm">
+            <div class="input-container">
+                <label>Nome</label>
+                <input type="text" placeholder="Digite seu nome">
+            </div>
+            <div class="input-container">
+                <label>Número de Telemóvel (opcional)</label>
+                <input type="tel" placeholder="Digite seu número de telemóvel">
+            </div>
+            <div class="input-container">
+                <label>NIF</label>
+                <input type="text" placeholder="Digite seu NIF">
+            </div>
+            <div class="input-container">
+                <label>Número de Utente</label>
+                <input type="text" placeholder="Digite o número de utente">
+            </div>
+            <div class="input-container">
+                <label>Data de Nascimento</label>
+                <input type="date">
+            </div>
+            <div class="input-container">
+                <label>Email</label>
+                <input type="email" placeholder="Digite seu email">
+            </div>
+            <div class="input-container">
+                <label>Password</label>
+                <input type="password" placeholder="Crie uma senha">
+            </div>
+            <div class="input-container">
+                <label>Confirmar Password</label>
+                <input type="password" placeholder="Confirme sua senha">
+            </div>
+            <button type="submit">Registrar</button>
+        </form>
+    
+        <p *ngIf="!showLoginForm">
+            Já tem uma conta? <a href="" (click)="toggleForm($event)">Clique aqui</a> para entrar
+        </p>
+    </div>
+</div>
