@@ -1,4 +1,7 @@
 <header class="header">
+    <div class="app-name" >
+        <h2>SAP-JM</h2>
+    </div>
     <div class="user-info">
         <span class="user-id">Número do Utente</span>
     </div>
@@ -53,141 +56,123 @@
 <div *ngIf="showFormPopup">
     <div>
         <form *ngIf="showFormPopup" class="form-container">
-            <h2>Preencha os campos abaixo para efetuar o seu Pedido de Junta Médica</h2>
-
+            <h2>Preencha os campos abaixo para efetuar o Pedido de Junta Médica</h2>
             <!-- Box de Informações Pessoais -->
-            <div class="box box-info">
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label for="nomeCompleto">Nome Completo:</label>
-                        <input type="text" id="nomeCompleto" name="nomeCompleto">
+            <div class="form-container-1">
+                <div class="form-field">
+                    <label for="fullName">Nome Completo</label>
+                    <input type="text" id="fullName" placeholder="Nome Completo">
+                </div>
+                <div class="form-field">
+                    <label for="birthDate">Data de Nascimento</label>
+                    <input type="date" id="birthDate">
+                </div>
+            </div>
+            <br><br><br>
+            <!-- Box de Informações Documento -->
+            <div class="form-container-2">
+                <div class="form-field-group">
+                    <div class="form-field half-width">
+                        <label for="nIdentificacao">Nº de Identificacao:</label>
+                        <input type="text" placeholder="Nº Identificacao">
+                    </div>
+                    <div class="form-field half-width">
+                        <label for="nUtente">Nº Utente de Saúde:</label>
+                        <input type="text" id="nUtente" placeholder="Nº de Utente">
                     </div>
                 </div>
-                <div class="flex-row">
-                    <div class="form-group">
-                        <div class="form-group">
-                            <label for="dataNascimento">Data de Nascimento:</label>
-                            <input type="date" id="dataNascimento" name="dataNascimento">
-                        </div>
+                <div class="form-field-group">
+                    <div class="form-field half-width">
+                        <label for="nif">NIF:</label>
+                        <input type="text" placeholder="NIF">
                     </div>
-                </div>
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label for="nacionalidade">Nacionalidade:</label>
-                        <input type="text" id="nacionalidade" name="nacionalidade">
-                    </div>
-                    <div class="form-group">
-                        <label for="naturalidade">Naturalidade:</label>
-                        <input type="text" id="naturalidade" name="naturalidade">
+                    <div class="form-field half-width">
+                        <label for="validade">Data de Validade:</label>
+                        <input type="date" id="validade" placeholder="Data de Validade">
                     </div>
                 </div>
             </div>
+            <br><br><br>
             <!-- Box de Informações Morada -->
             <h3>Morada</h3>
-            <div class="box box-morada">
-                <div class="flex-row">
-                    <div class="form-group full-width">
-                        <label for="morada">Rua:</label>
-                        <input type="text" id="morada" name="morada">
-                    </div>
+            <div class="form-container-1">
+                <div class="form-field">
+                    <label for="morada">Rua:</label>
+                    <input type="text" id="morada" placeholder="Morada">
                 </div>
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label for="cp">Código Postal:</label>
-                        <input type="text" id="codigoPostal" name="codigoPostal">
+                <div class="form-field-group">
+                    <div class="form-field half-width">
+                        <label for="cp">Codigo Postal:</label>
+                        <input type="text" placeholder="Codigo Postal">
                     </div>
-                    <div class="form-group">
+                    <div class="form-field half-width">
                         <label for="localidade">Localidade:</label>
-                        <input type="text" id="localidade" name="localidade">
+                        <input type="text" id="localidade" placeholder="Localidade">
                     </div>
                 </div>
-                <div class="flex-row">
-                    <div class="form-group">
+                <div class="form-field-group">
+                    <div class="form-field half-width">
                         <label for="concelho">Concelho:</label>
-                        <input type="text" id="concelho" name="concelho">
+                        <input type="text" id="concelho" placeholder="Concelho">
                     </div>
-                    <div class="form-group">
+                    <div class="form-field half-width">
                         <label for="distrito">Distrito:</label>
-                        <input type="text" id="distrito" name="distrito">
+                        <input type="text" id="distrito" placeholder="Distrito">
                     </div>
                 </div>
             </div>
+            <br><br><br>
             <!-- Box de Informações Contacto -->
             <h3>Contacto</h3>
-            <div class="box box-contacto">
-                <div class="flex-row">
-                    <div class="form-group">
+            <div class="form-container-1">
+                <div class="form-field-group">
+                    <div class="form-field half-width">
                         <label for="telemovel">Telemóvel:</label>
-                        <input type="text" id="telemovel" name="telemovel">
+                        <input type="text" placeholder="Telemóvel">
                     </div>
-                    <div class="form-group">
+                    <div class="form-field half-width">
                         <label for="email">E-mail:</label>
-                        <input type="text" id="email" name="email">
+                        <input type="text" id="email" placeholder="E-mail">
                     </div>
                 </div>
             </div>
-            <!-- Box de Informações Documento -->
-            <div class="box box-documento">
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label for="nIdentificacao">Nº de Identificacao:</label>
-                        <input type="text" id="nIdentificacao" name="nIdentificacao">
-                    </div>
-                    <div class="form-group">
-                        <label for="nUtente">Nº Utente de Saúde:</label>
-                        <input type="text" id="nUtente" name="nUtente">
-                    </div>
-                </div>
-                <div class="flex-row">
-                    <div class="form-group">
-                        <label for="NIF">NIF:</label>
-                        <input type="text" id="NIF" name="NIF">
-                    </div>
-                    <div class="form-group">
-                        <label for="validade">Data de Validade:</label>
-                        <input type="date" id="validade" name="validade">
-                    </div>
-                </div>
-            </div>
+            <br><br><br>
             <!-- Box de Anexo Documentos -->
             <h3>Anexar Documentação</h3>
-            <div class="box box-anexo">
-                <div class="flex-row">
-                    <div class="form-group">
+            <div class="form-container-2">
+                <div class="form-field-group">
+                    <div class="form-field">
                         <label for="registosClinicos">Adicionar documentos:</label>
                         <input type="file" id="registosClinicos" name="registosClinicos" accept=".pdf" (change)="onFileChange($event)" multiple>
                     </div>
-                    <div>
+                    <div class="form-field half-width">
                         <div *ngFor="let file of files" class="document-item">
                             <span (click)="openFile(file)">{{ file.name }}</span>
                             <span (click)="removeFile(file)">&times;</span>
                         </div>
-                        <br><br>
                     </div>
                 </div>
             </div>
+            <br><br><br>
             <!-- Box de Opção -->
-            <div class="box box-opcao">
-                <div class="flex-row">
-                    <div class="form-group">
-                        <div>
-                            <input type="radio" id="submissaoReavaliacaoSim" name="submissionStatus" value="sim" (change)="onSubmissionStatusChange('sim')"><label for="submissaoReavaliacaoSim">Já foi submetido, pretendo uma reavaliação</label>
-                        </div>
-                        <div>
-                            <input type="radio" id="nuncaSubmetido" name="submissionStatus" value="nao" (change)="onSubmissionStatusChange('nao')"><label for="nuncaSubmetido">Nunca foi submetido a Junta Médica de avaliação do grau de incapacidade</label>
-                        </div>
-                    </div>
+            <div class="form-container-2">
+                <div class="radio-group">
+                    <label class="radio-option" for="submissaoReavaliacaoSim">
+                        Já foi submetido, pretendo uma reavaliação
+                        <input type="radio" id="submissaoReavaliacaoSim" name="submissionStatus" value="sim" (change)="onSubmissionStatusChange('sim')">
+                    </label>
+                    <label class="radio-option" for="nuncaSubmetido">
+                        Nunca foi submetido a Junta Médica de avaliação do grau de incapacidade
+                        <input type="radio" id="nuncaSubmetido" name="submissionStatus" value="nao" (change)="onSubmissionStatusChange('nao')">
+                    </label>
                 </div>
-            </div>
-
-            <div class="form-group" *ngIf="showPreviousAssessmentField">
-                <label for="atestadoAnterior">Adicionar Atestado Anterior:</label>
-                <input type="file" id="atestadoAnterior" name="atestadoAnterior" accept=".pdf">
+                <div class="form-group" *ngIf="showPreviousAssessmentField">
+                    <label for="atestadoAnterior">Adicionar Atestado Anterior:</label>
+                    <input type="file" id="atestadoAnterior" name="atestadoAnterior" accept=".pdf">
+                </div>
             </div>
             <button>Submeter</button>
         </form>
     </div>
 </div>
-
-<footer class="footer"></footer>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

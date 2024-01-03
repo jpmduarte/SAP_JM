@@ -50,12 +50,16 @@ button:hover {
 
 .header {
     display: flex;
-    justify-content: flex-end; 
+    justify-content: space-between;
     align-items: center;
     padding: 10px;
     width: 100%;
     background: #fff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-name {
+    margin-right: auto;
 }
 
 .nav-link {
@@ -105,7 +109,8 @@ button:hover {
 
 .user-info {
     display: flex;
-    align-items: center;
+    justify-content: flex-end;
+    flex-grow: 1;
 }
 
 .user-id {
@@ -116,14 +121,6 @@ button:hover {
 
 .icon {
     margin-right: 5px;
-}
-
-.form-container {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-  background: #FFFFFF;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .form-container h2 {
@@ -180,4 +177,96 @@ button:hover {
     align-items: middle;
     margin-right: 5px;
     vertical-align: middle;
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: none;
+    max-width: 900px;
+    margin: 30px auto;
+}
+
+.form-field input[type="text"],
+.form-field input[type="date"],
+.form-field input[type="email"],
+.form-field select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #e5e5e5;
+}
+
+button,
+.form-field input[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover,
+.form-field input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+input[type="file"] {
+    border: 2px dashed #ccc;
+    display: inline-block;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.icons {
+    color: #007bff;
+    margin-right: 5px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.radio-option input[type="radio"] {
+    margin-right: 10px;
+}
+
+.radio-option label {
+    font-size: 14px;
+    color: #333;
+}
+
+.radio-group {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.radio-option {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.radio-option input[type="radio"] {
+    margin-left: 10px;
+    vertical-align: middle;
+}
+
+.radio-option label {
+    display: inline;
 }
