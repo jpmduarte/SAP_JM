@@ -113,3 +113,56 @@ CREATE TABLE USFUtente (
     FOREIGN KEY (id_usf, id_medico) REFERENCES USFMedico(id_usf, id_medico),
     FOREIGN KEY (id_usf, id_enfermeiro) REFERENCES USFEnfermeiro(id_usf, id_enfermeiro)
 );
+
+
+-- Inserting data into Distrito table
+INSERT INTO distrito (nome_distrito) VALUES
+    ('Distrito 1'),
+    ('Distrito 2'),
+    ('Distrito 3');
+
+-- Inserting data into Concelho table
+INSERT INTO concelho (nome_concelho, id_distrito) VALUES
+    ('Concelho 1', 1),
+    ('Concelho 2', 1),
+    ('Concelho 3', 2),
+    ('Concelho 4', 2),
+    ('Concelho 5', 3);
+
+-- Inserting data into USF table
+INSERT INTO usf (nome_usf) VALUES
+    ('USF A'),
+    ('USF B'),
+    ('USF C');
+
+-- Inserting data into Freguesia table
+INSERT INTO freguesia (nome_freguesia, id_concelho) VALUES
+    ('Freguesia 1', 1),
+    ('Freguesia 2', 1),
+    ('Freguesia 3', 2),
+    ('Freguesia 4', 3),
+    ('Freguesia 5', 3);
+
+-- Inserting data into Medico table
+INSERT INTO medico (nome, especialidade) VALUES
+    ('Dr. Medico 1', 'Cardiologia'),
+    ('Dr. Medico 2', 'Pediatria'),
+    ('Dr. Medico 3', 'Ginecologia');
+
+-- Inserting data into Enfermeiro table
+INSERT INTO enfermeiro (nome) VALUES
+    ('Enfermeiro 1'),
+    ('Enfermeiro 2'),
+    ('Enfermeiro 3');
+
+-- Inserting data into USFMedico table
+INSERT INTO usfmedico (id_usf, id_medico) VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3);
+
+-- Inserting data into USFEnfermeiro table
+INSERT INTO usfenfermeiro (id_usf, id_enfermeiro) VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3);
