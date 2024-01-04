@@ -15,7 +15,7 @@ create sequence seq_id_user start 1 increment 1;
 
 create table users (
     id_user bigint default nextval('seq_id_user'::regclass) not null primary key,
-    user_role int not null references perfis(id_perfil),
+    id_perfil int not null references perfis(id_perfil),
     email varchar(100) not null,
     password varchar(255) not null 
 );
@@ -37,11 +37,7 @@ create sequence seq_id_medicos start 1 increment 1;
 create table utentes(
 	id_utente bigint default nextval('seq_id_utentes'::regclass) primary key,
 	id_user_utente bigint not null references users(id_user),
-	nome varchar(100) not null,
-	telemovel bigint,
-	nif bigint not null,
-	numero_utente bigint not null,
-	data_nascimento date not null
+	numero_utente bigint not null
 );
 
 create table medicos(
@@ -53,3 +49,28 @@ create table medicos(
 );
 
 
+
+create table USF(
+	id_USF serial primary key,
+	nomeUSF varchar(100) not null
+)
+
+create table medicoUSF(
+	id_medicoUSF serial primary key,
+	id_medico int not null,
+	id_USF int not null,
+	foreign key (id_medico) references medicos(id_medico),
+	foreign key (id_USF) references USF(id_USF)
+)
+
+create table utenteUSF(
+	id_utenteUSF serial primary key,
+	id_utente int not null,
+	id_USF int not null,
+	foreign key (id_utente) references utentes(id_utente),
+	foreign key (id_USF) references USF(id_USF)
+)
+
+
+-- criar tabela pedido de primeira avaliacao, se o estado for 1, o pedido ainda nao foi aceite, se for 2, o pedido foi aceite se for 0 nao foi aceite
+-- criar tabela pedido de junta medica,, 
