@@ -88,3 +88,29 @@ a:hover {
 form.showLoginForm {
     display: block;
 }
+
+@media (max-width: 768px) {
+    .container {
+        max-width: 90%; /* Aumentar a largura para acomodar telas menores */
+        padding: 10px; /* Adicionar algum padding para não ficar muito junto às bordas */
+    }
+
+    .login-box {
+        margin-top: 30px; /* Diminuir a margem superior para melhor visualização */
+        margin-left: 0; /* Centralizar a caixa de login */
+        padding: 20px; /* Reduzir o padding para economizar espaço */
+    }
+
+    .login-box h1 {
+        font-size: 20px; /* Diminuir o tamanho da fonte do título */
+    }
+
+    .input-container input {
+        padding: 10px; /* Reduzir o padding dos inputs */
+    }
+
+    button {
+        padding: 10px; /* Reduzir o padding do botão */
+        font-size: 16px; /* Reduzir o tamanho da fonte do botão */
+    }
+}
