@@ -1,70 +1,52 @@
-
-CREATE SEQUENCE utente_id_sequence START WITH 1 INCREMENT BY 1 NO MAXVALUE NO CYCLE;
-
-CREATE SEQUENCE morada_id_sequence START WITH 1 INCREMENT BY 1 NO MAXVALUE NO CYCLE;
-
-CREATE SEQUENCE usf_id_sequence START WITH 1 INCREMENT BY 1 NO MAXVALUE NO CYCLE;
-
-CREATE SEQUENCE medico_id_sequence START WITH 1 INCREMENT BY 1 NO MAXVALUE NO CYCLE;
-
-CREATE SEQUENCE enfermeiro_id_sequence START WITH 1 INCREMENT BY 1 NO MAXVALUE NO CYCLE;
-
-create sequence distrito_id_sequence start with 1 increment by 1 no maxvalue no cycle;
-
-create sequence concelho_id_sequence start with 1 increment by 1 no maxvalue no cycle;
-
-create sequence freguesia_id_sequence start with 1 increment by 1 no maxvalue no cycle;
-
+CREATE SEQUENCE utente_id_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE morada_id_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE usf_id_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE medico_id_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE enfermeiro_id_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE distrito_id_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE concelho_id_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE freguesia_id_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE localidadeUSF_id_sequence START 1 INCREMENT 1;
 
 CREATE TABLE Utente (
     id_utente INT DEFAULT nextval('utente_id_sequence') PRIMARY KEY,
-    nome VARCHAR(255) not null,
+    nome VARCHAR(255) NOT NULL,
     numero_telemovel VARCHAR(20),
     email VARCHAR(255),
-    data_nascimento DATE not null,
-    nif VARCHAR(20) not null unique,
-    numero_utente VARCHAR(20) not null unique,
-    numero_cc VARCHAR(20) not null unique,
-    validade_cc DATE not null
-
+    data_nascimento DATE NOT NULL,
+    nif VARCHAR(20) NOT NULL UNIQUE,
+    numero_utente VARCHAR(20) NOT NULL UNIQUE,
+    numero_cc VARCHAR(20) NOT NULL UNIQUE,
+    validade_cc DATE NOT NULL
 );
-
 
 CREATE TABLE Morada (
     id_morada INT DEFAULT nextval('morada_id_sequence') PRIMARY KEY,
-    id_utente INT,
-    rua VARCHAR(255) not null,
-    codigo_postal VARCHAR(20)  not null,
-    freguesia VARCHAR(255) not null,
-    concelho VARCHAR(255) not null,
-    distrito VARCHAR(255) not null,
+    rua VARCHAR(255) NOT NULL,
+    codigo_postal VARCHAR(20) NOT NULL,
+    freguesia VARCHAR(255) NOT NULL,
+    concelho VARCHAR(255) NOT NULL,
+    distrito VARCHAR(255) NOT NULL,
     FOREIGN KEY (id_utente) REFERENCES Utente(id_utente)
 );
 
-create table freguesia (
-    id_freguesia  int default nextval('freguesia_id_sequence'::regclass) primary key,
-    nome_freguesia varchar(255) not null,
-    id_concelho int,
-    foreign key (id_concelho) references concelho(id_concelho)
+CREATE TABLE freguesia (
+    id_freguesia INT DEFAULT nextval('freguesia_id_sequence'::regclass) PRIMARY KEY,
+    nome_freguesia VARCHAR(255) NOT NULL,
+    id_concelho INT,
+    FOREIGN KEY (id_concelho) REFERENCES concelho(id_concelho)
 );
 
-create table concelho (
-    id_concelho int default nextval('concelho_id_sequence'::regclass) primary key,
-    nome_concelho varchar(255) not null,
-    id_distrito int,
-    foreign key (id_distrito) references distrito(id_distrito)
-
+CREATE TABLE concelho (
+    id_concelho INT DEFAULT nextval('concelho_id_sequence'::regclass) PRIMARY KEY,
+    nome_concelho VARCHAR(255) NOT NULL,
+    id_distrito INT,
+    FOREIGN KEY (id_distrito) REFERENCES distrito(id_distrito)
 );
 
-create table distrito (
-    id_distrito int default nextval('distrito_id_sequence'::regclass) primary key,
-    nome_distrito varchar(255) not null
-);
-
-
-CREATE TABLE USF (
-    id_usf INT DEFAULT nextval('usf_id_sequence') PRIMARY KEY,
-    nome_usf VARCHAR(100) 
+CREATE TABLE distrito (
+    id_distrito INT DEFAULT nextval('distrito_id_sequence'::regclass) PRIMARY KEY,
+    nome_distrito VARCHAR(255) NOT NULL
 );
 
 
@@ -74,13 +56,23 @@ CREATE TABLE Medico (
     especialidade VARCHAR(100)
 );
 
-
 CREATE TABLE Enfermeiro (
     id_enfermeiro INT DEFAULT nextval('enfermeiro_id_sequence') PRIMARY KEY,
     nome VARCHAR(255)
-
 );
 
+
+CREATE TABLE IF NOT EXISTS public.usf
+(
+    id_usf integer NOT NULL DEFAULT nextval('usf_id_sequence'::regclass) primary key,
+    nome_usf varchar(100),
+    id_concelho integer,
+    id_distrito integer,
+    id_freguesia integer,
+   	FOREIGN KEY (id_concelho) REFERENCES public.concelho (id_concelho),
+    FOREIGN KEY (id_distrito) REFERENCES public.distrito (id_distrito),
+    FOREIGN KEY (id_freguesia) REFERENCES public.freguesia (id_freguesia) 
+)
 
 CREATE TABLE USFMedico (
     id_usf INT,
@@ -90,7 +82,6 @@ CREATE TABLE USFMedico (
     FOREIGN KEY (id_medico) REFERENCES Medico(id_medico)
 );
 
-
 CREATE TABLE USFEnfermeiro (
     id_usf INT,
     id_enfermeiro INT,
@@ -99,13 +90,12 @@ CREATE TABLE USFEnfermeiro (
     FOREIGN KEY (id_enfermeiro) REFERENCES Enfermeiro(id_enfermeiro)
 );
 
-
 CREATE TABLE USFUtente (
+	id_UsfUtente serial primary key,
     id_usf INT,
     id_utente INT,
     id_medico INT,
     id_enfermeiro INT,
-    PRIMARY KEY (id_usf, id_utente),
     FOREIGN KEY (id_usf) REFERENCES USF(id_usf),
     FOREIGN KEY (id_utente) REFERENCES Utente(id_utente),
     FOREIGN KEY (id_medico) REFERENCES Medico(id_medico),
@@ -114,55 +104,99 @@ CREATE TABLE USFUtente (
     FOREIGN KEY (id_usf, id_enfermeiro) REFERENCES USFEnfermeiro(id_usf, id_enfermeiro)
 );
 
+CREATE TABLE LocalidadesUSF (
+    id_LocalidadeUSF BIGINT DEFAULT nextval('localidadeUSF_id_sequence'::regclass) PRIMARY KEY,
+    id_freguesia INT NOT NULL,
+    id_concelho INT NOT NULL,
+    id_distrito INT NOT NULL,
+    id_usf INT NOT NULL,
+    FOREIGN KEY (id_freguesia) REFERENCES freguesia(id_freguesia),
+    FOREIGN KEY (id_concelho) REFERENCES concelho(id_concelho),
+    FOREIGN KEY (id_distrito) REFERENCES distrito(id_distrito),
+    FOREIGN KEY (id_usf) REFERENCES USF(id_usf)
+);
+
 
 -- Inserting data into Distrito table
 INSERT INTO distrito (nome_distrito) VALUES
-    ('Distrito 1'),
-    ('Distrito 2'),
-    ('Distrito 3');
+    ('Lisboa');
+	
+select * from distrito
 
 -- Inserting data into Concelho table
-INSERT INTO concelho (nome_concelho, id_distrito) VALUES
-    ('Concelho 1', 1),
-    ('Concelho 2', 1),
-    ('Concelho 3', 2),
-    ('Concelho 4', 2),
-    ('Concelho 5', 3);
+INSERT INTO concelho (nome_concelho, id_distrito) VALUES 
+('Barcelos',1);
 
--- Inserting data into USF table
-INSERT INTO usf (nome_usf) VALUES
-    ('USF A'),
-    ('USF B'),
-    ('USF C');
+select * from concelho
 
 -- Inserting data into Freguesia table
 INSERT INTO freguesia (nome_freguesia, id_concelho) VALUES
-    ('Freguesia 1', 1),
-    ('Freguesia 2', 1),
-    ('Freguesia 3', 2),
-    ('Freguesia 4', 3),
-    ('Freguesia 5', 3);
+    ('Vila nova de sande', 1);
+	
+select * from freguesia
 
 -- Inserting data into Medico table
 INSERT INTO medico (nome, especialidade) VALUES
-    ('Dr. Medico 1', 'Cardiologia'),
-    ('Dr. Medico 2', 'Pediatria'),
-    ('Dr. Medico 3', 'Ginecologia');
+    ('Joaquim Alfredo', 'neurologia');
+delete from medico
+select * from medico
 
 -- Inserting data into Enfermeiro table
 INSERT INTO enfermeiro (nome) VALUES
-    ('Enfermeiro 1'),
-    ('Enfermeiro 2'),
-    ('Enfermeiro 3');
+    ('Pinto da Costa'),
+    ('Bruno de Carvalho'),
+    ('Sérgio Conceição');
+	
+select * from enfermeiro
+
+
+INSERT INTO public.usf(
+	id_usf, nome_usf, id_concelho, id_distrito, id_freguesia)
+	VALUES (1,'USF Ara de trajano');
 
 -- Inserting data into USFMedico table
 INSERT INTO usfmedico (id_usf, id_medico) VALUES
     (1, 1),
-    (2, 2),
-    (3, 3);
+    (2, 2);
+select * from usfmedico
+
 
 -- Inserting data into USFEnfermeiro table
 INSERT INTO usfenfermeiro (id_usf, id_enfermeiro) VALUES
     (1, 1),
-    (2, 2),
-    (3, 3);
+    (2, 2);
+
+select * from usfenfermeiro
+
+CREATE TABLE UtenteMorada (
+    id_UtenteMorada SERIAl PRIMARY KEY,
+    id_utente INT,
+    id_morada INT,
+    FOREIGN KEY (id_utente) REFERENCES utente(id_utente),
+    FOREIGN KEY (id_morada) REFERENCES morada(id_morada)
+);
+
+INSERT INTO public.morada( rua, codigo_postal, freguesia, concelho, distrito)
+	VALUES ('Rua bento ribeiro', '4805-085', 'Caldelas','Guimarães', 'Braga');
+select * from morada
+	
+INSERT INTO public.utente (nome, numero_telemovel, email, data_nascimento, nif, numero_utente, numero_cc, validade_cc)
+VALUES ('João Duarte', '915599842', 'joaopauloduarte2001@gmail.com', '2001-07-27', '254263828', '321345324', '20483277', '2026-05-16');
+
+select * from utente
+
+insert into UtenteMorada(id_utente,id_morada) values
+(1,1)
+
+select  * from UtenteMorada
+
+INSERT INTO public.usfutente(
+	id_usf, id_utente, id_medico, id_enfermeiro)
+	VALUES (1, 1, 1, 1);
+	
+select * from usfUtente
+
+INSERT INTO public.localidadesusf(id_freguesia, id_concelho, id_distrito, id_usf)
+	VALUES (1, 1, 1, 1),(3,1,1,1);
+	
+select * from localidadesusf

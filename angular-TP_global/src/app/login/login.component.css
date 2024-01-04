@@ -1,4 +1,24 @@
+<<<<<<< HEAD
+=======
+body {
+    background-color: #f4f4f4; /* Fallback background color */
+    background-image: url("../../assets/img/backgroundPhoto.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    /* Additional styles as needed */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+>>>>>>> main
 .container {
+    background-color: transparent; /* Set to transparent */
     width: 100%;
     max-width: 400px;
     margin: 0 auto;
@@ -14,8 +34,8 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
-    margin-top: 130px;
-    margin-left: 250px;
+    margin-top: 130px; /* Adjust based on your design */
+    margin-left: 250px; /* Adjust based on your design */
 }
 
 .login-box h1 {
