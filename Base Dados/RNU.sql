@@ -22,7 +22,6 @@ CREATE TABLE Utente (
 
 CREATE TABLE Morada (
     id_morada INT DEFAULT nextval('morada_id_sequence') PRIMARY KEY,
-    id_utente INT,
     rua VARCHAR(255) NOT NULL,
     codigo_postal VARCHAR(20) NOT NULL,
     freguesia VARCHAR(255) NOT NULL,
@@ -50,10 +49,6 @@ CREATE TABLE distrito (
     nome_distrito VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE USF (
-    id_usf INT DEFAULT nextval('usf_id_sequence') PRIMARY KEY,
-    nome_usf VARCHAR(100)
-);
 
 CREATE TABLE Medico (
     id_medico INT DEFAULT nextval('medico_id_sequence') PRIMARY KEY,
@@ -65,6 +60,19 @@ CREATE TABLE Enfermeiro (
     id_enfermeiro INT DEFAULT nextval('enfermeiro_id_sequence') PRIMARY KEY,
     nome VARCHAR(255)
 );
+
+
+CREATE TABLE IF NOT EXISTS public.usf
+(
+    id_usf integer NOT NULL DEFAULT nextval('usf_id_sequence'::regclass) primary key,
+    nome_usf varchar(100),
+    id_concelho integer,
+    id_distrito integer,
+    id_freguesia integer,
+   	FOREIGN KEY (id_concelho) REFERENCES public.concelho (id_concelho),
+    FOREIGN KEY (id_distrito) REFERENCES public.distrito (id_distrito),
+    FOREIGN KEY (id_freguesia) REFERENCES public.freguesia (id_freguesia) 
+)
 
 CREATE TABLE USFMedico (
     id_usf INT,
@@ -83,11 +91,11 @@ CREATE TABLE USFEnfermeiro (
 );
 
 CREATE TABLE USFUtente (
+	id_UsfUtente serial primary key,
     id_usf INT,
     id_utente INT,
     id_medico INT,
     id_enfermeiro INT,
-    PRIMARY KEY (id_usf, id_utente),
     FOREIGN KEY (id_usf) REFERENCES USF(id_usf),
     FOREIGN KEY (id_utente) REFERENCES Utente(id_utente),
     FOREIGN KEY (id_medico) REFERENCES Medico(id_medico),
@@ -109,45 +117,86 @@ CREATE TABLE LocalidadesUSF (
 );
 
 
-
+-- Inserting data into Distrito table
 INSERT INTO distrito (nome_distrito) VALUES
-    ('Braga'),
-    ('Porto'),
-    ('Vila Real');
+    ('Lisboa');
+	
+select * from distrito
 
+-- Inserting data into Concelho table
+INSERT INTO concelho (nome_concelho, id_distrito) VALUES 
+('Barcelos',1);
 
-INSERT INTO concelho (nome_concelho, id_distrito) VALUES
-    ('Guimarães', 1),
-    ('Vila Verde', 1),
-    ('Vila Nova de Famalicão', 1);
+select * from concelho
 
-
+-- Inserting data into Freguesia table
 INSERT INTO freguesia (nome_freguesia, id_concelho) VALUES
-    ('Caldelas', 1),
-    ('Portela das Cabras', 2),
-    ('Sande São Clemente', 1),
-    ('Freiriz', 2);
+    ('Vila nova de sande', 1);
+	
+select * from freguesia
 
-
+-- Inserting data into Medico table
 INSERT INTO medico (nome, especialidade) VALUES
-    ('Frederico Varandas', 'Cardiologia'),
-    ('Jorge Jesus', 'Pediatria'),
-    ('Jesualdo Ferreira', 'Ginecologia');
+    ('Joaquim Alfredo', 'neurologia');
+delete from medico
+select * from medico
 
-
+-- Inserting data into Enfermeiro table
 INSERT INTO enfermeiro (nome) VALUES
     ('Pinto da Costa'),
     ('Bruno de Carvalho'),
     ('Sérgio Conceição');
+	
+select * from enfermeiro
 
 
+INSERT INTO public.usf(
+	id_usf, nome_usf, id_concelho, id_distrito, id_freguesia)
+	VALUES (1,'USF Ara de trajano');
+
+-- Inserting data into USFMedico table
 INSERT INTO usfmedico (id_usf, id_medico) VALUES
     (1, 1),
-    (2, 2),
-    (3, 3);
+    (2, 2);
+select * from usfmedico
 
 
+-- Inserting data into USFEnfermeiro table
 INSERT INTO usfenfermeiro (id_usf, id_enfermeiro) VALUES
     (1, 1),
-    (2, 2),
-    (3, 3);
+    (2, 2);
+
+select * from usfenfermeiro
+
+CREATE TABLE UtenteMorada (
+    id_UtenteMorada SERIAl PRIMARY KEY,
+    id_utente INT,
+    id_morada INT,
+    FOREIGN KEY (id_utente) REFERENCES utente(id_utente),
+    FOREIGN KEY (id_morada) REFERENCES morada(id_morada)
+);
+
+INSERT INTO public.morada( rua, codigo_postal, freguesia, concelho, distrito)
+	VALUES ('Rua bento ribeiro', '4805-085', 'Caldelas','Guimarães', 'Braga');
+select * from morada
+	
+INSERT INTO public.utente (nome, numero_telemovel, email, data_nascimento, nif, numero_utente, numero_cc, validade_cc)
+VALUES ('João Duarte', '915599842', 'joaopauloduarte2001@gmail.com', '2001-07-27', '254263828', '321345324', '20483277', '2026-05-16');
+
+select * from utente
+
+insert into UtenteMorada(id_utente,id_morada) values
+(1,1)
+
+select  * from UtenteMorada
+
+INSERT INTO public.usfutente(
+	id_usf, id_utente, id_medico, id_enfermeiro)
+	VALUES (1, 1, 1, 1);
+	
+select * from usfUtente
+
+INSERT INTO public.localidadesusf(id_freguesia, id_concelho, id_distrito, id_usf)
+	VALUES (1, 1, 1, 1),(3,1,1,1);
+	
+select * from localidadesusf
