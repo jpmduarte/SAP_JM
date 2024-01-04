@@ -157,13 +157,29 @@
             <!-- Box de Opção -->
             <div class="form-container-2">
                 <div class="radio-group">
+                    <p>Vem solicitar a V.Exª, que ao abrigo do nº 1 do 3º do Decreto - Lei nº 202/96, de 12 de Outubro, seja admitido a Junta Médica para Avaliação do grau de incapacidade para efeito de:</p>
+                    <br>
+                    <label class="radio-option" for="multiuso">
+                        <input type="checkbox" id="multiuso" name="">
+                        Multiuso (Decreto-Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto-Lei nº 174/97, de 19 de Junho).
+                    </label>
+                    <label class="radio-option" for="importação">
+                        <input type="checkbox" id="importação" name="">
+                        Importação de veículo automóvel e outros (Lei nº 22-A/2007 de 29 de junho de 2007).
+                    </label>
+                </div>
+                <br><br>
+                <div class="radio-group">
+                    <p>Comprometendo-se a ser portador de toda a informação clínica respeitante à(s) doença(s) e/ou defeciência(s) que justifica(m) este pedido.</p>
+                    <p>Informa ainda que:</p>
+                    <br>
                     <label class="radio-option" for="submissaoReavaliacaoSim">
-                        Já foi submetido, pretendo uma reavaliação
                         <input type="radio" id="submissaoReavaliacaoSim" name="submissionStatus" value="sim" (change)="onSubmissionStatusChange('sim')">
+                        Já foi submetido em (data) <input type="date">, pretendo uma reavaliação
                     </label>
                     <label class="radio-option" for="nuncaSubmetido">
-                        Nunca foi submetido a Junta Médica de avaliação do grau de incapacidade
                         <input type="radio" id="nuncaSubmetido" name="submissionStatus" value="nao" (change)="onSubmissionStatusChange('nao')">
+                        Nunca foi submetido a Junta Médica de avaliação do grau de incapacidade
                     </label>
                 </div>
                 <div class="form-group" *ngIf="showPreviousAssessmentField">
