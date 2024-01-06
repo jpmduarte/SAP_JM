@@ -117,31 +117,31 @@ CREATE TABLE LocalidadesUSF (
 );
 
 
--- Inserting data into Distrito table
+
 INSERT INTO distrito (nome_distrito) VALUES
     ('Lisboa');
 	
 select * from distrito
 
--- Inserting data into Concelho table
+
 INSERT INTO concelho (nome_concelho, id_distrito) VALUES 
 ('Barcelos',1);
 
 select * from concelho
 
--- Inserting data into Freguesia table
+
 INSERT INTO freguesia (nome_freguesia, id_concelho) VALUES
     ('Vila nova de sande', 1);
 	
 select * from freguesia
 
--- Inserting data into Medico table
+
 INSERT INTO medico (nome, especialidade) VALUES
     ('Joaquim Alfredo', 'neurologia');
 delete from medico
 select * from medico
 
--- Inserting data into Enfermeiro table
+
 INSERT INTO enfermeiro (nome) VALUES
     ('Pinto da Costa'),
     ('Bruno de Carvalho'),
@@ -154,14 +154,14 @@ INSERT INTO public.usf(
 	id_usf, nome_usf, id_concelho, id_distrito, id_freguesia)
 	VALUES (1,'USF Ara de trajano');
 
--- Inserting data into USFMedico table
+
 INSERT INTO usfmedico (id_usf, id_medico) VALUES
     (1, 1),
     (2, 2);
 select * from usfmedico
 
 
--- Inserting data into USFEnfermeiro table
+
 INSERT INTO usfenfermeiro (id_usf, id_enfermeiro) VALUES
     (1, 1),
     (2, 2);
