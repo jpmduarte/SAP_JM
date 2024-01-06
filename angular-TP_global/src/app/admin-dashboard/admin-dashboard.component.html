@@ -1,16 +1,80 @@
 <header class="header">
-    <div class="app-name" >
+    <div class="app-name">
         <h2>SAP-JM</h2>
     </div>
-    <div class="user-info">
-        <span class="user-id">Admin</span>
+    <div class="nav-container">
+        <span class="nav" (click)="showUsers()">Utilizadores</span>
+        <span class="nav" (click)="addEmployee()">Criar Utilizadores</span>
+        <span class="nav" (click)="showSchedules()">Criar Horarios</span>
     </div>
-    <div class="profile" (click)="toggleLogoutPopup()">
+    <div class="user-info">
+        <h4 class="user-id">Admin</h4>
+    </div>
+    <div class="profile">
         <i class="material-icons">person</i>
-        <div *ngIf="showLogoutPopup" class="logout-popup">
+        <div class="logout-popup">
             <button (click)="logout()">Logout</button>
         </div>
     </div>
 </header>
+<div class="create-employee-form" *ngIf="showCreateEmployeeForm">
+    <form><!-- (submit)="submitCreateEmployeeForm(employeeData)" -->
+        <label for="nome">Nome:</label>
+        <input type="text" id="name" name="name" placeholder="Nome Completo">
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" placeholder="E-mail">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" placeholder="Password">
+        <label for="accountType">Role:</label>
+        <select id="accountType" name="accountType">
+            <option value=1>Médico</option>
+            <option value=2>Rececionista</option>
+        </select>
+        <button type="submit">Criar</button><!-- (click)="submitCreateEmployeeForm(employeeData)" -->
+    </form>
+</div>
+<div class="users" *ngIf="showUsersTable">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Id</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody *ngFor="let user of users">
+            <tr>
+                <!-- <td>{{ user.nome }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.nomeperfil }}</td>
+                <td>{{ user.id_user }}</td> -->
+                <td>
+                    <button class="action-button delete-button" (click)="confirmDelete(user)">Delete </button>
+                    <button class="action-button update-button" (click)="updateUser(user)">Update</button>
+                    <div class="confirmation-options" *ngIf="selectedUser === user">
+                        <button class="confirm-button">Confirm</button><!-- (click)="deleteUser(user)" -->
+                        <button class="cancel-button" (click)="cancelDelete()">Cancel</button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="overlay" *ngIf="selectedUserToUpdate"></div>
+<div class="update-form" *ngIf="selectedUserToUpdate">
+    <h2>Atualizar Informação</h2>
+    <form><!-- (submit)="submitUpdateUserForm(selectedUserToUpdate)" -->
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"/><!-- [(ngModel)]="selectedUserToUpdate.nome" -->
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email"/><!-- [(ngModel)]="selectedUserToUpdate.email" -->
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password"/><!-- [(ngModel)]="selectedUserToUpdate.password" -->
+        <button type="submit">Update</button>
+        <button type="button" (click)="cancelUpdate()">Cancel</button>
+    </form>
+</div>
 <footer class="footer"></footer>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

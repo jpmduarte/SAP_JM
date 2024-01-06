@@ -91,10 +91,14 @@ button:hover {
     transform: translateX(-50%);
     width: 80px;
     text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0.5s;
 }
 
-.logout-popup button {
-    margin: 0;
+.profile:hover .logout-popup {
+    opacity: 1;
+    visibility: visible;
 }
 
 .footer {
@@ -181,7 +185,7 @@ button:hover {
 
 .form-container {
     background-color: #fff;
-    padding: 20px;
+    padding: 1px;
     border-radius: 5px;
     box-shadow: none;
     max-width: 900px;
@@ -237,12 +241,6 @@ input[type="file"] {
     grid-gap: 20px;
 }
 
-@media (max-width: 768px) {
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 .radio-option input[type="radio"] {
     margin-right: 10px;
 }
@@ -269,4 +267,53 @@ input[type="file"] {
 
 .radio-option label {
     display: inline;
+}
+
+.warning-message {
+    padding: 10px;
+    background-color: #ffcc00;
+    color: #333;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.inline-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.inline-field label, .inline-field input {
+    margin-right: 10px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.inline-field input[type="text"] {
+    flex: 2;
+}
+
+.inline-field input[type="date"] {
+    flex: 1;
+}
+
+.form-field {
+    margin-bottom: 20px;
+}
+
+.form-field label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-field input {
+    width: 100%; 
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
 }

@@ -15,6 +15,7 @@ export class UtenteDashboardComponent {
   showLogoutPopup = false;
   showFormPopup = false;
   showPreviousAssessmentField: boolean = false;
+  showSuccessPopup = false;
   files: File[] = [];
 
   constructor(private router: Router) {}
@@ -68,5 +69,13 @@ export class UtenteDashboardComponent {
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
+  }
+
+  submitForm() {
+    this.showSuccessPopup = true;
+  }
+
+  closePopup() {
+    this.showSuccessPopup = false;
   }
 }

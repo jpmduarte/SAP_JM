@@ -1,13 +1,13 @@
 <header class="header">
-    <div class="app-name" >
+    <div class="app-name">
         <h2>SAP-JM</h2>
     </div>
     <div class="user-info">
-        <span class="user-id">Número do Utente</span>
+        <h4 class="user-id">Número do Utente</h4>
     </div>
-    <div class="profile" (click)="toggleLogoutPopup()">
+    <div class="profile">
         <i class="material-icons">person</i>
-        <div *ngIf="showLogoutPopup" class="logout-popup">
+        <div class="logout-popup">
             <button (click)="logout()">Logout</button>
         </div>
     </div>
@@ -57,120 +57,77 @@
     <div>
         <form *ngIf="showFormPopup" class="form-container">
             <h2>Preencha os campos abaixo para efetuar o Pedido de Junta Médica</h2>
-            <!-- Box de Informações Pessoais -->
-            <div class="form-container-1">
+            <!-- Informações Pessoais -->
+            <div class="form-container">
+                <h3>Informações Pessoais</h3>
                 <div class="form-field">
-                    <label for="fullName">Nome Completo</label>
                     <input type="text" id="fullName" placeholder="Nome Completo">
-                </div>
-                <div class="form-field">
-                    <label for="birthDate">Data de Nascimento</label>
+                    <label for="birthDate">Data de Nascimento:</label>
                     <input type="date" id="birthDate">
                 </div>
-            </div>
-            <br><br><br>
-            <!-- Box de Informações Documento -->
-            <div class="form-container-2">
-                <div class="form-field-group">
-                    <div class="form-field half-width">
-                        <label for="nIdentificacao">Nº de Identificacao:</label>
-                        <input type="text" placeholder="Nº Identificacao">
-                    </div>
-                    <div class="form-field half-width">
-                        <label for="nUtente">Nº Utente de Saúde:</label>
-                        <input type="text" id="nUtente" placeholder="Nº de Utente">
-                    </div>
+                <!-- Informações Documento -->
+                <div class="form-field inline-field">
+                    <input type="text" placeholder="Nº Identificacao">
+                    <input type="text" id="nUtente" placeholder="Nº de Utente">
+                    <input type="text" placeholder="NIF">
                 </div>
-                <div class="form-field-group">
-                    <div class="form-field half-width">
-                        <label for="nif">NIF:</label>
-                        <input type="text" placeholder="NIF">
-                    </div>
-                    <div class="form-field half-width">
-                        <label for="validade">Data de Validade:</label>
-                        <input type="date" id="validade" placeholder="Data de Validade">
-                    </div>
+                <div class="form-field">
+                    <label for="validade">Data de Validade:</label>
+                    <input type="date" id="validade" placeholder="Data de Validade">
                 </div>
             </div>
-            <br><br><br>
-            <!-- Box de Informações Morada -->
-            <h3>Morada</h3>
-            <div class="form-container-1">
+            <!-- Informações Morada -->
+            <div class="form-container">
+                <h3>Morada</h3>
                 <div class="form-field">
                     <label for="morada">Rua:</label>
                     <input type="text" id="morada" placeholder="Morada">
                 </div>
-                <div class="form-field-group">
-                    <div class="form-field half-width">
-                        <label for="cp">Codigo Postal:</label>
-                        <input type="text" placeholder="Codigo Postal">
-                    </div>
-                    <div class="form-field half-width">
-                        <label for="localidade">Localidade:</label>
-                        <input type="text" id="localidade" placeholder="Localidade">
-                    </div>
+                <div class="form-field inline-field">
+                    <input type="text" placeholder="Codigo Postal">
+                    <input type="text" id="localidade" placeholder="Localidade">
                 </div>
-                <div class="form-field-group">
-                    <div class="form-field half-width">
-                        <label for="concelho">Concelho:</label>
-                        <input type="text" id="concelho" placeholder="Concelho">
-                    </div>
-                    <div class="form-field half-width">
-                        <label for="distrito">Distrito:</label>
-                        <input type="text" id="distrito" placeholder="Distrito">
+                <div class="form-field inline-field">
+                    <input type="text" id="concelho" placeholder="Concelho">
+                    <input type="text" id="distrito" placeholder="Distrito">
+                </div>
+            </div>
+            <!-- Informações Contacto -->
+            <div class="form-container">
+                <h3>Contacto</h3>
+                <div class="form-field inline-field">
+                    <input type="text" placeholder="Telemóvel">
+                    <input type="text" id="email" placeholder="E-mail">
+                </div>
+            </div>
+            <!-- Anexo Documentos -->
+            <div class="form-container">
+                <h3>Anexar Documentação</h3>
+                <div class="form-field">
+                    <input type="file" id="registosClinicos" name="registosClinicos" accept=".pdf" (change)="onFileChange($event)" multiple>
+                    <div *ngFor="let file of files" class="document-item">
+                        <span (click)="openFile(file)">{{ file.name }}</span>
+                        <span (click)="removeFile(file)">&times;</span>
                     </div>
                 </div>
             </div>
-            <br><br><br>
-            <!-- Box de Informações Contacto -->
-            <h3>Contacto</h3>
-            <div class="form-container-1">
-                <div class="form-field-group">
-                    <div class="form-field half-width">
-                        <label for="telemovel">Telemóvel:</label>
-                        <input type="text" placeholder="Telemóvel">
-                    </div>
-                    <div class="form-field half-width">
-                        <label for="email">E-mail:</label>
-                        <input type="text" id="email" placeholder="E-mail">
-                    </div>
-                </div>
-            </div>
-            <br><br><br>
-            <!-- Box de Anexo Documentos -->
-            <h3>Anexar Documentação</h3>
-            <div class="form-container-2">
-                <div class="form-field-group">
-                    <div class="form-field">
-                        <label for="registosClinicos">Adicionar documentos:</label>
-                        <input type="file" id="registosClinicos" name="registosClinicos" accept=".pdf" (change)="onFileChange($event)" multiple>
-                    </div>
-                    <div class="form-field half-width">
-                        <div *ngFor="let file of files" class="document-item">
-                            <span (click)="openFile(file)">{{ file.name }}</span>
-                            <span (click)="removeFile(file)">&times;</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <br><br><br>
-            <!-- Box de Opção -->
-            <div class="form-container-2">
+            <!-- Opção -->
+            <div class="form-container">
                 <div class="radio-group">
                     <p>Vem solicitar a V.Exª, que ao abrigo do nº 1 do 3º do Decreto - Lei nº 202/96, de 12 de Outubro, seja admitido a Junta Médica para Avaliação do grau de incapacidade para efeito de:</p>
                     <br>
                     <label class="radio-option" for="multiuso">
-                        <input type="checkbox" id="multiuso" name="">
+                        <input type="radio" id="multiuso" name="tipoPedido" value="multiuso">
                         Multiuso (Decreto-Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto-Lei nº 174/97, de 19 de Junho).
                     </label>
-                    <label class="radio-option" for="importação">
-                        <input type="checkbox" id="importação" name="">
+                    <label class="radio-option" for="importacao">
+                        <input type="radio" id="importacao" name="tipoPedido" value="importacao">
                         Importação de veículo automóvel e outros (Lei nº 22-A/2007 de 29 de junho de 2007).
                     </label>
                 </div>
-                <br><br>
+                <br>
                 <div class="radio-group">
-                    <p>Comprometendo-se a ser portador de toda a informação clínica respeitante à(s) doença(s) e/ou defeciência(s) que justifica(m) este pedido.</p>
+                    <p>Comprometendo-se a ser portador de toda a informação clínica respeitante à(s) doença(s) e/ou deficiência(s) que justifica(m) este pedido.</p>
                     <p>Informa ainda que:</p>
                     <br>
                     <label class="radio-option" for="submissaoReavaliacaoSim">
@@ -183,12 +140,14 @@
                     </label>
                 </div>
                 <div class="form-group" *ngIf="showPreviousAssessmentField">
-                    <label for="atestadoAnterior">Adicionar Atestado Anterior:</label>
-                    <input type="file" id="atestadoAnterior" name="atestadoAnterior" accept=".pdf">
-                </div>
+                    <p class="warning-message">Aviso: Inclua o atestado médico anterior na seção "Anexar Documentação".</p>
+                </div>               
             </div>
-            <button>Submeter</button>
+            <button (click)="submitForm()">Submeter</button>
         </form>
     </div>
 </div>
+<footer>
+    
+</footer>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

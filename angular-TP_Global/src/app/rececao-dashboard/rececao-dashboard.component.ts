@@ -3,14 +3,14 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-medico-dashboard',
+  selector: 'app-rececao-dashboard',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './medico-dashboard.component.html',
-  styleUrl: './medico-dashboard.component.css'
+  templateUrl: './rececao-dashboard.component.html',
+  styleUrl: './rececao-dashboard.component.css'
 })
-export class MedicoDashboardComponent {
-  
+export class RececaoDashboardComponent {
+
   show = true;
   showLogoutPopup = false;
 
@@ -20,4 +20,5 @@ export class MedicoDashboardComponent {
     this.showLogoutPopup = false;
     this.router.navigate(['/login']);
   }
+
 }

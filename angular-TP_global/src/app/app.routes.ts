@@ -3,6 +3,7 @@ import { LoginComponent } from './login/login.component';
 import { MedicoDashboardComponent } from './medico-dashboard/medico-dashboard.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { UtenteDashboardComponent } from './utente-dashboard/utente-dashboard.component';
+import { RececaoDashboardComponent } from './rececao-dashboard/rececao-dashboard.component';
 
 
 export const routes: Routes = [
@@ -10,5 +11,6 @@ export const routes: Routes = [
     { path: 'medico_dashboard', component: MedicoDashboardComponent },
     { path: 'admin_dashboard', component: AdminDashboardComponent },
     { path: 'utente_dashboard', component: UtenteDashboardComponent },
-    { path: 'login', component: LoginComponent }
+    { path: 'login', component: LoginComponent },
+    { path: 'rececao_dashboard', component: RececaoDashboardComponent },
 ];
