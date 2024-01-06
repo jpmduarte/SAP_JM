@@ -1,8 +1,3 @@
-create sequence seq_id_perfil start 1  increment 1;
-create sequence seq_id_user start 1 increment 1;
-create sequence seq_id_utentes start 1 increment 1;
-create sequence seq_id_medicos start 1 increment 1;
-
 
 create table perfis(
 id_perfil  bigint DEFAULT nextval('seq_id_perfil'::regclass) NOT NULL primary key,
@@ -14,7 +9,7 @@ insert into perfis(nome) values ('utente');
 insert into perfis(nome) values ('medico');
 
 
-create sequence seq_id_user start 1 increment 1;
+
 
 create table users (
     id_user bigint default nextval('seq_id_user'::regclass) not null primary key,
@@ -43,7 +38,7 @@ create table medicos(
 create table USF(
 	id_USF serial primary key,
 	nomeUSF varchar(100) not null
-)
+);
 
 create table medicoUSF(
 	id_medicoUSF serial primary key,
@@ -51,7 +46,7 @@ create table medicoUSF(
 	id_USF int not null,
 	foreign key (id_medico) references medicos(id_medico),
 	foreign key (id_USF) references USF(id_USF)
-)
+);
 
 create table utenteUSF(
 	id_utenteUSF serial primary key,
@@ -59,35 +54,14 @@ create table utenteUSF(
 	id_USF int not null,
 	foreign key (id_utente) references utentes(id_utente),
 	foreign key (id_USF) references USF(id_USF)
-)
+);
 
 
-
-create table pedido_primeira_avaliacao(
-	id_pedido serial primary key,
-	id_utente int not null,
-	id_medico int not null,
-	estado int not null,
-	descricao varchar(255) default null,
-	foreign key (id_utente) references utentes(id_utente),
-	foreign key (id_medico) references medicos(id_medico)
-)
-
-
-create table pedido_junta_medica(
-	id_pedido serial primary key,
-	id_utente int not null,
-	id_medico int not null,
-	estado int not null,
-	descricao varchar(255) default null,
-	foreign key (id_utente) references utentes(id_utente),
-	foreign key (id_medico) references medicos(id_medico)
-)
 
 create table estado (
 	id_estado serial primary key,
 	nome_estado varchar(100) not null
-)
+);
 
 insert into estado(nome_estado) values ('pendente');
 insert into estado(nome_estado) values ('aceite');
@@ -124,6 +98,16 @@ CREATE TABLE pedido_primeira_avaliacao (
     )
 );
 
+CREATE TABLE pedido_junta_medica (
+    id_pedido_junta_medica SERIAL PRIMARY KEY,
+    id_pedido_avaliacao INT NOT NULL,
+    estado INT NOT NULL,
+    descricao VARCHAR(255) DEFAULT NULL,
+    id_grupo_medico INT NOT NULL,
+    FOREIGN KEY (id_pedido_avaliacao) REFERENCES pedido_primeira_avaliacao(id_pedido),
+    FOREIGN KEY (id_grupo_medico) REFERENCES grupos_medicos(id_grupo_medico)
+);
+
 
 CREATE TABLE documentos (
     id_documento SERIAL PRIMARY KEY,
@@ -138,4 +122,29 @@ CREATE TABLE pedido_documentos (
     id_documento INT NOT NULL,
     FOREIGN KEY (id_pedido) REFERENCES pedido_primeira_avaliacao(id_pedido),
     FOREIGN KEY (id_documento) REFERENCES documentos(id_documento)
+);
+
+CREATE TABLE grupos_medicos (
+    id_grupo_medico SERIAL PRIMARY KEY,
+    nome_grupo varchar(100) NOT NULL
+);
+
+
+CREATE TABLE medicos_grupos (
+    id_medico_grupo SERIAL PRIMARY KEY,
+    id_medico int NOT NULL,
+    id_grupo_medico int NOT NULL,
+    FOREIGN KEY (id_medico) REFERENCES medicos(id_medico),
+    FOREIGN KEY (id_grupo_medico) REFERENCES grupos_medicos(id_grupo_medico)
+);
+
+CREATE TABLE horarios (
+    id_horario SERIAL PRIMARY KEY,
+    id_medico INT NOT NULL,
+    dia_semana INT NOT NULL,
+    hora_inicio_manha TIME NOT NULL,
+    hora_fim_manha TIME NOT NULL,
+    hora_inicio_tarde TIME NOT NULL,
+    hora_fim_tarde TIME NOT NULL,
+    FOREIGN KEY (id_medico) REFERENCES medicos(id_medico)
 );
