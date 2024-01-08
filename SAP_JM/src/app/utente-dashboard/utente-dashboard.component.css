@@ -101,8 +101,9 @@ button:hover {
     visibility: visible;
 }
 
-.logout-popup button {
-    margin: 0;
+.profile:hover .logout-popup {
+    opacity: 1;
+    visibility: visible;
 }
 
 .footer {
