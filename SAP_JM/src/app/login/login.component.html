@@ -1,0 +1,86 @@
+<div class="container">
+  <div class="login-box">
+    <h1>SAP-JM</h1>
+    <!-- Login Form -->
+    <form *ngIf="showLoginForm" (ngSubmit)="handleLogin()" #loginForm="ngForm" name="loginForm">
+      <div class="input-container">
+        <label>Email:</label>
+        <input
+          type="email"
+          placeholder="Digite seu email"
+          [(ngModel)]="loginInfo.email"
+          name="email"
+          required
+        />
+      </div>
+      <div class="input-container">
+        <label>Password:</label>
+        <input
+          type="password"
+          placeholder="Digite sua senha"
+          [(ngModel)]="loginInfo.password"
+          name="password"
+          required
+        />
+      </div>
+      <button type="submit">Entrar</button>
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+    </form>
+    <p *ngIf="showLoginForm">
+      Não tem conta? <a href="" (click)="toggleForm($event)">Clique aqui</a> para se registrar
+    </p>
+    <!-- Registration Form -->
+    <form *ngIf="!showLoginForm" (ngSubmit)="handleRegister()" #registerForm="ngForm" name="registerForm">
+      <div class="input-container">
+        <label>Nome:</label>
+        <input
+          type="text"
+          placeholder="Digite seu nome"
+          [(ngModel)]="registerInfo.nome"
+          name="nome"
+          required
+        />
+      </div>
+      <div class="input-container">
+        <label>Número de Utente:</label>
+        <input
+          type="text"
+          placeholder="Digite o número de utente"
+          [(ngModel)]="registerInfo.numeroUtente"
+          name="numeroUtente"
+          required
+        />
+      </div>
+      <div class="input-container">
+        <label>Email:</label>
+        <input
+          type="email"
+          placeholder="Digite seu email"
+          [(ngModel)]="registerInfo.email"
+          name="email"
+          required
+        />
+      </div>
+      <div class="input-container">
+        <label>Password:</label>
+        <input
+          type="password"
+          placeholder="Crie uma senha"
+          [(ngModel)]="registerInfo.password"
+          name="password"
+          required
+        />
+      </div>
+      <div class="input-container">
+        <label>Confirmar Password:</label>
+        <input type="password" placeholder="Confirme sua senha" name="confirmPassword" required />
+      </div>
+      <button type="submit">Registrar</button>
+      <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
+    </form>
+    <p *ngIf="!showLoginForm">
+      Já tem uma conta? <a href="" (click)="toggleForm($event)">Clique aqui</a> para entrar
+    </p>
+  </div>
+</div>
