@@ -1,5 +1,5 @@
-body {
-    background-image: url('../../assets/backgroundPhoto.jpeg');
+.body {
+    background-image: url('C:/Users/diogo/OneDrive - Instituto Politécnico do Cávado e do Ave/Desktop/TP_GLOBAL/SAP_JM/src/assets/backgroundPhoto.jpeg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
@@ -10,6 +10,7 @@ body {
     display: flex;
     overflow: hidden;
 }
+
 .error-message {
     color: #ff0000;
     margin-top: 10px;

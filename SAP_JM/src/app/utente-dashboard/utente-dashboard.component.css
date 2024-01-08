@@ -209,6 +209,10 @@ button:hover {
     background-color: #e5e5e5;
 }
 
+.form-field input[class="contacto"]{
+    background-color: #fff;
+}
+
 button,
 .form-field input[type="submit"] {
     background-color: #007bff;
