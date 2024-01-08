@@ -7,7 +7,7 @@
 button {
     margin-top: 20px;
     padding: 10px 20px;
-    background-color: rgba(117, 170, 219, 1);
+    background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
@@ -33,11 +33,28 @@ button:hover {
     margin-right: auto;
 }
 
-.nav-link {
-    margin-right: 20px;
+.nav-link, .nav {
+    margin-right: 60px;
     text-decoration: none;
     color: #333;
     font-size: 16px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    margin-left: 300px;
+}
+
+.nav:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
 }
 
 .profile {
@@ -62,6 +79,14 @@ button:hover {
     transform: translateX(-50%);
     width: 80px;
     text-align: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: visibility 0.5s;
+}
+
+.profile:hover .logout-popup {
+    opacity: 1;
+    visibility: visible;
 }
 
 .logout-popup button {
@@ -92,4 +117,216 @@ button:hover {
 
 .icon {
     margin-right: 5px;
+}
+
+/* ----------------------------------------------------------- */ 
+.users {
+    margin-top: 40px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+    max-width: 800px;
+    margin-bottom: 20px;
+}
+
+.table th,
+.table td {
+    padding: 10px;
+    text-align: left;
+}
+
+.table th {
+    background-color: #f2f2f2;
+}
+
+.table td button.delete-button,
+.table td button.update-button {
+    padding: 5px 10px;
+    background-color: #ff4444;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-bottom: 5px;
+    margin-right: 10px;
+}
+
+.table td button.delete-button:hover,
+.table td button.update-button:hover {
+    background-color: #cc0000;
+}
+
+.confirmation-options {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-left: -15px; 
+}
+
+.confirm-button,
+.cancel-button {
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+.confirm-button {
+    background-color: #ff4444;
+    color: #fff;
+}
+
+.cancel-button {
+    background-color: #ccc;
+    color: #000;
+    margin-top: 5px;
+}
+
+.confirm-button:hover,
+.cancel-button:hover {
+    background-color: #cc0000;
+}
+
+.create-employee-form{
+    margin-top: 40px;
+}
+
+.create-employee-form form {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+    margin: auto;
+}
+  
+.create-employee-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #203354;
+}
+
+.create-employee-form label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.create-employee-form input, select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    background-color: #f4f4f4;
+}
+  
+.create-employee-form button[type="submit"],
+.create-employee-form button[type="button"] {
+    padding: 8px 16px;
+    background-color: #ff4444;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.create-employee-form select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    width: 100%; 
+}
+
+.create-employee-form select option {
+    padding: 8px;
+    font-size: 14px;
+}
+
+.create-employee-form button[type="submit"]:hover,
+.create-employee-form button[type="button"]:hover {
+    background-color: #cc0000;
+}
+  
+.create-employee-form button[type="submit"]:focus,
+.create-employee-form button[type="button"]:focus {
+    outline: none;
+}
+  
+.create-employee-form button[type="submit"]:disabled,
+.create-employee-form button[type="button"]:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+  
+.update-form {
+    position: fixed;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 4px;
+}
+  
+.update-form h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+  
+.update-form form {
+    margin-top: 10px;
+}
+  
+.update-form label {
+    display: block;
+    margin-bottom: 5px;
+}
+  
+.update-form input {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+  
+.update-form button[type="submit"],
+.update-form button[type="button"] {
+    padding: 5px 10px;
+    background-color: #ff4444;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-right: 10px;
+}
+  
+.update-form button[type="submit"]:hover,
+.update-form button[type="button"]:hover {
+    background-color: #cc0000;
+}
+  
+.update-form{
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 4px;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+  
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(71, 69, 69, 0.8);
+    z-index: 999;
 }

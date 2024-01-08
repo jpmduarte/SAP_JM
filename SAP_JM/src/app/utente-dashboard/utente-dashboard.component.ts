@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-utente-dashboard',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './utente-dashboard.component.html',
   styleUrls: ['./utente-dashboard.component.css']
 })
@@ -13,6 +15,7 @@ export class UtenteDashboardComponent {
   showLogoutPopup = false;
   showFormPopup = false;
   showPreviousAssessmentField: boolean = false;
+  showSuccessPopup = false;
   files: File[] = [];
 
   constructor(private router: Router) {}
@@ -66,5 +69,13 @@ export class UtenteDashboardComponent {
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
+  }
+
+  submitForm() {
+    this.showSuccessPopup = true;
+  }
+
+  closePopup() {
+    this.showSuccessPopup = false;
   }
 }

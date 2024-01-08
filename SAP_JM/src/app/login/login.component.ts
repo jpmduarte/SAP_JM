@@ -18,9 +18,6 @@ interface RegisterResponse {
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
-
-
-
 export class LoginComponent {
 
   errorMessage = '';

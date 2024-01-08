@@ -1,8 +1,6 @@
-<!-- Your Angular Component Template -->
 <div class="container">
   <div class="login-box">
     <h1>SAP-JM</h1>
-
     <!-- Login Form -->
     <form *ngIf="showLoginForm" (ngSubmit)="handleLogin()" #loginForm="ngForm" name="loginForm">
       <div class="input-container">
@@ -28,11 +26,9 @@
       <button type="submit">Entrar</button>
       <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
     </form>
-
     <p *ngIf="showLoginForm">
       Não tem conta? <a href="" (click)="toggleForm($event)">Clique aqui</a> para se registrar
     </p>
-
     <!-- Registration Form -->
     <form *ngIf="!showLoginForm" (ngSubmit)="handleRegister()" #registerForm="ngForm" name="registerForm">
       <div class="input-container">
@@ -83,8 +79,6 @@
       <p *ngIf="successMessage" class="success-message">{{ successMessage }}</p>
       <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
     </form>
-
-
     <p *ngIf="!showLoginForm">
       Já tem uma conta? <a href="" (click)="toggleForm($event)">Clique aqui</a> para entrar
     </p>
