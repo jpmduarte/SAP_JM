@@ -1,5 +1,5 @@
 .body {
-    background-image: url('C:/Users/diogo/OneDrive - Instituto Politécnico do Cávado e do Ave/Desktop/TP_GLOBAL/SAP_JM/src/assets/backgroundPhoto.jpeg');
+    background-image: url('/assets/backgroundPhoto.jpeg');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;

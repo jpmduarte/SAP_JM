@@ -15,6 +15,42 @@ const pool = new Pool({
   port: 5432,
 });
 
+
+app.get('/api/userinfo', async (req, res) => {
+  try {
+    const email = req.query.email;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Parametro email nao esta no URL' });
+    }
+
+    const query = `
+      SELECT ut.nome, ut.numero_telemovel, ut.email, ut.data_nascimento, ut.nif,
+             ut.numero_utente, ut.numero_cc, ut.validade_cc,
+             mor.rua, mor.codigo_postal, mor.freguesia, mor.concelho, mor.distrito
+      FROM utente ut
+      JOIN UtenteMorada um ON ut.id_utente = um.id_utente
+      JOIN morada mor ON um.id_morada = mor.id_morada
+      WHERE ut.email = $1;
+    `;
+
+    const result = await pool.query(query, [email]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'email nao encontrado no sistema' });
+    }
+
+    const userInfo = result.rows[0];
+    console.log(userInfo);
+    return res.json(userInfo);
+
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
 app.listen(3002, () => {
-  console.log("Server is listening on port 3001.");
+  console.log("Server is listening on port 3002.");
 });

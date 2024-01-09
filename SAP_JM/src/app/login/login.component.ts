@@ -48,10 +48,10 @@ export class LoginComponent {
         (response) => {
           console.log(response);
           if (response.success == true) {
-            this.successMessage = 'Registration successful. You can now login.';
+            this.successMessage = 'Registo bem sucedido. Por favor, faça login';
             setTimeout(() => {
-            this.router.navigate(['/login']);
-            },50);
+              this.showLoginForm = true;
+            },350);
           } else if (response.success === false)
           {
             this.errorMessage = response.erro;
@@ -59,7 +59,7 @@ export class LoginComponent {
           }
         },
         (error) => {
-          this.errorMessage = 'An error occurred during registration. Please try again.';
+          this.errorMessage = 'Ocorreu um erro ao tentar registar-se...';
           console.error(error);
         }
       );
@@ -69,26 +69,35 @@ export class LoginComponent {
     this.http.post<LoginResponse>('http://localhost:3001/api/login', this.loginInfo).subscribe(
       (response) => {
         console.log(response);
-        if (response.success == true) {
-          if (response.perfil == 1) {
-            this.router.navigate(['/admin_dashboard']);
-          } else if (response.perfil == 2) {
-            this.router.navigate(['/utente_dashboard']);
-          } else if (response.perfil == 3) {
-            this.router.navigate(['/medico_dashboard']);
+  
+        if (response.success) {
+          const queryParams = { email: this.loginInfo.email };
+  
+          switch (response.perfil) {
+            case 1:
+              this.router.navigate(['/admin_dashboard'], { queryParams });
+              break;
+            case 2:
+              this.router.navigate(['/utente_dashboard'], { queryParams });
+              break;
+            case 3:
+              this.router.navigate(['/medico_dashboard'], { queryParams });
+              break;
+            default:
+              this.errorMessage = 'Perfil desconhecido...';
+              break;
           }
-        } else if (response.success === false)
-        {
+        } else {
           this.errorMessage = response.erro;
           console.log(response.erro);
         }
       },
       (error) => {
-        this.errorMessage = 'An error occurred during login. Please try again.';
+        this.errorMessage = 'Ocorreu um erro durante o login... ';
         console.error(error);
       }
     );
-    console.log(this.loginInfo);
   }
+  
   
 }
