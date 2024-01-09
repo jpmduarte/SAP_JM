@@ -84,6 +84,9 @@ app.post("/api/register", async (req, res) => {
       "insert into utentes (id_user_utente, numero_utente,nome) values ($1, $2, $3)",
       [id, numeroUtente,nome]
     );
+    if (pool.query("SELECT * FROM utentes WHERE id_user_utente = $1", [id]).rows.length === 0){
+      return res.json({ success: false ,erro: "erro ao inserir utente"});
+    }
     return res.json({ success: true });
   }catch (err) {
     console.error(err.message);
