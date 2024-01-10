@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 
 
+
 @Component({
   selector: 'app-utente-dashboard',
   templateUrl: './utente-dashboard.component.html',
@@ -17,6 +18,9 @@ export class UtenteDashboardComponent {
   showSuccessPopup = false;
   files: File[] = [];
 
+
+
+  
   primeiroPedido: any = {
     idUtente: '',
     idMedico: '',
@@ -46,6 +50,7 @@ export class UtenteDashboardComponent {
     nome_usf: ''
   };
 
+  
   constructor(private router: Router, private http: HttpClient,private activatedRoute: ActivatedRoute,) {}
   
   handleUserInfoFromRNUserver() {
