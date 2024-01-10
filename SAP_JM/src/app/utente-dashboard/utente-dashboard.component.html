@@ -28,19 +28,13 @@
                     <td>1001</td>
                     <td>ABC</td>
                     <td>Rejeitado</td>
-                    <td>Consultar motivo</td>
+                    <td class="details" (click)="isRejectedModalVisible = true">Consultar detalhes</td>
                 </tr>
                 <tr>
                     <td>1002</td>
                     <td>ABC</td>
                     <td>Aprovado</td>
-                    <td>Consultar data da avaliação</td>
-                </tr>
-                <tr>
-                    <td>1003</td>
-                    <td>ABC</td>
-                    <td>Em análise</td>
-                    <td>Editar dados</td>
+                    <td class="details" (click)="isAcceptedModalVisible = true">Consultar detalhes</td>
                 </tr>
                 <!-- Other existing table rows -->
             </tbody>
@@ -140,6 +134,31 @@
             </div>
             <button (click)="submitForm()">Submeter</button>
         </form>
+    </div>
+</div>
+<div class="modal" *ngIf="isRejectedModalVisible">
+    <div class="modal-content">
+        <span class="close" (click)="closeModal()">&times;</span>
+        <h2>Detalhes do Pedido Junta Médica:</h2>
+        <p><strong>Nome:</strong> Diogo Pinheiro</p>
+        <p><strong>Data de submissão:</strong> 01/01/2000</p>
+        <p><strong>Data de validação:</strong> 01/01/200</p>
+        <p class="rejected">Pedido Junta Médica Rejeitada ❌</p>
+        <h3>Descrição da inconformidade:</h3>
+        <p>Registos Clinicos não estão assinados.</p>
+        <button (click)="toggleFormPopup()">Novo Pedido</button>
+    </div>
+</div>
+<div class="modal" *ngIf="isAcceptedModalVisible">
+    <div class="modal-content">
+        <span class="close" (click)="closeModal()">&times;</span>
+        <h2>Detalhes do Pedido Junta Médica:</h2>
+        <p><strong>Nome:</strong> </p>
+        <p><strong>Data de submissão:</strong> </p>
+        <p><strong>Data de validação:</strong> </p>
+        <h4>Resultado Pré-Avaliação: <strong>75%</strong></h4>
+        <p class="accepted">Pedido Junta Médica Aceite ✅</p>
+        <button>Finalizar pedido</button>
     </div>
 </div>
 <footer class="main">

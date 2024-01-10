@@ -11,16 +11,13 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./utente-dashboard.component.css'],
 })
 export class UtenteDashboardComponent {
+
   show = true;
   showLogoutPopup = false;
   showFormPopup = false;
   showPreviousAssessmentField: boolean = false;
   showSuccessPopup = false;
   files: File[] = [];
-
-
-
-  
   primeiroPedido: any = {
     idUtente: '',
     idMedico: '',
@@ -44,13 +41,13 @@ export class UtenteDashboardComponent {
     submissaoReavaliacao: false,
     dataSubmissaoReavaliacao:Date,
   };
-
   UtenteUSF: any = {
     id_utnete: '',
     nome_usf: ''
   };
+  isRejectedModalVisible: boolean = false;
+  isAcceptedModalVisible: boolean = false;
 
-  
   constructor(private router: Router, private http: HttpClient,private activatedRoute: ActivatedRoute,) {}
   
   handleUserInfoFromRNUserver() {
@@ -99,6 +96,7 @@ export class UtenteDashboardComponent {
   toggleFormPopup() {
     this.showFormPopup = !this.showFormPopup;
     this.show = !this.show;
+    this.closeModal();
   }
 
   logout(): void {
@@ -198,5 +196,15 @@ export class UtenteDashboardComponent {
 
   closePopup() {
     this.showSuccessPopup = false;
+  }
+
+  showModal() {
+    this.isRejectedModalVisible = true;
+    this.isAcceptedModalVisible = true;
+  }
+
+  closeModal() {
+    this.isRejectedModalVisible = false;
+    this.isAcceptedModalVisible = false;
   }
 }

@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { Router, RouterModule, Routes } from '@angular/router';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { Router, RouterModule, Routes } from '@angular/router';
     FormsModule,
     HttpClientModule,
     RouterModule,
+    NgxPaginationModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
