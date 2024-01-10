@@ -3,7 +3,7 @@
         <h2>SAP-JM</h2>
     </div>
     <div class="user-info">
-        <h4 class="user-id">Número do Utente</h4>
+        <h4 class="user-id">{{ primeiroPedido.numeroUtente }}</h4>
     </div>
     <div class="profile">
         <i class="material-icons">person</i>
@@ -42,12 +42,7 @@
                     <td>Em análise</td>
                     <td>Editar dados</td>
                 </tr>
-                <!-- <tr *ngFor="let pedido of pedidos">
-                    <td>{{ pedido.id }}</td>
-                    <td>{{ pedido.utente.name }}</td>
-                    <td>{{ pedido.estado }}</td>
-                    <td>{{ pedido.detalhes }}</td>
-                </tr> -->
+                <!-- Other existing table rows -->
             </tbody>
         </table>
     </div>
@@ -61,19 +56,19 @@
             <div class="form-container">
                 <h3>Informações Pessoais</h3>
                 <div class="form-field">
-                    <input type="text" id="fullName" placeholder="Nome Completo" readonly>
+                    <input [(ngModel)]="primeiroPedido.nome_completo" type="text" id="fullName" name="fullName" placeholder="Nome Completo" readonly>
                     <label for="birthDate">Data de Nascimento:</label>
-                    <input type="date" id="birthDate" readonly>
+                    <input [(ngModel)]="primeiroPedido.data_nascimento" type="date" id="birthDate" name="birthDate" readonly>
                 </div>
                 <!-- Informações Documento -->
                 <div class="form-field inline-field">
-                    <input type="text" placeholder="Nº Identificacao" readonly>
-                    <input type="text" id="nUtente" placeholder="Nº de Utente" readonly>
-                    <input type="text" placeholder="NIF" readonly>
+                    <input [(ngModel)]="primeiroPedido.n_identificacao" type="text" id="nIdentificacao" name="nIdentificacao" placeholder="Nº Identificacao" readonly>
+                    <input [(ngModel)]="primeiroPedido.n_utente_saude" type="text" id="nUtente" name="nUtente" placeholder="Nº de Utente" readonly>
+                    <input [(ngModel)]="primeiroPedido.nif" type="text" id="nif" name="nif" placeholder="NIF" readonly>
                 </div>
                 <div class="form-field">
                     <label for="validade">Data de Validade:</label>
-                    <input type="date" id="validade" placeholder="Data de Validade" readonly>
+                    <input [(ngModel)]="primeiroPedido.data_validade" type="date" id="validade" name="validade" placeholder="Data de Validade" readonly>
                 </div>
             </div>
             <!-- Informações Morada -->
@@ -81,23 +76,23 @@
                 <h3>Morada</h3>
                 <div class="form-field">
                     <label for="morada">Rua:</label>
-                    <input type="text" id="morada" placeholder="Morada" readonly>
+                    <input [(ngModel)]="primeiroPedido.rua" type="text" id="morada" name="morada" placeholder="Morada" readonly>
                 </div>
                 <div class="form-field inline-field">
-                    <input type="text" placeholder="Codigo Postal" readonly>
-                    <input type="text" id="localidade" placeholder="Localidade" readonly>
+                    <input [(ngModel)]="primeiroPedido.codigo_postal" type="text" name="codigoPostal" placeholder="Codigo Postal" readonly>
+                    <input [(ngModel)]="primeiroPedido.localidade" type="text" id="localidade" name="localidade" placeholder="Localidade" readonly>
                 </div>
                 <div class="form-field inline-field">
-                    <input type="text" id="concelho" placeholder="Concelho" readonly>
-                    <input type="text" id="distrito" placeholder="Distrito" readonly>
+                    <input [(ngModel)]="primeiroPedido.concelho" type="text" id="concelho" name="concelho" placeholder="Concelho" readonly>
+                    <input [(ngModel)]="primeiroPedido.distrito" type="text" id="distrito" name="distrito" placeholder="Distrito" readonly>
                 </div>
             </div>
             <!-- Informações Contacto -->
             <div class="form-container">
                 <h3>Contacto</h3>
                 <div class="form-field inline-field">
-                    <input class="contacto" type="text" placeholder="Telemóvel">
-                    <input class="contacto" type="text" id="email" placeholder="E-mail">
+                    <input [(ngModel)]="primeiroPedido.telemovel" class="contacto" type="text" name="telemovel" placeholder="Telemóvel">
+                    <input [(ngModel)]="primeiroPedido.email" class="contacto" type="text" id="email" name="email" placeholder="E-mail">
                 </div>
             </div>
             <!-- Anexo Documentos -->
@@ -117,11 +112,11 @@
                     <p>Vem solicitar a V.Exª, que ao abrigo do nº 1 do 3º do Decreto - Lei nº 202/96, de 12 de Outubro, seja admitido a Junta Médica para Avaliação do grau de incapacidade para efeito de:</p>
                     <br>
                     <label class="radio-option" for="multiuso">
-                        <input type="radio" id="multiuso" name="tipoPedido" value="multiuso">
+                        <input [(ngModel)]="primeiroPedido.multiuso" type="radio" id="multiuso" name="tipoPedido" value="multiuso">
                         Multiuso (Decreto-Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto-Lei nº 174/97, de 19 de Junho).
                     </label>
                     <label class="radio-option" for="importacao">
-                        <input type="radio" id="importacao" name="tipoPedido" value="importacao">
+                        <input [(ngModel)]="primeiroPedido.importacao_veiculo" type="radio" id="importacao" name="tipoPedido" value="importacao">
                         Importação de veículo automóvel e outros (Lei nº 22-A/2007 de 29 de junho de 2007).
                     </label>
                 </div>
@@ -131,11 +126,11 @@
                     <p>Informa ainda que:</p>
                     <br>
                     <label class="radio-option" for="submissaoReavaliacaoSim">
-                        <input type="radio" id="submissaoReavaliacaoSim" name="submissionStatus" value="sim" (change)="onSubmissionStatusChange('sim')">
-                        Já foi submetido em (data) <input type="date">, pretendo uma reavaliação
+                        <input [(ngModel)]="primeiroPedido.submissao_reavaliacao" type="radio" id="submissaoReavaliacaoSim" name="submissionStatus" value="sim" (change)="onSubmissionStatusChange('sim')">
+                        Já foi submetido em (data) <input [(ngModel)]="primeiroPedido.data_submissao_reavaliacao" type="date" name="dataSubmissaoReavaliacao">, pretendo uma reavaliação
                     </label>
                     <label class="radio-option" for="nuncaSubmetido">
-                        <input type="radio" id="nuncaSubmetido" name="submissionStatus" value="nao" (change)="onSubmissionStatusChange('nao')">
+                        <input [(ngModel)]="primeiroPedido.submissao_reavaliacao" type="radio" id="nuncaSubmetido" name="submissionStatus" value="nao" (change)="onSubmissionStatusChange('nao')">
                         Nunca foi submetido a Junta Médica de avaliação do grau de incapacidade
                     </label>
                 </div>
