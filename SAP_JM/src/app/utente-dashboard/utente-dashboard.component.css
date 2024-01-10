@@ -29,21 +29,6 @@ th {
     background-color: #f0f0f0;
 }
 
-.button-container {
-    text-align: center;
-}
-
-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: rgba(117, 170, 219, 1);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
 button:hover {
     background-color: #0056b3;
 }
@@ -60,13 +45,6 @@ button:hover {
 
 .app-name {
     margin-right: auto;
-}
-
-.nav-link {
-    margin-right: 20px;
-    text-decoration: none;
-    color: #333;
-    font-size: 16px;
 }
 
 .profile {
@@ -106,16 +84,6 @@ button:hover {
     visibility: visible;
 }
 
-.footer {
-    width: 100%;
-    padding: 10px 0;
-    background: #f5f5f5;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-    position: fixed;
-    bottom: 0;
-    left: 0;
-}
-
 .user-info {
     display: flex;
     justify-content: flex-end;
@@ -128,10 +96,6 @@ button:hover {
     margin-right: 10px;
 }
 
-.icon {
-    margin-right: 5px;
-}
-
 .form-container h2 {
   margin-bottom: 1em;
   color: #333333;
@@ -141,23 +105,6 @@ button:hover {
   margin-bottom: 1em;
 }
 
-.form-group label {
-  margin-bottom: .5em;
-  display: inline-block;
-  margin-right: 10px;
-}
-
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: .5em;
-  border: 1px solid #ccc;
-  background-color: #f0f0f0;
-  border-radius: 4px;
-}
-
 .button-container {
   padding: 1em 2em;
   color: white;
@@ -165,6 +112,7 @@ button:hover {
   border-radius: 4px;
   cursor: pointer;
   margin-left: 45%;
+  text-align: center;
 }
 
 .button-container button:hover {
@@ -182,12 +130,6 @@ button:hover {
     transform: scale(1.2);
 }
 
-.form-group input[type="radio"] {
-    align-items: middle;
-    margin-right: 5px;
-    vertical-align: middle;
-}
-
 .form-container {
     background-color: #fff;
     padding: 1px;
@@ -198,9 +140,7 @@ button:hover {
 }
 
 .form-field input[type="text"],
-.form-field input[type="date"],
-.form-field input[type="email"],
-.form-field select {
+.form-field input[type="date"] {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
@@ -239,24 +179,10 @@ input[type="file"] {
     text-align: center;
 }
 
-.icons {
-    color: #007bff;
-    margin-right: 5px;
-}
-
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    grid-gap: 20px;
-}
-
-.radio-option input[type="radio"] {
-    margin-right: 10px;
-}
-
 .radio-option label {
     font-size: 14px;
     color: #333;
+    display: inline;
 }
 
 .radio-group {
@@ -274,10 +200,6 @@ input[type="file"] {
     vertical-align: middle;
 }
 
-.radio-option label {
-    display: inline;
-}
-
 .warning-message {
     padding: 10px;
     background-color: #ffcc00;
@@ -293,7 +215,7 @@ input[type="file"] {
     align-items: center;
 }
 
-.inline-field label, .inline-field input {
+.inline-field input {
     margin-right: 10px;
     display: inline-block;
     vertical-align: middle;
@@ -301,10 +223,6 @@ input[type="file"] {
 
 .inline-field input[type="text"] {
     flex: 2;
-}
-
-.inline-field input[type="date"] {
-    flex: 1;
 }
 
 .form-field {
@@ -321,7 +239,90 @@ input[type="file"] {
     box-sizing: border-box;
 }
 
+.main-container {
+    min-height: 68.6vh;
+}
+
+footer.main {
+    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    padding: 10px 0;
+    position: relative;
+    clear: both;
+}
+
+.sns-container {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+.sns-container > div {
+    flex: 1;
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+
+.logo-ms {
+    max-height: 50px;
+    width: auto;
+    padding-left: 10px;
+}
+
+.footer-right {
+    justify-content: flex-end;
+}
+
+.footer-right span{
+    position: absolute;
+    font-size: 0.8em;
+    right: 15px;
+    top: 5px;
+}
+
+.footer-right p {
+    position: absolute;
+    font-size: 0.8em;
+    right: 15px;
+    top: 20px;
+}
+
+.f-note {
+    position: absolute;
+    right: 15px;
+    bottom: 10px;
+    font-size: 0.8em;
+}
+
 @media (max-width: 768px) {
+    .sns-container {
+        flex-direction: column;
+    }
+
+    .sns-container > div {
+        justify-content: flex-start;
+    }
+
+    .footer-right {
+        order: 1; 
+        margin-bottom: 10px;
+    }
+
+    .f-note {
+        position: static; 
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
+    }
+
     .form-grid {
         grid-template-columns: 1fr;
     }
