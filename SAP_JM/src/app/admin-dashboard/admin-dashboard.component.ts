@@ -10,7 +10,7 @@ interface User {
   password: string;
 }
 interface Employee {
-  medicoName: string;
+  psaudeName: string;
   email: string;
   password: string;
   accountType: number;
@@ -50,9 +50,6 @@ export class AdminDashboardComponent {
   selectedUser: User | undefined;
   selectedUserToUpdate: User | undefined;
   employeeData: Employee = { psaudeName: '', email: '', password: '', accountType: 2, numero_cedula: 0 };
-  ScheduleTimes: string[] = ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
-  users: User[] = [];
-  selectedUser: User | undefined;
   daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
   doctorsWithNoSchedule: medico[] = [];
   doctorswithSchedules: medico[] = [];
@@ -97,12 +94,6 @@ export class AdminDashboardComponent {
   selectedAfternoonEnd: string = '';
   selectedUpdatepsaude: any;
   errorMessage: string | undefined;
-  employeeData: Employee = {
-    medicoName: '',
-    email: '',
-    password: '',
-    accountType: 0,
-  };
   showLogoutPopup = false;
 
   constructor(private router: Router, private http: HttpClient) {}
