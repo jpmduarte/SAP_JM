@@ -56,14 +56,14 @@
 <div class="form-container">
     <h3>Informações Pessoais</h3>
     <div class="form-field">
-        <input [(ngModel)]="primeiroPedido.nome_completo" type="text" id="fullName" name="fullName" placeholder="Nome Completo" readonly>
+        <input [(ngModel)]="primeiroPedido.nomeCompleto" type="text" id="fullName" name="fullName" placeholder="Nome Completo" readonly>
         <label for="birthDate">Data de Nascimento:</label>
         <input [(ngModel)]="primeiroPedido.data_nascimento" type="date" id="birthDate" name="birthDate" readonly>
     </div>
     <!-- Informações Documento -->
     <div class="form-field inline-field">
-        <input [(ngModel)]="primeiroPedido.n_identificacao" type="text" id="nIdentificacao" name="nIdentificacao" placeholder="Nº Identificacao" readonly>
-        <input [(ngModel)]="primeiroPedido.n_utente_saude" type="text" id="nUtente" name="nUtente" placeholder="Nº de Utente" readonly>
+        <input [(ngModel)]="primeiroPedido.nIdentificacao" type="text" id="nIdentificacao" name="nIdentificacao" placeholder="Nº Identificacao" readonly>
+        <input [(ngModel)]="primeiroPedido.numero_utente" type="text" id="nUtente" name="nUtente" placeholder="Nº de Utente" readonly>
         <input [(ngModel)]="primeiroPedido.nif" type="text" id="nif" name="nif" placeholder="NIF" readonly>
     </div>
     <div class="form-field">
@@ -79,7 +79,7 @@
         <input [(ngModel)]="primeiroPedido.rua" type="text" id="morada" name="morada" placeholder="Morada" readonly>
     </div>
     <div class="form-field inline-field">
-        <input [(ngModel)]="primeiroPedido.codigo_postal" type="text" name="codigoPostal" placeholder="Codigo Postal" readonly>
+        <input [(ngModel)]="primeiroPedido.codigoPostal" type="text" name="codigoPostal" placeholder="Codigo Postal" readonly>
         <input [(ngModel)]="primeiroPedido.localidade" type="text" id="localidade" name="localidade" placeholder="Localidade" readonly>
     </div>
     <div class="form-field inline-field">
