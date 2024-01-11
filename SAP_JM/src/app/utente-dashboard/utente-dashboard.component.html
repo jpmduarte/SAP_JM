@@ -12,7 +12,7 @@
         </div>
     </div>
 </header>
-<div *ngIf="show">
+<div *ngIf="show" class="main-container">
     <div class="table-container">
         <table>
             <thead>
@@ -56,19 +56,19 @@
 <div class="form-container">
     <h3>Informações Pessoais</h3>
     <div class="form-field">
-        <input [(ngModel)]="primeiroPedido.nomeCompleto" type="text" id="fullName" name="fullName" placeholder="Nome Completo" readonly>
+        <input [(ngModel)]="primeiroPedido.nome_completo" type="text" id="fullName" name="fullName" placeholder="Nome Completo" readonly>
         <label for="birthDate">Data de Nascimento:</label>
-        <input [(ngModel)]="primeiroPedido.data_nascimento" type="text" id="birthDate" name="birthDate" readonly>
+        <input [(ngModel)]="primeiroPedido.data_nascimento" type="date" id="birthDate" name="birthDate" readonly>
     </div>
     <!-- Informações Documento -->
     <div class="form-field inline-field">
-        <input [(ngModel)]="primeiroPedido.nIdentificacao" type="text" id="nIdentificacao" name="nIdentificacao" placeholder="Nº Identificacao" readonly>
-        <input [(ngModel)]="primeiroPedido.numero_utente" type="text" id="nUtente" name="nUtente" placeholder="Nº de Utente" readonly>
+        <input [(ngModel)]="primeiroPedido.n_identificacao" type="text" id="nIdentificacao" name="nIdentificacao" placeholder="Nº Identificacao" readonly>
+        <input [(ngModel)]="primeiroPedido.n_utente_saude" type="text" id="nUtente" name="nUtente" placeholder="Nº de Utente" readonly>
         <input [(ngModel)]="primeiroPedido.nif" type="text" id="nif" name="nif" placeholder="NIF" readonly>
     </div>
     <div class="form-field">
         <label for="validade">Data de Validade:</label>
-        <input [(ngModel)]="primeiroPedido.data_validade" type="text" id="validade" name="validade" placeholder="Data de Validade" readonly>
+        <input [(ngModel)]="primeiroPedido.data_validade" type="date" id="validade" name="validade" placeholder="Data de Validade" readonly>
     </div>
 </div>
 <!-- Informações Morada -->
@@ -79,7 +79,7 @@
         <input [(ngModel)]="primeiroPedido.rua" type="text" id="morada" name="morada" placeholder="Morada" readonly>
     </div>
     <div class="form-field inline-field">
-        <input [(ngModel)]="primeiroPedido.codigoPostal" type="text" name="codigoPostal" placeholder="Codigo Postal" readonly>
+        <input [(ngModel)]="primeiroPedido.codigo_postal" type="text" name="codigoPostal" placeholder="Codigo Postal" readonly>
         <input [(ngModel)]="primeiroPedido.localidade" type="text" id="localidade" name="localidade" placeholder="Localidade" readonly>
     </div>
     <div class="form-field inline-field">
@@ -142,7 +142,34 @@
 </form>
 </div>
 </div>
-<footer>
-<!-- Footer content, if any -->
+<footer class="main">
+    <div class="sns-container box-2">
+        <div class="row">
+            <div>
+                <a href="http://www.portugal.gov.pt/pt.aspx" target="_blank">
+                    <img class="logo-ms img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2023/12/logotipo_RP.svg" alt="Portal do Governo: Ministério da Saúde">
+                </a>
+            </div>
+            <div>
+                <a href="https://www.sns.gov.pt/" target="_blank">
+                    <img class="logo-ms ms2 img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2020/04/logo_sns.svg" alt="SNS Serviço Nacional de Saúde">
+                </a>
+            </div>
+            <div>
+                <a href="http://spms.min-saude.pt/" target="_blank">
+                    <img class="logo-ms ms2 img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2016/02/LOGO-SPMS.png" alt="SPMS Serviços Partilhados do Ministério da Saúde">
+                </a>
+            </div>
+            <div>
+                <div class="row footer-right">
+                    <div>
+                        <span>Desenvolvido por:</span>
+                        <p>Diogo Pinheiro | João Duarte | Ruben Oliveira</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="f-note"> © 2024 SAP_JM</div>
+    </div>
 </footer>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">

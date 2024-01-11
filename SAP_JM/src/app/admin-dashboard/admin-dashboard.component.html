@@ -4,7 +4,7 @@
     </div>
     <div class="nav-container">
         <span class="nav" (click)="showUsers()">Utilizadores</span>
-        <span class="nav" (click)="addEmployee()">Criar Utilizadores</span>
+        <span class="nav" (click)="addEmployee()">Criar Medicos</span>
         <span class="nav" (click)="showSchedules()">Criar Horarios</span>
     </div>
     <div class="user-info">
@@ -25,11 +25,6 @@
         <input type="text" id="email" name="email" placeholder="E-mail">
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" placeholder="Password">
-        <label for="accountType">Role:</label>
-        <select id="accountType" name="accountType">
-            <option value=1>Médico</option>
-            <option value=2>Rececionista</option>
-        </select>
         <button type="submit">Criar</button><!-- (click)="submitCreateEmployeeForm(employeeData)" -->
     </form>
 </div>
@@ -44,18 +39,18 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody *ngFor="let user of users">
+        <tbody> <!-- *ngFor="let user of users" -->
             <tr>
                 <!-- <td>{{ user.nome }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.nomeperfil }}</td>
                 <td>{{ user.id_user }}</td> -->
                 <td>
-                    <button class="action-button delete-button" (click)="confirmDelete(user)">Delete </button>
-                    <button class="action-button update-button" (click)="updateUser(user)">Update</button>
-                    <div class="confirmation-options" *ngIf="selectedUser === user">
-                        <button class="confirm-button">Confirm</button><!-- (click)="deleteUser(user)" -->
-                        <button class="cancel-button" (click)="cancelDelete()">Cancel</button>
+                    <button class="action-button delete-button">Delete</button> <!-- (click)="deleteUser(user)" -->
+                    <button class="action-button update-button">Update</button> <!-- (click)="updateUser(user)" -->
+                    <div class="confirmation-options" *ngIf="selectedUser"> <!-- *ngIf="selectedUser === user" -->
+                        <button class="confirm-button">Confirmar</button><!-- (click)="deleteUser(user)" -->
+                        <button class="cancel-button" (click)="cancelDelete()">Cancelar</button>
                     </div>
                 </td>
             </tr>
@@ -65,8 +60,8 @@
 <div class="overlay" *ngIf="selectedUserToUpdate"></div>
 <div class="update-form" *ngIf="selectedUserToUpdate">
     <h2>Atualizar Informação</h2>
-    <form><!-- (submit)="submitUpdateUserForm(selectedUserToUpdate)" -->
-        <label for="name">Name:</label>
+    <form><!-- (submit)="submitUpdateForm(selectedUserToUpdate)" -->
+        <label for="name">Nome:</label>
         <input type="text" id="name" name="name"/><!-- [(ngModel)]="selectedUserToUpdate.nome" -->
         <label for="email">Email:</label>
         <input type="text" id="email" name="email"/><!-- [(ngModel)]="selectedUserToUpdate.email" -->
@@ -76,5 +71,111 @@
         <button type="button" (click)="cancelUpdate()">Cancel</button>
     </form>
 </div>
-<footer class="footer"></footer>
+<div class="schedules" *ngIf="showSchedulesTable">
+    <table class="table"> <!-- *ngIf="schedules.length > 0; else noSchedulesTemplate" -->
+        <thead>
+            <tr>
+                <th>Nome Médico</th>
+                <th>Dia da Semana</th>
+                <th>Turno da Manhã</th>
+                <th>Turno da Tarde</th>
+                <th>Disponibilidade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><!-- *ngFor="let schedule of schedules" -->
+                <!-- <td>{{ schedule.schedule.name }}</td>
+                <td>{{ schedule.schedule.dia_semana_string }}</td>
+                <td>{{ schedule.schedule.periodo_manha_inicio }} - {{ schedule.schedule.periodo_manha_fim }}</td>
+                <td>{{ schedule.schedule.periodo_tarde_inicio }} - {{ schedule.schedule.periodo_tarde_fim }}</td>
+                <td>{{ schedule.schedule.isdisponivel ? "Working" : "On vacations" }}</td> -->
+            </tr>
+        </tbody>
+    </table>
+    <ng-template #noSchedulesTemplate>
+        <p>Sem horários disponívies.</p>
+    </ng-template>
+    <h3>Médicos com horário incompleto</h3>
+    <table class="table"> <!-- *ngIf=" doctorsWithNoSchedule.length > 0; else noDoctorsWithNoScheduleTemplate" -->
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Número</th>
+                <th>Profissão</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><!-- *ngFor="let doctor of doctorsWithNoSchedule" -->
+                <!-- <td>{{ doctor.nomeprofissionalsaude }}</td>
+                <td>{{ doctor.numero_cedula }}</td>
+                <td>{{ doctor.tipo_profissionalsaude }}</td> -->
+                <td>
+                    <button class="create-button"> <!-- (click)="createschedule(doctor)" -->
+                        Criar Horário
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <ng-template #noDoctorsWithNoScheduleTemplate>
+        <p>0 Médicos sem horário.</p>
+    </ng-template>
+    <h3>Médicos com Horário</h3>
+    <table class="table"> <!--  *ngIf="doctorswithSchedules.length > 0; else noDoctorsTemplate" -->
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Número</th>
+                <th>Profissão</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><!-- *ngFor="let doctor of doctorswithSchedules" -->
+                <!-- <td>{{ doctor.nomeprofissionalsaude }}</td>
+                <td>{{ doctor.numero_cedula }}</td>
+                <td>{{ doctor.tipo_profissionalsaude }}</td> -->
+                <td>
+                    <button class="alter-button"> <!-- (click)="alterschedule(doctor)" -->
+                        Alterar Horário
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <ng-template #noDoctorsTemplate>
+        <p>0 Médicos disponívies.</p>
+    </ng-template>
+</div>
+<footer class="main">
+    <div class="sns-container box-2">
+        <div class="row">
+            <div>
+                <a href="http://www.portugal.gov.pt/pt.aspx" target="_blank">
+                    <img class="logo-ms img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2023/12/logotipo_RP.svg" alt="Portal do Governo: Ministério da Saúde">
+                </a>
+            </div>
+            <div>
+                <a href="https://www.sns.gov.pt/" target="_blank">
+                    <img class="logo-ms ms2 img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2020/04/logo_sns.svg" alt="SNS Serviço Nacional de Saúde">
+                </a>
+            </div>
+            <div>
+                <a href="http://spms.min-saude.pt/" target="_blank">
+                    <img class="logo-ms ms2 img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2016/02/LOGO-SPMS.png" alt="SPMS Serviços Partilhados do Ministério da Saúde">
+                </a>
+            </div>
+            <div>
+                <div class="row footer-right">
+                    <div>
+                        <span>Desenvolvido por:</span>
+                        <p>Diogo Pinheiro | João Duarte | Ruben Oliveira</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="f-note"> © 2024 SAP_JM</div>
+    </div>
+</footer>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
