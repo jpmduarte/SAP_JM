@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 interface User {
   id_user: number;
@@ -13,6 +14,7 @@ interface Employee {
   email: string;
   password: string;
   accountType: number;
+  numero_cedula: number;
 }
 interface Schedule {
   schedule: {
@@ -47,6 +49,10 @@ export class AdminDashboardComponent {
   showSchedulesTable = false;
   selectedUser: User | undefined;
   selectedUserToUpdate: User | undefined;
+  employeeData: Employee = { psaudeName: '', email: '', password: '', accountType: 2, numero_cedula: 0 };
+  ScheduleTimes: string[] = ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+  users: User[] = [];
+  selectedUser: User | undefined;
   daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
   doctorsWithNoSchedule: medico[] = [];
   doctorswithSchedules: medico[] = [];
@@ -99,11 +105,26 @@ export class AdminDashboardComponent {
   };
   showLogoutPopup = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   ngOnInit(): void {
-    // this.fetchUsers();
+    this.fetchUsers();
     this.showUsersTable = true;
+  }
+
+
+
+  fetchUsers() {
+    this.http.get<User[]>('/api/users').subscribe(
+      (response: User[]) => {
+        this.users = response;
+        console.log('API response:', response);
+      },
+      (error: any) => {
+        console.log('Error:', error);
+      }
+    );
+    
   }
 
   toggleLogoutPopup() {
@@ -133,17 +154,6 @@ export class AdminDashboardComponent {
     this.showCreateEmployeeForm = false;
   }
 
-  // fetchUsers() {
-  //   this.http.get<User[]>('/api/users').subscribe(
-  //     (response: User[]) => {
-  //       this.users = response;
-  //       console.log('API response:', response);
-  //     },
-  //     (error: any) => {
-  //       console.log('Error:', error);
-  //     }
-  //   );
-  // }
 
   confirmDelete(user: User) {
     this.selectedUser = user;
