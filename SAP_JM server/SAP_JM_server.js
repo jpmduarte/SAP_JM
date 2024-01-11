@@ -37,6 +37,37 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await pool.query(`
+    SELECT
+    CASE
+      WHEN perfis.nome = 'utente' THEN utentes.nome
+      WHEN perfis.nome = 'medico' THEN medicos.nome
+      ELSE NULL
+    END AS nome,
+    users.email,
+    perfis.nome AS perfil,
+    users.id_user
+  FROM users
+  JOIN perfis ON users.id_perfil = perfis.id_perfil
+  LEFT JOIN utentes ON users.id_user = utentes.id_user_utente
+  LEFT JOIN medicos ON users.id_user = medicos.id_user_medico;
+  
+    `);
+
+    if (users.rows.length === 0) {
+      return res.json({ success: false, erro: "Nenhum utilizador encontrado" });
+    }
+
+    const userList = users.rows;
+    console.log(userList);
+    return res.json({ success: true, users: userList });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
 
 
 app.post("/api/register", async (req, res) => {

@@ -42,19 +42,22 @@ export class AdminDashboardComponent {
   }
 
 
-
   fetchUsers() {
-    this.http.get<User[]>('/api/users').subscribe(
-      (response: User[]) => {
-        this.users = response;
-        console.log('API response:', response);
+    this.http.get<User[]>('http: localhost:3001/api/users').subscribe(
+      (response: any) => {
+        if (response.success) {
+          this.users = response.users;  // Update the users array
+          console.log('Users:', this.users);
+        } else {
+          console.log('Error:', response.erro);
+        }
       },
       (error: any) => {
         console.log('Error:', error);
       }
     );
-    
   }
+  
 
   toggleLogoutPopup() {
     this.showLogoutPopup = !this.showLogoutPopup;
@@ -92,18 +95,18 @@ export class AdminDashboardComponent {
     this.selectedUser = undefined;
   }
 
-  // deleteUser(user: User): void {
-  //   const userId = user.id_user;
-  //   this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
-  //     () => {
-  //       console.log('User deleted successfully');
-  //       this.fetchUsers();
-  //     },
-  //     (error: any) => {
-  //       console.error('Error deleting user:', error);
-  //     }
-  //   );
-  // }
+    deleteUser(user: User): void {
+      const userId = user.id_user;
+      this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
+        () => {
+          console.log('User deleted successfully');
+          this.fetchUsers();
+        },
+        (error: any) => {
+          console.error('Error deleting user:', error);
+        }
+      );
+    }
 
   // submitCreateEmployeeForm(employee: any) {
   //     employee.accountType = Number(employee.accountType) + 1;
@@ -135,28 +138,28 @@ export class AdminDashboardComponent {
     this.selectedUserToUpdate = user;
   }
 
-  // submitUpdateForm() {
-  //   if (this.selectedUserToUpdate) {
-  //     const userId = this.selectedUserToUpdate.id_user;
-  //     const { nome, nomeperfil, email, password } = this.selectedUserToUpdate;
+    submitUpdateForm() {
+      if (this.selectedUserToUpdate) {
+        const userId = this.selectedUserToUpdate.id_user;
+        const { nome, nomeperfil, email, password } = this.selectedUserToUpdate;
 
-  //     const body = {
-  //       nome: nome,
-  //       nomeperfil: nomeperfil,
-  //       email: email,
-  //       password: password,
-  //     };
+        const body = {
+          nome: nome,
+          nomeperfil: nomeperfil,
+          email: email,
+          password: password,
+        };
 
-  //     this.http.put(`/api/updateusers/${userId}`, body).subscribe(
-  //       () => {
-  //         console.log('User updated successfully');
-  //       },
-  //       (error: any) => {
-  //         console.error('Error updating user:', error);
-  //       }
-  //     );
-  //   }
-  // }
+        this.http.put(`/api/updateusers/${userId}`, body).subscribe(
+          () => {
+            console.log('User updated successfully');
+          },
+          (error: any) => {
+            console.error('Error updating user:', error);
+          }
+        );
+      }
+    }
 
   cancelUpdate() {
     this.selectedUserToUpdate = undefined;

@@ -1,183 +1,269 @@
 <header class="header">
-    <div class="app-name">
-        <h2>SAP-JM</h2>
+  <div class="app-name">
+    <h2>SAP-JM</h2>
+  </div>
+  <div class="nav-container">
+    <span class="nav" (click)="showUsers()">Utilizadores</span>
+    <span class="nav" (click)="addEmployee()">Criar Medicos</span>
+    <span class="nav" (click)="showSchedules()">Criar Horarios</span>
+  </div>
+  <div class="user-info">
+    <h4 class="user-id">Admin</h4>
+  </div>
+  <div class="profile">
+    <i class="material-icons">person</i>
+    <div class="logout-popup">
+      <button (click)="logout()">Logout</button>
     </div>
-    <div class="nav-container">
-        <span class="nav" (click)="showUsers()">Utilizadores</span>
-        <span class="nav" (click)="addEmployee()">Criar Medicos</span>
-        <span class="nav" (click)="showSchedules()">Criar Horarios</span>
-    </div>
-    <div class="user-info">
-        <h4 class="user-id">Admin</h4>
-    </div>
-    <div class="profile">
-        <i class="material-icons">person</i>
-        <div class="logout-popup">
-            <button (click)="logout()">Logout</button>
-        </div>
-    </div>
+  </div>
 </header>
 <div class="create-employee-form" *ngIf="showCreateEmployeeForm">
-    <form><!-- (submit)="submitCreateEmployeeForm(employeeData)" -->
-        <label for="nome">Nome:</label>
-        <input type="text" id="name" name="name" placeholder="Nome Completo">
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" placeholder="E-mail">
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" placeholder="Password">
-        <label for="role">Número cedula:</label>
-        <input type="text" id="numero_cedula" name="numero_cedula" placeholder="numero cedula">
-        <button type="submit">Criar</button><!-- (click)="submitCreateEmployeeForm(employeeData)" -->
-    </form>
+  <form>
+    <!-- (submit)="submitCreateEmployeeForm(employeeData)" -->
+    <label for="nome">Nome:</label>
+    <input type="text" id="name" name="name" placeholder="Nome Completo" />
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email" placeholder="E-mail" />
+    <label for="password">Password:</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      placeholder="Password"
+    />
+    <label for="role">Número cedula:</label>
+    <input
+      type="text"
+      id="numero_cedula"
+      name="numero_cedula"
+      placeholder="numero cedula"
+    />
+    <button type="submit">Criar</button
+    ><!-- (click)="submitCreateEmployeeForm(employeeData)" -->
+  </form>
 </div>
 <div class="users" *ngIf="showUsersTable">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Id</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody> <!-- *ngFor="let user of users" -->
-            <tr>
-                <!-- <td>{{ user.nome }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.nomeperfil }}</td>
-                <td>{{ user.id_user }}</td> -->
-                <td>
-                    <button class="action-button delete-button">Delete</button> <!-- (click)="deleteUser(user)" -->
-                    <button class="action-button update-button">Update</button> <!-- (click)="updateUser(user)" -->
-                    <div class="confirmation-options" *ngIf="selectedUser"> <!-- *ngIf="selectedUser === user" -->
-                        <button class="confirm-button">Confirmar</button><!-- (click)="deleteUser(user)" -->
-                        <button class="cancel-button" (click)="cancelDelete()">Cancelar</button>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Nome</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Id</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td>{{ user.nome }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.nomeperfil }}</td>
+        <td>{{ user.id_user }}</td>
+        <td>
+          <div class="users" *ngIf="showUsersTable">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Id</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let user of users">
+                  <td>{{ user.nome }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.nomeperfil }}</td>
+                  <td>{{ user.id_user }}</td>
+                  <td>
+                    <button class="action-button delete-button">Delete</button>
+                    <button
+                      class="action-button update-button"
+                      (click)="updateUser(user)"
+                    >
+                      Update
+                    </button>
+                    <div
+                      class="confirmation-options"
+                      *ngIf="selectedUser === user"
+                    >
+                      <button class="confirm-button" (click)="deleteUser(user)">
+                        Confirmar
+                      </button>
+                      <button class="cancel-button" (click)="cancelDelete()">
+                        Cancelar
+                      </button>
                     </div>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-<div class="overlay" *ngIf="selectedUserToUpdate"></div>
-<div class="update-form" *ngIf="selectedUserToUpdate">
-    <h2>Atualizar Informação</h2>
-    <form><!-- (submit)="submitUpdateForm(selectedUserToUpdate)" -->
-        <label for="name">Nome:</label>
-        <input type="text" id="name" name="name"/><!-- [(ngModel)]="selectedUserToUpdate.nome" -->
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email"/><!-- [(ngModel)]="selectedUserToUpdate.email" -->
-        <label for="password">Password:</label>
-        <input type="text" id="password" name="password"/><!-- [(ngModel)]="selectedUserToUpdate.password" -->
-        <button type="submit">Update</button>
-        <button type="button" (click)="cancelUpdate()">Cancel</button>
-    </form>
-</div>
-<div class="schedules" *ngIf="showSchedulesTable">
-    <table class="table"> <!-- *ngIf="schedules.length > 0; else noSchedulesTemplate" -->
-        <thead>
-            <tr>
-                <th>Nome Médico</th>
-                <th>Dia da Semana</th>
-                <th>Turno da Manhã</th>
-                <th>Turno da Tarde</th>
-                <th>Disponibilidade</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><!-- *ngFor="let schedule of schedules" -->
-                <!-- <td>{{ schedule.schedule.name }}</td>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="overlay" *ngIf="selectedUserToUpdate"></div>
+          <div class="update-form" *ngIf="selectedUserToUpdate">
+            <h2>Atualizar Informação</h2>
+            <form (submit)="submitUpdateForm()">
+              <label for="name">Nome:</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                [(ngModel)]="selectedUserToUpdate.nome"
+              />
+              <label for="email">Email:</label>
+              <input
+                type="text"
+                id="email"
+                name="email"
+                [(ngModel)]="selectedUserToUpdate.email"
+              />
+              <label for="password">Password:</label>
+              <input
+                type="text"
+                id="password"
+                name="password"
+                [(ngModel)]="selectedUserToUpdate.password"
+              />
+              <button type="submit">Update</button>
+              <button type="button" (click)="cancelUpdate()">Cancel</button>
+            </form>
+          </div>
+
+          <div class="schedules" *ngIf="showSchedulesTable">
+            <table class="table">
+              <!-- *ngIf="schedules.length > 0; else noSchedulesTemplate" -->
+              <thead>
+                <tr>
+                  <th>Nome Médico</th>
+                  <th>Dia da Semana</th>
+                  <th>Turno da Manhã</th>
+                  <th>Turno da Tarde</th>
+                  <th>Disponibilidade</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <!-- *ngFor="let schedule of schedules" -->
+                  <!-- <td>{{ schedule.schedule.name }}</td>
                 <td>{{ schedule.schedule.dia_semana_string }}</td>
                 <td>{{ schedule.schedule.periodo_manha_inicio }} - {{ schedule.schedule.periodo_manha_fim }}</td>
                 <td>{{ schedule.schedule.periodo_tarde_inicio }} - {{ schedule.schedule.periodo_tarde_fim }}</td>
                 <td>{{ schedule.schedule.isdisponivel ? "Working" : "On vacations" }}</td> -->
-            </tr>
-        </tbody>
-    </table>
-    <ng-template #noSchedulesTemplate>
-        <p>Sem horários disponívies.</p>
-    </ng-template>
-    <h3>Médicos com horário incompleto</h3>
-    <table class="table"> <!-- *ngIf=" doctorsWithNoSchedule.length > 0; else noDoctorsWithNoScheduleTemplate" -->
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Número</th>
-                <th>Profissão</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><!-- *ngFor="let doctor of doctorsWithNoSchedule" -->
-                <!-- <td>{{ doctor.nomeprofissionalsaude }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <ng-template #noSchedulesTemplate>
+              <p>Sem horários disponívies.</p>
+            </ng-template>
+            <h3>Médicos com horário incompleto</h3>
+            <table class="table">
+              <!-- *ngIf=" doctorsWithNoSchedule.length > 0; else noDoctorsWithNoScheduleTemplate" -->
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Número</th>
+                  <th>Profissão</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <!-- *ngFor="let doctor of doctorsWithNoSchedule" -->
+                  <!-- <td>{{ doctor.nomeprofissionalsaude }}</td>
                 <td>{{ doctor.numero_cedula }}</td>
                 <td>{{ doctor.tipo_profissionalsaude }}</td> -->
-                <td>
-                    <button class="create-button"> <!-- (click)="createschedule(doctor)" -->
-                        Criar Horário
+                  <td>
+                    <button class="create-button">
+                      <!-- (click)="createschedule(doctor)" -->
+                      Criar Horário
                     </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <ng-template #noDoctorsWithNoScheduleTemplate>
-        <p>0 Médicos sem horário.</p>
-    </ng-template>
-    <h3>Médicos com Horário</h3>
-    <table class="table"> <!--  *ngIf="doctorswithSchedules.length > 0; else noDoctorsTemplate" -->
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Número</th>
-                <th>Profissão</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><!-- *ngFor="let doctor of doctorswithSchedules" -->
-                <!-- <td>{{ doctor.nomeprofissionalsaude }}</td>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <ng-template #noDoctorsWithNoScheduleTemplate>
+              <p>0 Médicos sem horário.</p>
+            </ng-template>
+            <h3>Médicos com Horário</h3>
+            <table class="table">
+              <!--  *ngIf="doctorswithSchedules.length > 0; else noDoctorsTemplate" -->
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Número</th>
+                  <th>Profissão</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <!-- *ngFor="let doctor of doctorswithSchedules" -->
+                  <!-- <td>{{ doctor.nomeprofissionalsaude }}</td>
                 <td>{{ doctor.numero_cedula }}</td>
                 <td>{{ doctor.tipo_profissionalsaude }}</td> -->
-                <td>
-                    <button class="alter-button"> <!-- (click)="alterschedule(doctor)" -->
-                        Alterar Horário
+                  <td>
+                    <button class="alter-button">
+                      <!-- (click)="alterschedule(doctor)" -->
+                      Alterar Horário
                     </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <ng-template #noDoctorsTemplate>
-        <p>0 Médicos disponívies.</p>
-    </ng-template>
-</div>
-<footer class="main">
-    <div class="sns-container box-2">
-        <div class="row">
-            <div>
-                <a href="http://www.portugal.gov.pt/pt.aspx" target="_blank">
-                    <img class="logo-ms img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2023/12/logotipo_RP.svg" alt="Portal do Governo: Ministério da Saúde">
-                </a>
-            </div>
-            <div>
-                <a href="https://www.sns.gov.pt/" target="_blank">
-                    <img class="logo-ms ms2 img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2020/04/logo_sns.svg" alt="SNS Serviço Nacional de Saúde">
-                </a>
-            </div>
-            <div>
-                <a href="http://spms.min-saude.pt/" target="_blank">
-                    <img class="logo-ms ms2 img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2016/02/LOGO-SPMS.png" alt="SPMS Serviços Partilhados do Ministério da Saúde">
-                </a>
-            </div>
-            <div>
-                <div class="row footer-right">
-                    <div>
-                        <span>Desenvolvido por:</span>
-                        <p>Diogo Pinheiro | João Duarte | Ruben Oliveira</p>
-                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <ng-template #noDoctorsTemplate>
+              <p>0 Médicos disponívies.</p>
+            </ng-template>
+          </div>
+          <footer class="main">
+            <div class="sns-container box-2">
+              <div class="row">
+                <div>
+                  <a href="http://www.portugal.gov.pt/pt.aspx" target="_blank">
+                    <img
+                      class="logo-ms img-responsive"
+                      src="https://www.sns.gov.pt/wp-content/uploads/2023/12/logotipo_RP.svg"
+                      alt="Portal do Governo: Ministério da Saúde"
+                    />
+                  </a>
                 </div>
+                <div>
+                  <a href="https://www.sns.gov.pt/" target="_blank">
+                    <img
+                      class="logo-ms ms2 img-responsive"
+                      src="https://www.sns.gov.pt/wp-content/uploads/2020/04/logo_sns.svg"
+                      alt="SNS Serviço Nacional de Saúde"
+                    />
+                  </a>
+                </div>
+                <div>
+                  <a href="http://spms.min-saude.pt/" target="_blank">
+                    <img
+                      class="logo-ms ms2 img-responsive"
+                      src="https://www.sns.gov.pt/wp-content/uploads/2016/02/LOGO-SPMS.png"
+                      alt="SPMS Serviços Partilhados do Ministério da Saúde"
+                    />
+                  </a>
+                </div>
+                <div>
+                  <div class="row footer-right">
+                    <div>
+                      <span>Desenvolvido por:</span>
+                      <p>Diogo Pinheiro | João Duarte | Ruben Oliveira</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="f-note">© 2024 SAP_JM</div>
             </div>
-        </div>
-        <div class="f-note"> © 2024 SAP_JM</div>
-    </div>
-</footer>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+          </footer>
+          <link
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+          />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
