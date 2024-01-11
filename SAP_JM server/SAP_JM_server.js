@@ -246,6 +246,50 @@ app.get('/api/pedidos', async (req, res) => {
 }); //  incompleto falta a query para pedidos de junta medica (pedido_junta_medica) 
 
 
+app.get('/api/numeroUtente', async (req, res) => {
+
+  try {
+    const email = req.query.email; 
+    const result = await pool.query(
+      `select numero_utente from utentes join users on utentes.id_user_utente = users.id_user where email = $1`,
+      [email]
+    );
+      if (result.rows.length === 0) {
+        return res.status(404).json({ success: false, error: 'Utente not found' });
+      }
+
+    const { numero_utente } = result.rows[0];
+    res.status(200).json({ success: true, numero_utente});
+  }
+  catch (error) {
+    console.error('Error fetching numero_utente:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+});
+
+app.get('/api/utenteID', async (req, res) => {
+  
+    try {
+      const email = req.query.email; 
+      const result = await pool.query(
+        `select id_utente from utentes join users on utentes.id_user_utente = users.id_user where email = $1`,
+        [email]
+      );
+        if (result.rows.length === 0) {
+          return res.status(404).json({ success: false, error: 'Utente not found' });
+        }
+  
+      const { id_utente } = result.rows[0];
+      res.status(200).json({ success: true, id_utente});
+    }
+    catch (error) {
+      console.error('Error fetching id_utente:', error);
+      res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+  }
+);
+
+
 app.listen(3001, () => {
   console.log("Server is listening on port 3001.");
 });

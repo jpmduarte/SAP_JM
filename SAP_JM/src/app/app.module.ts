@@ -12,6 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { NgxPaginationModule } from 'ngx-pagination';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
