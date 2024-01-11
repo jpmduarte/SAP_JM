@@ -27,11 +27,11 @@ export class UtenteDashboardComponent {
     estado: '',
     descricao: '',
     nomeCompleto: '',
-    dataNascimento:Date,
+    data_nascimento:Date,
     nIdentificacao: '',
-    nUtenteSaude: '',
+    numero_utente: '',
     nif: '',
-    dataValidade:Date,
+    data_validade:Date,
     rua: '',
     codigoPostal: '',
     localidade: '',
@@ -50,40 +50,74 @@ export class UtenteDashboardComponent {
     nome_usf: ''
   };
 
+  Current_numero_utente:string ='';
+
   
   constructor(private router: Router, private http: HttpClient,private activatedRoute: ActivatedRoute,) {}
   
-  handleUserInfoFromRNUserver() {
-    // Retrieve the email from the URL
+
+  ngOnInit(): void {
+    this.fetchNumeroUtente();
+    this.fetchIDutente();
+    //this.fetchPedidos();
+    //this.fetchUtenteUSF();
+  }
+  fetchNumeroUtente() {
     const email = this.activatedRoute.snapshot.queryParams['email'];
-    console.log(email);
-  
-    // Check if the email parameter is present
-    if (!email) {
-      console.error('Email parameter is missing in the URL');
-      return;
-    }
-  
-    
-    const url = `http://localhost:3002/api/userinfo?email=${email}`;
+    this.http.get(`http://localhost:3001/api/numeroUtente?email=${email}`).subscribe(
+      (response: any) => {
+        console.log(response);
+        this.Current_numero_utente = response.numero_utente;
+        this.handleUserInfoFromRNUserver();
+        console.log(this.Current_numero_utente);
+      
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  fetchIDutente() {
+    const email = this.activatedRoute.snapshot.queryParams['email'];
+    this.http.get(`http://localhost:3001/api/utenteID?email=${email}`).subscribe(
+      (response: any) => {
+        console.log(response);
+        this.primeiroPedido.idUtente = response.id_utente;
+      
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  handleUserInfoFromRNUserver() {
+    const numero_utente = this.Current_numero_utente
+    console.log(numero_utente);
+
+    const url = `http://localhost:3002/api/userinfo?numero_utente=${numero_utente}`;
   
 
     this.http.get(url).subscribe(
       (response: any) => {
         console.log(response);
-        this.primeiroPedido.nomeCompleto = response.nomeCompleto;
-        this.primeiroPedido.numeroUtente = response.numeroUtente;
-        this.primeiroPedido.dataNascimento = response.dataNascimento;
-        this.primeiroPedido.nIdentificacao = response.nIdentificacao;
+        this.primeiroPedido.nomeCompleto = response.nome;
+        this.primeiroPedido.numero_utente = response.numero_utente;
+        this.primeiroPedido.data_nascimento = response.data_nascimento;
+        this.primeiroPedido.data_nascimento = this.primeiroPedido.data_nascimento.substring(0,10);
+        this.primeiroPedido.nIdentificacao = response.numero_cc;
         this.primeiroPedido.nif = response.nif;
-        this.primeiroPedido.DataDeValidade = response.DataDeValidade;
+        this.primeiroPedido.data_validade = response.validade_cc;
+        this.primeiroPedido.data_validade = this.primeiroPedido.data_validade.substring(0,10);
         this.primeiroPedido.rua = response.rua;
-        this.primeiroPedido.codigoPostal = response.codigoPostal;
-        this.primeiroPedido.localidade = response.localidade;
+        this.primeiroPedido.codigoPostal = response.codigo_postal;
+        this.primeiroPedido.localidade = response.freguesia;
         this.primeiroPedido.concelho = response.concelho;
         this.primeiroPedido.distrito = response.distrito;
-        this.primeiroPedido.telemovel = response.telemovel;
+        this.primeiroPedido.telemovel = response.numero_telemovel;
         this.primeiroPedido.email = response.email;
+        console.log(this.primeiroPedido);
 
       },
       (error) => {
