@@ -62,7 +62,7 @@
 <div class="overlay" *ngIf="selectedUserToUpdate"></div>
 <div class="update-form" *ngIf="selectedUserToUpdate">
     <h2>Atualizar Informação</h2>
-    <form><!-- (submit)="submitUpdateForm(selectedUserToUpdate)" -->
+    <form (submit)="submitUpdateForm()">
         <label for="name">Nome:</label>
         <input type="text" id="name" name="name"/><!-- [(ngModel)]="selectedUserToUpdate.nome" -->
         <label for="email">Email:</label>
