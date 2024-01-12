@@ -10,30 +10,10 @@ interface User {
   password: string;
 }
 interface Employee {
-  psaudeName: string;
+  nome_medico: string;
   email: string;
   password: string;
-  accountType: number;
   numero_cedula: number;
-}
-interface Schedule {
-  schedule: {
-    id_medico: number;
-    name: string;
-    id: number;
-    dia_semana: number;
-    dia_semana_string: string;
-    periodo_manha_inicio: string;
-    periodo_manha_fim: string;
-    periodo_tarde_inicio: string;
-    periodo_tarde_fim: string;
-    isdisponivel: boolean;
-  };
-}
-interface medico {
-  nomeprofissionalsaude: string;
-  numero_cedula: Number;
-  id_profissionalsaude: number;
 }
 
 @Component({
@@ -43,58 +23,26 @@ interface medico {
 })
 export class AdminDashboardComponent {
 
-  users: User[] = [];
-  schedules: Schedule[] = [];
+  showLogoutPopup = false;
   showUsersTable = false;
   showSchedulesTable = false;
-  selectedUser: User | undefined;
-  selectedUserToUpdate: User | undefined;
-  employeeData: Employee = { psaudeName: '', email: '', password: '', accountType: 2, numero_cedula: 0 };
-  daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
-  doctorsWithNoSchedule: medico[] = [];
-  doctorswithSchedules: medico[] = [];
   showCreateEmployeeForm = false;
-  ScheduleTimes: string[] = [
-    '7:00',
-    '7:30',
-    '8:00 ',
-    '8:30',
-    '9:00',
-    '9:30',
-    '10:00',
-    '10:30',
-    '11:00',
-    '11:30',
-    '12:00',
-    '12:30',
-    '13:00',
-    '13:30',
-    '14:00',
-    '14:30',
-    '15:00',
-    '15:30',
-    '16:00',
-    '16:30',
-    '17:00',
-    '17:30',
-    '18:00',
-    '18:30',
-    '19:00',
-    '19:30',
-    '20:00',
-  ];
-  showAlterScheduleform = false;
-  isAvail: boolean = false;
+  selectedUserToUpdate: User | undefined;
+  employeeData: Employee = { nome_medico: '', email: '', password: '', numero_cedula: 0 };
+  ScheduleTimes: string[] = ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
+  users: User[] = [];
+  selectedUser: User | undefined;
+  doctorsWithNoSchedule: Employee[] = [];
+  doctorswithSchedules: Employee[] = [];
+  selectedpsaude: any;
+  selectedUpdatepsaude: any;
   showCreateForm = false;
-  selectedpsaude: any; // Replace with your specific doctor type
   selectedDayOfWeek!: number;
   selectedMorningStart: string = '';
   selectedMorningEnd: string = '';
   selectedAfternoonStart: string = '';
   selectedAfternoonEnd: string = '';
-  selectedUpdatepsaude: any;
-  errorMessage: string | undefined;
-  showLogoutPopup = false;
+  showAlterScheduleform = false;
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -103,19 +51,24 @@ export class AdminDashboardComponent {
     this.showUsersTable = true;
   }
 
+
+
   fetchUsers() {
-    this.http.get<User[]>('/api/users').subscribe(
-      (response: User[]) => {
-        this.users = response;
-        console.log('API response:', response);
+    this.http.get<User[]>('http://localhost:3001/api/users').subscribe(
+      (response: any) => {
+        if (response.success) {
+          this.users = response.users;  // Update the users array
+          console.log('Users:', this.users);
+        } else {
+          console.log('Error:', response.erro);
+        }
       },
       (error: any) => {
         console.log('Error:', error);
       }
     );
-    
   }
-
+  
   toggleLogoutPopup() {
     this.showLogoutPopup = !this.showLogoutPopup;
   }
@@ -143,7 +96,6 @@ export class AdminDashboardComponent {
     this.showCreateEmployeeForm = false;
   }
 
-
   confirmDelete(user: User) {
     this.selectedUser = user;
   }
@@ -152,18 +104,18 @@ export class AdminDashboardComponent {
     this.selectedUser = undefined;
   }
 
-  deleteUser(user: User): void {
-    const userId = user.id_user;
-    this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
-      () => {
-        console.log('User deleted successfully');
-        this.fetchUsers();
-      },
-      (error: any) => {
-        console.error('Error deleting user:', error);
-      }
-    );
-  }
+  // deleteUser(user: User): void {
+  //   const userId = user.id_user;
+  //   this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
+  //     () => {
+  //       console.log('User deleted successfully');
+  //       this.fetchUsers();
+  //     },
+  //     (error: any) => {
+  //       console.error('Error deleting user:', error);
+  //     }
+  //   );
+  // }
 
   // submitCreateEmployeeForm(employee: any) {
   //     employee.accountType = Number(employee.accountType) + 1;
@@ -199,7 +151,6 @@ export class AdminDashboardComponent {
     if (this.selectedUserToUpdate) {
       const userId = this.selectedUserToUpdate.id_user;
       const { nome, nomeperfil, email, password } = this.selectedUserToUpdate;
-
       const body = {
         nome: nome,
         nomeperfil: nomeperfil,
@@ -207,19 +158,35 @@ export class AdminDashboardComponent {
         password: password,
       };
 
-      this.http.put(`/api/updateusers/${userId}`, body).subscribe(
-        () => {
-          console.log('User updated successfully');
-        },
-        (error: any) => {
-          console.error('Error updating user:', error);
-        }
-      );
+      // this.http.put(`/api/updateusers/${userId}`, body).subscribe(
+      //   () => {
+      //     console.log('User updated successfully');
+      //   },
+      //   (error: any) => {
+      //     console.error('Error updating user:', error);
+      //   }
+      // );
     }
   }
 
   cancelUpdate() {
     this.selectedUserToUpdate = undefined;
+  }
+
+  cancelCreateSchedule() {
+    // Reset the form values
+    this.selectedDayOfWeek;
+    this.selectedMorningStart = '';
+    this.selectedMorningEnd = '';
+    this.selectedAfternoonEnd = '';
+    this.selectedAfternoonStart = '';
+
+    // Hide the create form
+    this.showCreateForm = false;
+  }
+
+  cancelAlterSchedule() {
+    this.showAlterScheduleform = false;
   }
 
 }
