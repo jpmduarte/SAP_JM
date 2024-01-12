@@ -323,14 +323,16 @@ button:hover {
     background-color: #cc0000;
 }
 
+
 footer.main {
     background-color: #f5f5f5;
     font-family: Arial, sans-serif;
     width: 100%;
-    position: absolute;
     bottom: 0;
     left: 0;
     padding: 10px 0;
+    position: relative;
+    clear: both;
 }
 
 .sns-container {
@@ -381,24 +383,6 @@ footer.main {
     font-size: 0.8em;
 }
 
-@media (max-width: 768px) {
-    .sns-container {
-        flex-direction: column;
-    }
-
-    .sns-container > div {
-        justify-content: flex-start;
-    }
-
-    .footer-right {
-        order: 1; 
-        margin-bottom: 10px;
-    }
-
-    .f-note {
-        position: static; 
-        width: 100%;
-        text-align: center;
-        margin-top: 10px;
-    }
+.main-container {
+    min-height: 73vh;
 }

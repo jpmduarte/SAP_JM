@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -10,16 +11,13 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./utente-dashboard.component.css'],
 })
 export class UtenteDashboardComponent {
+
   show = true;
   showLogoutPopup = false;
   showFormPopup = false;
   showPreviousAssessmentField: boolean = false;
   showSuccessPopup = false;
   files: File[] = [];
-
-
-
-  
   primeiroPedido: any = {
     idUtente: '',
     idMedico: '',
@@ -43,15 +41,15 @@ export class UtenteDashboardComponent {
     submissaoReavaliacao: false,
     dataSubmissaoReavaliacao:Date,
   };
-
   UtenteUSF: any = {
     id_utnete: '',
     nome_usf: ''
   };
 
   Current_numero_utente:string ='';
+  isRejectedModalVisible: boolean = false;
+  isAcceptedModalVisible: boolean = false;
 
-  
   constructor(private router: Router, private http: HttpClient,private activatedRoute: ActivatedRoute,) {}
   
 
@@ -132,6 +130,7 @@ export class UtenteDashboardComponent {
   toggleFormPopup() {
     this.showFormPopup = !this.showFormPopup;
     this.show = !this.show;
+    this.closeModal();
   }
 
   logout(): void {
@@ -231,5 +230,15 @@ export class UtenteDashboardComponent {
 
   closePopup() {
     this.showSuccessPopup = false;
+  }
+
+  showModal() {
+    this.isRejectedModalVisible = true;
+    this.isAcceptedModalVisible = true;
+  }
+
+  closeModal() {
+    this.isRejectedModalVisible = false;
+    this.isAcceptedModalVisible = false;
   }
 }
