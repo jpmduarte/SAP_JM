@@ -41,15 +41,15 @@
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody> <!-- *ngFor="let user of users" -->
+        <tbody *ngFor="let user of users">
             <tr>
-                <!-- <td>{{ user.nome }}</td>
+                <td>{{ user.nome }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.nomeperfil }}</td>
-                <td>{{ user.id_user }}</td> -->
+                <td>{{ user.id_user }}</td>
                 <td>
                     <button class="action-button delete-button">Delete</button> <!-- (click)="deleteUser(user)" -->
-                    <button class="action-button update-button">Update</button> <!-- (click)="updateUser(user)" -->
+                    <button class="action-button update-button" (click)="updateUser(user)">Update</button>
                     <div class="confirmation-options" *ngIf="selectedUser"> <!-- *ngIf="selectedUser === user" -->
                         <button class="confirm-button">Confirmar</button><!-- (click)="deleteUser(user)" -->
                         <button class="cancel-button" (click)="cancelDelete()">Cancelar</button>
