@@ -10,10 +10,9 @@ interface User {
   password: string;
 }
 interface Employee {
-  psaudeName: string;
+  nome_medico: string;
   email: string;
   password: string;
-  accountType: number;
   numero_cedula: number;
 }
 
@@ -29,7 +28,7 @@ export class AdminDashboardComponent {
   showSchedulesTable = false;
   showCreateEmployeeForm = false;
   selectedUserToUpdate: User | undefined;
-  employeeData: Employee = { psaudeName: '', email: '', password: '', accountType: 2, numero_cedula: 0 };
+  employeeData: Employee = { nome_medico: '', email: '', password: '', numero_cedula: 0 };
   ScheduleTimes: string[] = ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
   users: User[] = [];
   selectedUser: User | undefined;
@@ -104,44 +103,30 @@ export class AdminDashboardComponent {
     this.selectedUser = undefined;
   }
 
-  deleteUser(user: User): void {
-    const userId = user.id_user;
-    this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
+  // deleteUser(user: User): void {
+  //   const userId = user.id_user;
+  //   this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
+  //     () => {
+  //       console.log('User deleted successfully');
+  //       this.fetchUsers();
+  //     },
+  //     (error: any) => {
+  //       console.error('Error deleting user:', error);
+  //     }
+  //   );
+  // }
+  submitCreateEmployeeForm()
+  {
+    this.http.post('http://localhost:3001/api/createemployee', this.employeeData).subscribe(
       () => {
-        console.log('User deleted successfully');
+        console.log('Employee created successfully');
         this.fetchUsers();
       },
       (error: any) => {
-        console.error('Error deleting user:', error);
+        console.error('Error creating employee:', error);
       }
     );
   }
-
-  // submitCreateEmployeeForm(employee: any) {
-  //     employee.accountType = Number(employee.accountType) + 1;
-  //     console.log('Employee data:', employee);
-  
-  //     this.http.post('/api/register', employee).subscribe(
-  //       () => {
-  //         console.log('User created successfully');
-  //         employee.accountType = Number(employee.accountType) - 1;
-  //         this.http.post('/api/registerPsaude', employee).subscribe(
-  //           () => {
-  //             console.log('Healthcare professional created successfully');
-  //             this.showCreateEmployeeForm = false;
-  //           },
-  //           (error: any) => {
-  //             console.error('Error creating healthcare professional:', error);
-  //             this.errorMessage = error.error.error || 'An unknown error occurred';
-  //             this.showCreateEmployeeForm = false;
-  //           }
-  //         );
-  //       },
-  //       (error: any) => {
-  //         console.error('Error creating user:', error);
-  //       }
-  //     );
-  // }
 
   createschedule(medico: Employee) {
     this.selectedpsaude = medico;

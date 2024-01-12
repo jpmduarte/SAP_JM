@@ -19,28 +19,20 @@
 </header>
 <div class="main-container">
   <div class="create-employee-form" *ngIf="showCreateEmployeeForm">
-    <form>
-      <!-- (submit)="submitCreateEmployeeForm(employeeData)" -->
-      <label for="nome">Nome:</label>
-      <input type="text" id="name" name="name" placeholder="Nome Completo" />
+    <form (ngSubmit)="submitCreateEmployeeForm()">
+      <label for="name">Nome:</label>
+      <input type="text" id="name" name="name" placeholder="Nome Completo" [(ngModel)]="employeeData.nome_medico" />
+
       <label for="email">Email:</label>
-      <input type="text" id="email" name="email" placeholder="E-mail" />
+      <input type="text" id="email" name="email" placeholder="E-mail" [(ngModel)]="employeeData.email" />
+
       <label for="password">Password:</label>
-      <input
-        type="password"
-        id="password"
-        name="password"
-        placeholder="Password"
-      />
-      <label for="role">Número cedula:</label>
-      <input
-        type="text"
-        id="numero_cedula"
-        name="numero_cedula"
-        placeholder="numero cedula"
-      />
-      <button type="submit">Criar</button
-      ><!-- (click)="submitCreateEmployeeForm(employeeData)" -->
+      <input type="password" id="password" name="password" placeholder="Password" [(ngModel)]="employeeData.password" />
+
+      <label for="numero_cedula">Número cedula:</label>
+      <input type="text" id="numero_cedula" name="numero_cedula" placeholder="Número Cedula" [(ngModel)]="employeeData.numero_cedula" />
+
+      <button type="submit">Criar</button>
     </form>
   </div>
   <div class="users" *ngIf="showUsersTable">
@@ -146,7 +138,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let doctor of doctorsWithNoSchedule">
-          <td>{{ doctor.psaudeName }}</td>
+          <td>{{ doctor.nome_medico }}</td>
               <td>{{ doctor.numero_cedula }}</td>
           <td>
             <button class="create-button" (click)="createschedule(doctor)">
@@ -171,7 +163,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let doctor of doctorswithSchedules">
-          <td>{{ doctor.psaudeName }}</td>
+          <td>{{ doctor.nome_medico }}</td>
               <td>{{ doctor.numero_cedula }}</td>
           <td>
             <button class="alter-button" (click)="alterschedule(doctor)">

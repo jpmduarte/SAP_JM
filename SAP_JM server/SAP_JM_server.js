@@ -320,6 +320,58 @@ app.get('/api/utenteID', async (req, res) => {
   }
 );
 
+app.post('/api/createemployee', async (req, res) => {
+  try {
+    const { email, password, numero_cedula, nome_medico } = req.body;
+
+    // Inserting into the 'users' table
+    const userResult = await pool.query(
+      'INSERT INTO users (id_perfil, email, password) VALUES (3, $1, $2) RETURNING id_user',
+      [email, password]
+    );
+
+    const id_user = userResult.rows[0].id_user;
+
+    // Calling another API using http.post instead of http.get
+    const medicoData = await this.http.post('http://localhost:3002/api/loadmedico', { nome: nome_medico, numero_cedula: numero_cedula }).toPromise();
+
+    console.log(medicoData);
+
+    // Assuming medicoData is not an array
+    const newnumero_cedula = medicoData.numero_cedula;
+    const newnome_medico = medicoData.nome;
+
+    // Inserting into the 'medicos' table
+    const medicoResult = pool.query(
+      'INSERT INTO medicos (id_user_medico, numero_cedula, nome) VALUES (3, $1, $2) RETURNING id_medico',
+      [newnumero_cedula, newnome_medico]
+    );
+
+    const id_medico = medicoResult.rows[0].id_medico;
+
+    // Fetching the id_usf based on the data from the 'loadmedico' API
+    const getUSF = pool.query(
+      'SELECT id_usf FROM usf WHERE nome_usf = $1',
+      [medicoData.usf_name]
+    );
+
+    const id_usf = getUSF.rows[0].id_usf;
+
+    // Inserting into the 'usfmedico' table
+    const insertUSFmedico = pool.query(
+      'INSERT INTO usfmedico (id_usf, id_medico) VALUES ($1, $2)',
+      [id_usf, id_medico]
+    );
+
+    // Sending a success response
+    res.status(200).json({ success: true, message: 'Employee created successfully' });
+
+  } catch (error) {
+    console.error('Error creating employee:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+});
+
 
 app.listen(3001, () => {
   console.log("Server is listening on port 3001.");
