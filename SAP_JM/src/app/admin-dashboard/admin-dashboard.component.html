@@ -135,8 +135,7 @@
       <p>Sem horários disponívies.</p>
     </ng-template>
     <h3>Médicos com horário incompleto</h3>
-    <table class="table">
-      <!-- *ngIf=" doctorsWithNoSchedule.length > 0; else noDoctorsWithNoScheduleTemplate" -->
+    <table class="table" *ngIf=" doctorsWithNoSchedule.length > 0; else noDoctorsWithNoScheduleTemplate">
       <thead>
         <tr>
           <th>Nome</th>
@@ -146,14 +145,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <!-- *ngFor="let doctor of doctorsWithNoSchedule" -->
-          <!-- <td>{{ doctor.nomeprofissionalsaude }}</td>
+        <tr *ngFor="let doctor of doctorsWithNoSchedule">
+          <td>{{ doctor.psaudeName }}</td>
               <td>{{ doctor.numero_cedula }}</td>
-              <td>{{ doctor.tipo_profissionalsaude }}</td> -->
           <td>
-            <button class="create-button">
-              <!-- (click)="createschedule(doctor)" -->
+            <button class="create-button" (click)="createschedule(doctor)">
               Criar Horário
             </button>
           </td>
@@ -164,8 +160,7 @@
       <p>0 Médicos sem horário.</p>
     </ng-template>
     <h3>Médicos com Horário</h3>
-    <table class="table">
-      <!--  *ngIf="doctorswithSchedules.length > 0; else noDoctorsTemplate" -->
+    <table class="table"*ngIf="doctorswithSchedules.length > 0; else noDoctorsTemplate">
       <thead>
         <tr>
           <th>Nome</th>
@@ -175,14 +170,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <!-- *ngFor="let doctor of doctorswithSchedules" -->
-          <!-- <td>{{ doctor.nomeprofissionalsaude }}</td>
+        <tr *ngFor="let doctor of doctorswithSchedules">
+          <td>{{ doctor.psaudeName }}</td>
               <td>{{ doctor.numero_cedula }}</td>
-              <td>{{ doctor.tipo_profissionalsaude }}</td> -->
           <td>
-            <button class="alter-button">
-              <!-- (click)="alterschedule(doctor)" -->
+            <button class="alter-button" (click)="alterschedule(doctor)">
               Alterar Horário
             </button>
           </td>
@@ -192,6 +184,134 @@
     <ng-template #noDoctorsTemplate>
       <p>0 Médicos disponívies.</p>
     </ng-template>
+  </div>
+  <div class="overlay" *ngIf="showCreateForm"></div>
+  <div class="create-form" *ngIf="showCreateForm">
+    <h2>Create Schedule</h2>
+    <form><!-- (submit)="submitCreateScheduleForm()" -->
+      <label for="dayOfWeek">Day of Week:</label>
+      <select id="dayOfWeek" name="dayOfWeek" [(ngModel)]="selectedDayOfWeek">
+        <option value="1">Segunda-Feira</option>
+        <option value="2">Terça-Feira</option>
+        <option value="3">Quarta-Feira</option>
+        <option value="4">Quinta-Feira</option>
+        <option value="5">Sexta-Feira</option>
+      </select>
+
+      <label for="morningStart">Morning Start:</label>
+      <select
+        id="morningStart"
+        name="morningStart"
+        [(ngModel)]="selectedMorningStart"
+      >
+        <option *ngFor="let time of ScheduleTimes" [value]="time">
+          {{ time }}
+        </option>
+      </select>
+
+      <label for="morningEnd">Morning End:</label>
+      <select
+        id="morningEnd"
+        name="morningEnd"
+        [(ngModel)]="selectedMorningEnd"
+      >
+        <option *ngFor="let time of ScheduleTimes" [value]="time">
+          {{ time }}
+        </option>
+      </select>
+
+      <label for="afternoonStart">Afternoon Start:</label>
+      <select
+        id="afternoonStart"
+        name="afternoonStart"
+        [(ngModel)]="selectedAfternoonStart"
+      >
+        <option *ngFor="let time of ScheduleTimes" [value]="time">
+          {{ time }}
+        </option>
+      </select>
+
+      <label for="afternoonEnd">Afternoon End:</label>
+      <select
+        id="afternoonEnd"
+        name="afternoonEnd"
+        [(ngModel)]="selectedAfternoonEnd"
+      >
+        <option *ngFor="let time of ScheduleTimes" [value]="time">
+          {{ time }}
+        </option>
+      </select>
+
+      <button type="submit">Create</button>
+      <button type="button" (click)="cancelCreateSchedule()">Cancel</button>
+    </form>
+  </div>
+  <div class="overlay" *ngIf="showAlterScheduleform"></div>
+  <div class="alter-schedule-form" *ngIf="showAlterScheduleform">
+    <h2>Alter Schedule</h2>
+    <form><!-- (submit)="submitAlterScheduleForm()" -->
+      <label for="dayOfWeek">Day of the Week:</label>
+      <select id="dayOfWeek" name="dayOfWeek" [(ngModel)]="selectedDayOfWeek">
+        <option value="">Select day of the week</option>
+        <option value="1">Monday</option>
+        <option value="2">Tuesday</option>
+        <option value="3">Wednesday</option>
+        <option value="4">Thursday</option>
+        <option value="5">Friday</option>
+      </select>
+
+      <label for="morningStart">Morning Shift Start:</label>
+      <select
+        id="morningStart"
+        name="morningStart"
+        [(ngModel)]="selectedMorningStart"
+      >
+        <option value="">Select start time</option>
+        <option *ngFor="let time of ScheduleTimes" [value]="time">
+          {{ time }}
+        </option>
+      </select>
+      <label for="morningEnd">Morning Shift End:</label>
+      <select
+        id="morningEnd"
+        name="morningEnd"
+        [(ngModel)]="selectedMorningEnd"
+      >
+        <option value="">Select end time</option>
+        <option *ngFor="let time of ScheduleTimes" [value]="time">
+          {{ time }}
+        </option>
+      </select>
+      <label for="afternoonStart">Afternoon Shift Start:</label>
+      <select
+        id="afternoonStart"
+        name="afternoonStart"
+        [(ngModel)]="selectedAfternoonStart"
+      >
+        <option value="">Select start time</option>
+        <option *ngFor="let time of ScheduleTimes" [value]="time">
+          {{ time }}
+        </option>
+      </select>
+      <label for="afternoonEnd">Afternoon Shift End:</label>
+      <select
+        id="afternoonEnd"
+        name="afternoonEnd"
+        [(ngModel)]="selectedAfternoonEnd"
+      >
+        <option value="">Select end time</option>
+        <option *ngFor="let time of ScheduleTimes" [value]="time">
+          {{ time }}
+        </option>
+      </select>
+      <label for="availability">Is doctor available:</label>
+      <select id="availability" name="availability"><!-- [(ngModel)]="isAvail" -->
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+      <button type="submit">Submit</button>
+      <button type="button" (click)="cancelAlterSchedule()">Cancel</button>
+    </form>
   </div>
 </div>
 <footer class="main">
