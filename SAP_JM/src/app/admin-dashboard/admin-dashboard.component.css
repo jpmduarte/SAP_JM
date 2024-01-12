@@ -401,8 +401,4 @@ footer.main {
         text-align: center;
         margin-top: 10px;
     }
-
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
 }
