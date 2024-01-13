@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 const cors = require("cors");
 const e = require("express");
+const axios = require("axios"); 
 const app = express();
 
 app.use(bodyParser.json());
@@ -12,7 +13,7 @@ const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "SAP_JM",
-  password: "Diogo",
+  password: "joaopaulo",
   port: 5432,
 });
 
@@ -314,9 +315,20 @@ app.get('/api/utenteID', async (req, res) => {
   }
 );
 
+
 app.post('/api/createemployee', async (req, res) => {
   try {
     const { email, password, numero_cedula, nome_medico } = req.body;
+
+    // Check if email is duplicated
+    const checkEmailDuplicate = await pool.query(
+      'SELECT email FROM users WHERE email = $1',
+      [email]
+    );
+
+    if (checkEmailDuplicate.rows.length > 0) {
+      return res.status(400).json({ success: false, error: 'Email already registered' });
+    }
 
     // Inserting into the 'users' table
     const userResult = await pool.query(
@@ -326,46 +338,70 @@ app.post('/api/createemployee', async (req, res) => {
 
     const id_user = userResult.rows[0].id_user;
 
-    // Calling another API using http.post instead of http.get
-    const medicoData = await this.http.post('http://localhost:3002/api/loadmedico', { nome: nome_medico, numero_cedula: numero_cedula }).toPromise();
+    // Calling the 'loadmedico' API using axios.get
+    const medicoData = await axios.get('http://localhost:3002/api/loadmedico', { params: { nome: nome_medico, numero_cedula: numero_cedula } });
 
-    console.log(medicoData);
+    if (medicoData.data.length === 0) {
+      return res.status(404).json({ success: false, error: 'Medico data not found' });
+    }
 
-    // Assuming medicoData is not an array
-    const newnumero_cedula = medicoData.numero_cedula;
-    const newnome_medico = medicoData.nome;
+    // Assuming medicoData is an array, you might need to adjust accordingly
+    const newnumero_cedula = medicoData.data[0].numero_cedula;
+    const newnome_medico = medicoData.data[0].nome;
 
     // Inserting into the 'medicos' table
     const medicoResult = await pool.query(
-      'INSERT INTO medicos (id_user_medico, numero_cedula, nome) VALUES (3, $1, $2) RETURNING id_medico',
-      [newnumero_cedula, newnome_medico]
+      'INSERT INTO medicos (id_user_medico, numero_cedula, nome) VALUES ($1, $2, $3) RETURNING id_medico',
+      [id_user, newnumero_cedula, newnome_medico]
     );
 
     const id_medico = medicoResult.rows[0].id_medico;
+    console.log(medicoData)
 
     // Fetching the id_usf based on the data from the 'loadmedico' API
-    const getUSF = pool.query(
-      'SELECT id_usf FROM usf WHERE nome_usf = $1',
-      [medicoData.usf_name]
+    const getUSF = await pool.query(
+      'SELECT id_usf FROM usf WHERE nomeusf = $1',
+      [medicoData.data[0].usf_name]
     );
 
     const id_usf = getUSF.rows[0].id_usf;
-
+      console.log(id_usf);
     // Inserting into the 'usfmedico' table
-    const insertUSFmedico = pool.query(
-      'INSERT INTO usfmedico (id_usf, id_medico) VALUES ($1, $2)',
+    await pool.query(
+      'INSERT INTO medicousf (id_usf, id_medico) VALUES ($1, $2)',
       [id_usf, id_medico]
     );
 
     // Sending a success response
-    res.status(200).json({ success: true, message: 'Employee created successfully' });
-
+    res.status(200).json({ success: true, error: 'Employee created successfully' });
   } catch (error) {
     console.error('Error creating employee:', error);
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 });
 
+app.get('/api/loadusf', async (req, res) => {
+  try {
+    // Obter todas as USFs do servidor RNU
+    const rnuUsfs = await axios.get('http://localhost:3002/api/loadusf');
+    
+    // Verificar e inserir as USFs ausentes no servidor SAP
+    for (const rnuUsf of rnuUsfs.data) {
+      const existingUsf = await pool.query('SELECT * FROM usf WHERE nomeusf = $1', [rnuUsf.nome_usf]);
+      
+      if (existingUsf.rows.length === 0) {
+        // A USF não existe no servidor SAP, então insira
+        await pool.query('INSERT INTO usf (nomeusf) VALUES ($1)', [rnuUsf.nome_usf]);
+      }
+    }
+    console.log(rnuUsfs.data);
+
+    res.status(200).json({ success: true, message: 'Load USFs completed successfully' });
+  } catch (error) {
+    console.error('Error loading USFs:', error);
+    res.status(500).json({ success: false, error: 'Internal Server Error' });
+  }
+});
 
 
 app.get("/api/getschedules", (req, res) => {
@@ -442,45 +478,45 @@ app.get("/api/fetchdoctorswithschedule", (req, res) => {
   });
 });
 
-// app.post("/api/createSchedule", (req, res) => {
-//   const {
-//     id_medico,
-//     dia_semana,
-//     hora_inicio_manha,
-//     hora_fim_manha,
-//     hora_inicio_tarde,
-//     hora_fim_tarde,
-//   } = req.body;
+app.post("/api/createSchedule", (req, res) => {
+  const {
+    id_medico,
+    dia_semana,
+    hora_inicio_manha,
+    hora_fim_manha,
+    hora_inicio_tarde,
+    hora_fim_tarde,
+  } = req.body;
 
-//   console.log(req.body);
-//   const dayOfWeek = parseInt(dia_semana);
-//   const morningStartTime = parseTime(hora_inicio_manha);
-//   const morningEndTime = parseTime(hora_fim_manha);
-//   const afternoonStartTime = parseTime(hora_inicio_tarde);
-//   const afternoonEndTime = parseTime(hora_fim_tarde);
+  console.log(req.body);
+  const dayOfWeek = parseInt(dia_semana);
+  const morningStartTime = parseTime(hora_inicio_manha);
+  const morningEndTime = parseTime(hora_fim_manha);
+  const afternoonStartTime = parseTime(hora_inicio_tarde);
+  const afternoonEndTime = parseTime(hora_fim_tarde);
 
-//   const insertQuery = `select create_schedule($1, $2, $3, $4, $5, $6, $7)`;
-//   const insertValues = [
-//     id_medico,
-//     dayOfWeek,
-//     morningStartTime,
-//     morningEndTime,
-//     afternoonStartTime,
-//     afternoonEndTime,
-//     true,
-//   ];
+  const insertQuery = `select create_schedule($1, $2, $3, $4, $5, $6, $7)`;
+  const insertValues = [
+    id_medico,
+    dayOfWeek,
+    morningStartTime,
+    morningEndTime,
+    afternoonStartTime,
+    afternoonEndTime,
+    true,
+  ];
 
-//   pool.query(insertQuery, insertValues, (insertError, insertResult) => {
-//     if (insertError) {
-//       console.error("Error executing insert query:", insertError);
-//       let errorMessage = insertError.message;
-//       res.status(500).json({ error: errorMessage });
-//     } else {
-//       console.log("Schedule created successfully");
-//       res.status(200).json({ message: "Schedule created successfully" });
-//     }
-//   });
-// });
+  pool.query(insertQuery, insertValues, (insertError, insertResult) => {
+    if (insertError) {
+      console.error("Error executing insert query:", insertError);
+      let errorMessage = insertError.message;
+      res.status(500).json({ error: errorMessage });
+    } else {
+      console.log("Schedule created successfully");
+      res.status(200).json({ message: "Schedule created successfully" });
+    }
+  });
+});
 
 app.listen(3001, () => {
   console.log("Server is listening on port 3001.");

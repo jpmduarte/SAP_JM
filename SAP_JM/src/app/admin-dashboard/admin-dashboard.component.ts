@@ -41,7 +41,7 @@ interface Schedule {
   styleUrl: './admin-dashboard.component.css'
 })
 export class AdminDashboardComponent {
-
+  errorMessage = '';
   showLogoutPopup = false;
   showUsersTable = false;
   showSchedulesTable = false;
@@ -69,6 +69,23 @@ export class AdminDashboardComponent {
   ngOnInit(): void {
     this.fetchUsers();
     this.showUsersTable = true;
+    this.loadUSF();
+    this.fetchSchedules();
+  }
+
+  loadUSF() {
+    this.http.get('http://localhost:3001/api/loadusf').subscribe(
+      (response: any) => {
+        if (response.success) {
+          console.log('USF:', response.usf);
+        } else {
+          console.log('Error:', response.erro);
+        }
+      },
+      (error: any) => {
+        console.log('Error:', error);
+      }
+    );
   }
 
   fetchUsers() {
@@ -140,10 +157,15 @@ export class AdminDashboardComponent {
     this.http.post('http://localhost:3001/api/createemployee', this.employeeData).subscribe(
       () => {
         console.log('Employee created successfully');
+        
         this.fetchUsers();
+        this.errorMessage = 'Utilizador criado com sucesso!';
+        this.showCreateEmployeeForm = false;
+        this.showUsersTable = true;
       },
       (error: any) => {
         console.error('Error creating employee:', error);
+        this.errorMessage = error.error.error;
       }
     );
   }
@@ -245,40 +267,37 @@ export class AdminDashboardComponent {
     this.selectedUserToUpdate = undefined;
   }
 
+  fetchSchedules() {
+    this.http.get<Schedule[]>('http://localhost:3001/api/schedules').subscribe(
+      (response: Schedule[]) => {
+        this.schedules = response;
+      },
+      (error: any) => {
+        console.log('Error fetching schedules:', error);
+      }
+    );
+  }
+  
   fetchDoctorsWithNoSchedule() {
-    this.http.get<medico[]>('/api/noSchedule').subscribe(
+    this.http.get<medico[]>('http://localhost:3001/api/noSchedule').subscribe(
       (response: medico[]) => {
-        this.doctorsWithNoSchedule = response.map((doctor) => {
-          return {
-            nome_medico: doctor.nome_medico,
-            numero_cedula: doctor.numero_cedula,
-            id_medico: doctor.id_medico,
-          };
-        });
-        console.log('API response:', response);
+        this.doctorsWithNoSchedule = response;
       },
       (error: any) => {
-        console.log('Error:', error);
+        console.log('Error fetching doctors without a full schedule:', error);
       }
     );
   }
 
-  fetchAllDoctorswithschedule() {
-    this.http.get<medico[]>('/api/fetchdoctorswithschedule').subscribe(
+  fetchAllDoctorsWithSchedule() {
+    this.http.get<medico[]>('http://localhost:3001/api/fetchdoctorswithschedule').subscribe(
       (response: medico[]) => {
-        this.doctorswithSchedules = response.map((doctor) => {
-          return {
-            nome_medico: doctor.nome_medico,
-            numero_cedula: doctor.numero_cedula,
-            id_medico: doctor.id_medico,
-          };
-        });
-        console.log('API response:', response);
+        this.doctorswithSchedules = response;
       },
       (error: any) => {
-        console.log('Error:', error);
+        console.log('Error fetching doctors with schedule:', error);
       }
     );
   }
-
 }
+

@@ -11,7 +11,7 @@ const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "simuladorRNU",
-  password: "Diogo",
+  password: "joaopaulo",
   port: 5432,
 });
 
@@ -94,7 +94,9 @@ app.get("/api/loadmedico", async (req, res) => {
     medico.nome = $1 AND medico.numero_cedula = $2;
     `;
     const values = [nome, numero_cedula];
+    
     const result = await pool.query(query, values);
+    
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "No Medico data found" });
@@ -109,6 +111,17 @@ app.get("/api/loadmedico", async (req, res) => {
   }
 });
 
+app.get('/api/loadusf', async (req, res) => {
+  try {
+   
+    const rnuUsfs = await pool.query('SELECT nome_usf FROM usf');
+    
+    res.status(200).json(rnuUsfs.rows);
+  } catch (error) {
+    console.error('Error fetching USFs from RNU:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 app.listen(3002, () => {
   console.log("Server is listening on port 3002.");

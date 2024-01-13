@@ -33,6 +33,7 @@
       <input type="text" id="numero_cedula" name="numero_cedula" placeholder="Número Cedula" [(ngModel)]="employeeData.numero_cedula" />
 
       <button type="submit">Criar</button>
+      <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
     </form>
   </div>
   <div class="users" *ngIf="showUsersTable">
