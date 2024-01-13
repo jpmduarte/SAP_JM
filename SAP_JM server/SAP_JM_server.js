@@ -13,7 +13,7 @@ const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "SAP_JM",
-  password: "joaopaulo",
+  password: "Diogo",
   port: 5432,
 });
 
@@ -315,7 +315,6 @@ app.get('/api/utenteID', async (req, res) => {
   }
 );
 
-
 app.post('/api/createemployee', async (req, res) => {
   try {
     const { email, password, numero_cedula, nome_medico } = req.body;
@@ -402,7 +401,6 @@ app.get('/api/loadusf', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 });
-
 
 app.get("/api/getschedules", (req, res) => {
   const query = `

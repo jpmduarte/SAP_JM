@@ -139,18 +139,18 @@ export class AdminDashboardComponent {
     this.selectedUser = undefined;
   }
 
-  // deleteUser(user: User): void {
-  //   const userId = user.id_user;
-  //   this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
-  //     () => {
-  //       console.log('User deleted successfully');
-  //       this.fetchUsers();
-  //     },
-  //     (error: any) => {
-  //       console.error('Error deleting user:', error);
-  //     }
-  //   );
-  // }
+  deleteUser(user: User): void {
+    const userId = user.id_user;
+    this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
+      () => {
+        console.log('User deleted successfully');
+        this.fetchUsers();
+      },
+      (error: any) => {
+        console.error('Error deleting user:', error);
+      }
+    );
+  }
 
   submitCreateEmployeeForm()
   {

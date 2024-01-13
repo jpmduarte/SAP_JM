@@ -56,7 +56,7 @@
                 <td>
                     <button class="action-button delete-button">Delete</button> <!-- (click)="deleteUser(user)" -->
                     <button class="action-button update-button" (click)="updateUser(user)">Update</button>
-                    <div class="confirmation-options" *ngIf="selectedUser"> <!-- *ngIf="selectedUser === user" -->
+                    <div class="confirmation-options" *ngIf="selectedUser === user">
                         <button class="confirm-button">Confirmar</button><!-- (click)="deleteUser(user)" -->
                         <button class="cancel-button" (click)="cancelDelete()">Cancelar</button>
                     </div>
