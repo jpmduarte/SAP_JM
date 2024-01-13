@@ -15,6 +15,25 @@ interface Employee {
   password: string;
   numero_cedula: number;
 }
+interface medico {
+  nome_medico: string;
+  numero_cedula: Number;
+  id_medico: number;
+}
+interface Schedule {
+  schedule: {
+    id_profissionalsaude: number;
+    name: string;
+    id: number;
+    dia_semana: number;
+    dia_semana_string: string;
+    periodo_manha_inicio: string;
+    periodo_manha_fim: string;
+    periodo_tarde_inicio: string;
+    periodo_tarde_fim: string;
+    isdisponivel: boolean;
+  };
+}
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -32,8 +51,8 @@ export class AdminDashboardComponent {
   ScheduleTimes: string[] = ['7:00', '8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'];
   users: User[] = [];
   selectedUser: User | undefined;
-  doctorsWithNoSchedule: Employee[] = [];
-  doctorswithSchedules: Employee[] = [];
+  doctorsWithNoSchedule: medico[] = [];
+  doctorswithSchedules: medico[] = [];
   selectedpsaude: any;
   selectedUpdatepsaude: any;
   showCreateForm = false;
@@ -43,6 +62,7 @@ export class AdminDashboardComponent {
   selectedAfternoonStart: string = '';
   selectedAfternoonEnd: string = '';
   showAlterScheduleform = false;
+  schedules: Schedule[] = [];
 
   constructor(private router: Router, private http: HttpClient) {}
 
@@ -50,7 +70,6 @@ export class AdminDashboardComponent {
     this.fetchUsers();
     this.showUsersTable = true;
   }
-
 
   fetchUsers() {
     this.http.get<User[]>('http://localhost:3001/api/users').subscribe(
@@ -115,6 +134,7 @@ export class AdminDashboardComponent {
   //     }
   //   );
   // }
+
   submitCreateEmployeeForm()
   {
     this.http.post('http://localhost:3001/api/createemployee', this.employeeData).subscribe(
@@ -126,16 +146,6 @@ export class AdminDashboardComponent {
         console.error('Error creating employee:', error);
       }
     );
-  }
-
-  createschedule(medico: Employee) {
-    this.selectedpsaude = medico;
-    this.showCreateForm = true;
-  }
-
-  alterschedule(medico: Employee) {
-    this.selectedUpdatepsaude = medico;
-    this.showAlterScheduleform = true;
   }
 
   updateUser(user: User) {
@@ -163,24 +173,112 @@ export class AdminDashboardComponent {
     }
   }
 
-  cancelUpdate() {
-    this.selectedUserToUpdate = undefined;
+  createschedule(doctor: medico) {
+    this.selectedpsaude = doctor;
+    this.showCreateForm = true;
+  }
+
+  submitCreateScheduleForm() {
+    const body = {
+      id_profissionalsaude: this.selectedpsaude.id_profissionalsaude,
+      dia_semana: this.selectedDayOfWeek,
+      periodo_manha_inicio: this.selectedMorningStart,
+      periodo_manha_fim: this.selectedMorningEnd,
+      periodo_tarde_inicio: this.selectedAfternoonStart,
+      periodo_tarde_fim: this.selectedAfternoonEnd,
+    };
+    console.log(body);
+    this.http.post('/api/createschedule', body).subscribe(
+      () => {
+        console.log('Schedule created successfully');
+      },
+      (error: any) => {
+        console.error('Error creating schedule:', error);
+      }
+    );
+    this.showCreateForm = false;
   }
 
   cancelCreateSchedule() {
-    // Reset the form values
     this.selectedDayOfWeek;
     this.selectedMorningStart = '';
     this.selectedMorningEnd = '';
     this.selectedAfternoonEnd = '';
     this.selectedAfternoonStart = '';
-
-    // Hide the create form
     this.showCreateForm = false;
+  }
+
+  alterschedule(doctor: medico) {
+    this.selectedUpdatepsaude = doctor;
+    this.showAlterScheduleform = true;
+  }
+
+  submitAlterScheduleForm() {
+    const body = {
+      numero_cedula: this.selectedUpdatepsaude.numero_cedula,
+      dia_semana: this.selectedDayOfWeek,
+      periodo_manha_inicio: this.selectedMorningStart,
+      periodo_manha_fim: this.selectedMorningEnd,
+      periodo_tarde_inicio: this.selectedAfternoonStart,
+      periodo_tarde_fim: this.selectedAfternoonEnd,
+    };
+
+    console.log(body);
+
+    this.http.put('/api/alterschedule', body).subscribe(
+      () => {
+        console.log('Schedule updated successfully');
+      },
+      (error: any) => {
+        console.error('Error updating schedule:', error);
+      }
+    );
+
+    this.showAlterScheduleform = false;
   }
 
   cancelAlterSchedule() {
     this.showAlterScheduleform = false;
+  }
+
+  cancelUpdate() {
+    this.selectedUserToUpdate = undefined;
+  }
+
+  fetchDoctorsWithNoSchedule() {
+    this.http.get<medico[]>('/api/noSchedule').subscribe(
+      (response: medico[]) => {
+        this.doctorsWithNoSchedule = response.map((doctor) => {
+          return {
+            nome_medico: doctor.nome_medico,
+            numero_cedula: doctor.numero_cedula,
+            id_medico: doctor.id_medico,
+          };
+        });
+        console.log('API response:', response);
+      },
+      (error: any) => {
+        console.log('Error:', error);
+      }
+    );
+  }
+
+  fetchAllDoctorswithschedule() {
+    this.http.get<medico[]>('/api/fetchdoctorswithschedule').subscribe(
+      (response: medico[]) => {
+        this.doctorswithSchedules = response.map((doctor) => {
+          return {
+            nome_medico: doctor.nome_medico,
+            numero_cedula: doctor.numero_cedula,
+            id_medico: doctor.id_medico,
+          };
+        });
+        console.log('API response:', response);
+      },
+      (error: any) => {
+        console.log('Error:', error);
+      }
+    );
   }
 
 }

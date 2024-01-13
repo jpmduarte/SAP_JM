@@ -12,7 +12,7 @@ const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "SAP_JM",
-  password: "joaopaulo",
+  password: "Diogo",
   port: 5432,
 });
 
@@ -68,7 +68,6 @@ app.get("/api/users", async (req, res) => {
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
-
 
 app.post("/api/register", async (req, res) => {
   try {
@@ -135,8 +134,6 @@ app.post("/api/register", async (req, res) => {
     console.error(err.message);
   }
 });
-
-
 
 app.post('/submit/pedidoAvaliacao', async (req, res) => {
   try {
@@ -224,7 +221,6 @@ app.post('/submit/pedidoAvaliacao', async (req, res) => {
   }
 });
 
-
 app.post('/api/utenteUSF', async (req, res) => {
   try {
     const { id_utente, id_USF } = req.body;
@@ -239,7 +235,6 @@ app.post('/api/utenteUSF', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 });
-
 
 app.get('/api/pedidos', async (req, res) => {
   try {
@@ -275,7 +270,6 @@ app.get('/api/pedidos', async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 }); //  incompleto falta a query para pedidos de junta medica (pedido_junta_medica) 
-
 
 app.get('/api/numeroUtente', async (req, res) => {
 
@@ -342,7 +336,7 @@ app.post('/api/createemployee', async (req, res) => {
     const newnome_medico = medicoData.nome;
 
     // Inserting into the 'medicos' table
-    const medicoResult = pool.query(
+    const medicoResult = await pool.query(
       'INSERT INTO medicos (id_user_medico, numero_cedula, nome) VALUES (3, $1, $2) RETURNING id_medico',
       [newnumero_cedula, newnome_medico]
     );
@@ -372,6 +366,121 @@ app.post('/api/createemployee', async (req, res) => {
   }
 });
 
+
+
+app.get("/api/getschedules", (req, res) => {
+  const query = `
+    SELECT ms.nome, ms.id_medico, h.*
+    FROM public.horarios h
+    INNER JOIN public.medicos ms ON h.id_medico = ms.id_medico
+  `;
+
+  pool.query(query, (error, result) => {
+    if (error) {
+      console.error("Error executing query:", error);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      const doctors = result.rows.map((row) => ({
+        schedule: {
+          name: row.nome,
+          id_medico: row.id_medico,
+          id: row.id_horario,
+          dia_semana: row.dia_semana,
+          periodo_manha_inicio: row.hora_inicio_manha,
+          periodo_manha_fim: row.hora_fim_manha,
+          periodo_tarde_inicio: row.hora_inicio_tarde,
+          periodo_tarde_fim: row.hora_fim_tarde,
+        },
+      }));
+      res.json(doctors);
+    }
+  });
+});
+
+app.get("/api/noSchedule", (req, res) => {
+  const query = `
+    SELECT nome, numero_cedula, id_medico
+    FROM medicos
+    WHERE id_medico NOT IN (
+      SELECT id_medico
+      FROM horarios
+      GROUP BY id_medico
+      HAVING COUNT(*) >= 5
+    )
+  `;
+
+  pool.query(query, (error, result) => {
+    if (error) {
+      console.error("Error executing query:", error);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      const doctors = result.rows;
+      res.status(200).json(doctors);
+      console.log("Fetching doctors without a full schedule");
+    }
+  });
+});
+
+app.get("/api/fetchdoctorswithschedule", (req, res) => {
+  const query = `SELECT distinct nome, numero_cedula
+  FROM medicos 
+  WHERE id_medico IN (
+    SELECT  id_medico
+    FROM horarios
+  )
+  `;
+
+  pool.query(query, (error, result) => {
+    if (error) {
+      console.error("Error executing query:", error);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      const doctors = result.rows;
+      res.status(200).json(doctors);
+      console.log("Fetching doctors without schedule");
+    }
+  });
+});
+
+// app.post("/api/createSchedule", (req, res) => {
+//   const {
+//     id_medico,
+//     dia_semana,
+//     hora_inicio_manha,
+//     hora_fim_manha,
+//     hora_inicio_tarde,
+//     hora_fim_tarde,
+//   } = req.body;
+
+//   console.log(req.body);
+//   const dayOfWeek = parseInt(dia_semana);
+//   const morningStartTime = parseTime(hora_inicio_manha);
+//   const morningEndTime = parseTime(hora_fim_manha);
+//   const afternoonStartTime = parseTime(hora_inicio_tarde);
+//   const afternoonEndTime = parseTime(hora_fim_tarde);
+
+//   const insertQuery = `select create_schedule($1, $2, $3, $4, $5, $6, $7)`;
+//   const insertValues = [
+//     id_medico,
+//     dayOfWeek,
+//     morningStartTime,
+//     morningEndTime,
+//     afternoonStartTime,
+//     afternoonEndTime,
+//     true,
+//   ];
+
+//   pool.query(insertQuery, insertValues, (insertError, insertResult) => {
+//     if (insertError) {
+//       console.error("Error executing insert query:", insertError);
+//       let errorMessage = insertError.message;
+//       res.status(500).json({ error: errorMessage });
+//     } else {
+//       console.log("Schedule created successfully");
+//       res.status(200).json({ message: "Schedule created successfully" });
+//     }
+//   });
+// });
 
 app.listen(3001, () => {
   console.log("Server is listening on port 3001.");
