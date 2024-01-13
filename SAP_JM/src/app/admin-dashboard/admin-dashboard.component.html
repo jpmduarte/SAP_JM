@@ -99,13 +99,12 @@
           <th>Dia da Semana</th>
           <th>Turno da Manhã</th>
           <th>Turno da Tarde</th>
-          <th>Disponibilidade</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let schedule of schedules">
-          <td>{{ schedule.schedule.name }}</td>
-              <td>{{ schedule.schedule.dia_semana_string }}</td>
+          <td>{{ schedule.schedule.nome }}</td>
+              <td>{{ schedule.schedule.dia_semana }}</td>
               <td>{{ schedule.schedule.periodo_manha_inicio }} - {{ schedule.schedule.periodo_manha_fim }}</td>
               <td>{{ schedule.schedule.periodo_tarde_inicio }} - {{ schedule.schedule.periodo_tarde_fim }}</td>
         </tr>
@@ -120,13 +119,12 @@
         <tr>
           <th>Nome</th>
           <th>Número</th>
-          <th>Profissão</th>
           <th>Ações</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let doctor of doctorsWithNoSchedule">
-          <td>{{ doctor.nome_medico }}</td>
+          <td>{{ doctor.nome }}</td>
               <td>{{ doctor.numero_cedula }}</td>
           <td>
             <button class="create-button" (click)="createschedule(doctor)">
@@ -145,13 +143,12 @@
         <tr>
           <th>Nome</th>
           <th>Número</th>
-          <th>Profissão</th>
           <th>Ações</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let doctor of doctorswithSchedules">
-          <td>{{ doctor.nome_medico }}</td>
+          <td>{{ doctor.nome }}</td>
               <td>{{ doctor.numero_cedula }}</td>
           <td>
             <button class="alter-button" (click)="alterschedule(doctor)">
@@ -165,7 +162,7 @@
       <p>0 Médicos disponívies.</p>
     </ng-template>
   </div>
-  <div class="overlay" *ngIf="showCreateForm"></div>
+  <!-- <div class="overlay" *ngIf="showCreateForm"></div> -->
   <div class="create-form" *ngIf="showCreateForm">
     <h2>Create Schedule</h2>
     <form (submit)="submitCreateScheduleForm()">
@@ -209,7 +206,7 @@
       <button type="button" (click)="cancelCreateSchedule()">Cancel</button>
     </form>
   </div>
-  <div class="overlay" *ngIf="showAlterScheduleform"></div>
+  <!-- <div class="overlay" *ngIf="showAlterScheduleform"></div> -->
   <div class="alter-schedule-form" *ngIf="showAlterScheduleform">
     <h2>Alter Schedule</h2>
     <form (submit)="submitAlterScheduleForm()">
@@ -251,11 +248,6 @@
           {{ time }}
         </option>
       </select>
-      <!-- <label for="availability">Is doctor available:</label>
-      <select id="availability" name="availability" [(ngModel)]="isAvail">
-        <option value="true">Yes</option>
-        <option value="false">No</option>
-      </select> -->
       <button type="submit">Submit</button>
       <button type="button" (click)="cancelAlterSchedule()">Cancel</button>
     </form>

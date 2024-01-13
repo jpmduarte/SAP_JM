@@ -2,9 +2,9 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 const cors = require("cors");
-const e = require("express");
 const axios = require("axios"); 
 const app = express();
+
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -342,7 +342,9 @@ app.post('/api/createemployee', async (req, res) => {
     const medicoData = await axios.get('http://localhost:3002/api/loadmedico', { params: { nome: nome_medico, numero_cedula: numero_cedula } });
 
     if (medicoData.data.length === 0) {
+      await pool.query( 'DELETE FROM users WHERE id_user = $1', [id_user] );
       return res.status(404).json({ success: false, error: 'Medico data not found' });
+
     }
 
     // Assuming medicoData is an array, you might need to adjust accordingly
@@ -404,7 +406,7 @@ app.get('/api/loadusf', async (req, res) => {
 });
 
 
-app.get("/api/getschedules", (req, res) => {
+app.get("/api/schedules", (req, res) => {
   const query = `
     SELECT ms.nome, ms.id_medico, h.*
     FROM public.horarios h
@@ -418,10 +420,10 @@ app.get("/api/getschedules", (req, res) => {
     } else {
       const doctors = result.rows.map((row) => ({
         schedule: {
-          name: row.nome,
+          nome: row.nome,
           id_medico: row.id_medico,
           id: row.id_horario,
-          dia_semana: row.dia_semana,
+          dia_semana: diasemanastr(row.dia_semana),
           periodo_manha_inicio: row.hora_inicio_manha,
           periodo_manha_fim: row.hora_fim_manha,
           periodo_tarde_inicio: row.hora_inicio_tarde,
@@ -432,6 +434,19 @@ app.get("/api/getschedules", (req, res) => {
     }
   });
 });
+
+
+function diasemanastr(int)
+{
+    switch (int)
+    {
+        case 1: return "Segunda-feira"; break;
+        case 2: return "Terça-feira"; break;
+        case 3: return "Quarta-feira"; break;
+        case 4: return "Quinta-feira"; break;
+        case 5: return "Sexta-feira"; break;
+    }
+}
 
 app.get("/api/noSchedule", (req, res) => {
   const query = `
@@ -478,32 +493,30 @@ app.get("/api/fetchdoctorswithschedule", (req, res) => {
   });
 });
 
-app.post("/api/createSchedule", (req, res) => {
+app.post("/api/createschedule", (req, res) => {
   const {
-    id_medico,
+    id_profissionalsaude,
     dia_semana,
-    hora_inicio_manha,
-    hora_fim_manha,
-    hora_inicio_tarde,
-    hora_fim_tarde,
+    periodo_manha_inicio,
+    periodo_manha_fim,
+    periodo_tarde_inicio,
+    periodo_tarde_fim,
   } = req.body;
 
   console.log(req.body);
   const dayOfWeek = parseInt(dia_semana);
-  const morningStartTime = parseTime(hora_inicio_manha);
-  const morningEndTime = parseTime(hora_fim_manha);
-  const afternoonStartTime = parseTime(hora_inicio_tarde);
-  const afternoonEndTime = parseTime(hora_fim_tarde);
-
-  const insertQuery = `select create_schedule($1, $2, $3, $4, $5, $6, $7)`;
+  const morningStartTime = (periodo_manha_inicio);
+  const morningEndTime = (periodo_manha_fim);
+  const afternoonStartTime = (periodo_tarde_inicio);
+  const afternoonEndTime = (periodo_tarde_fim);
+  const insertQuery = `insert into horarios (id_medico,dia_semana,hora_inicio_manha,hora_fim_manha,hora_inicio_tarde,hora_fim_tarde) values ($1, $2, $3::time , $4::time , $5::time , $6::time)`;
   const insertValues = [
-    id_medico,
+    id_profissionalsaude,
     dayOfWeek,
     morningStartTime,
     morningEndTime,
     afternoonStartTime,
     afternoonEndTime,
-    true,
   ];
 
   pool.query(insertQuery, insertValues, (insertError, insertResult) => {
@@ -517,6 +530,48 @@ app.post("/api/createSchedule", (req, res) => {
     }
   });
 });
+
+app.put("/api/alterschedule", (req, res) => {
+  const { 
+    id_medico,
+    dia_semana,
+    periodo_manha_inicio,
+    periodo_manha_fim,
+    periodo_tarde_inicio,
+    periodo_tarde_fim,
+  } = req.body;
+  console.log(req.body);
+
+ pool.query(
+    `UPDATE horarios
+    hora_inicio_manha = $2::time,
+    hora_fim_manha = $3::time,
+    hora_inicio_tarde = $4::time,
+    hora_fim_tarde = $5::time
+    WHERE id_medico = $6 and dia_semana = $1`,
+    [
+      dia_semana,
+      periodo_manha_inicio,
+      periodo_manha_fim,
+      periodo_tarde_inicio,
+      periodo_tarde_fim,
+      id_medico,
+    ],
+    (error, result) => {
+      if (error) {
+        console.error("Error executing update query:", error);
+        let errorMessage = error.message;
+        res.status(500).json({ error: errorMessage });
+      } else {
+        console.log("Schedule updated successfully");
+        res.status(200).json({ message: "Schedule updated successfully" });
+      }
+    }
+  );
+});
+
+
+
 
 app.listen(3001, () => {
   console.log("Server is listening on port 3001.");

@@ -16,22 +16,20 @@ interface Employee {
   numero_cedula: number;
 }
 interface medico {
-  nome_medico: string;
+  nome: string;
   numero_cedula: Number;
   id_medico: number;
 }
 interface Schedule {
   schedule: {
-    id_profissionalsaude: number;
-    name: string;
+    id_medico: number;
+    nome: string;
     id: number;
-    dia_semana: number;
-    dia_semana_string: string;
+    dia_semana: string;
     periodo_manha_inicio: string;
     periodo_manha_fim: string;
     periodo_tarde_inicio: string;
     periodo_tarde_fim: string;
-    isdisponivel: boolean;
   };
 }
 
@@ -53,8 +51,8 @@ export class AdminDashboardComponent {
   selectedUser: User | undefined;
   doctorsWithNoSchedule: medico[] = [];
   doctorswithSchedules: medico[] = [];
-  selectedpsaude: any;
   selectedUpdatepsaude: any;
+  selectedpsaude: any;
   showCreateForm = false;
   selectedDayOfWeek!: number;
   selectedMorningStart: string = '';
@@ -70,7 +68,9 @@ export class AdminDashboardComponent {
     this.fetchUsers();
     this.showUsersTable = true;
     this.loadUSF();
+    this.fetchDoctorsWithNoSchedule();
     this.fetchSchedules();
+    this.fetchAllDoctorsWithSchedule();
   }
 
   loadUSF() {
@@ -139,18 +139,18 @@ export class AdminDashboardComponent {
     this.selectedUser = undefined;
   }
 
-  // deleteUser(user: User): void {
-  //   const userId = user.id_user;
-  //   this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
-  //     () => {
-  //       console.log('User deleted successfully');
-  //       this.fetchUsers();
-  //     },
-  //     (error: any) => {
-  //       console.error('Error deleting user:', error);
-  //     }
-  //   );
-  // }
+  deleteUser(user: User): void {
+    const userId = user.id_user;
+    this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
+      () => {
+        console.log('User deleted successfully');
+        this.fetchUsers();
+      },
+      (error: any) => {
+        console.error('Error deleting user:', error);
+      }
+    );
+  }
 
   submitCreateEmployeeForm()
   {
@@ -202,7 +202,7 @@ export class AdminDashboardComponent {
 
   submitCreateScheduleForm() {
     const body = {
-      id_profissionalsaude: this.selectedpsaude.id_profissionalsaude,
+      id_profissionalsaude: this.selectedpsaude.id_medico,
       dia_semana: this.selectedDayOfWeek,
       periodo_manha_inicio: this.selectedMorningStart,
       periodo_manha_fim: this.selectedMorningEnd,
@@ -210,7 +210,7 @@ export class AdminDashboardComponent {
       periodo_tarde_fim: this.selectedAfternoonEnd,
     };
     console.log(body);
-    this.http.post('/api/createschedule', body).subscribe(
+    this.http.post('http://localhost:3001/api/createschedule', body).subscribe(
       () => {
         console.log('Schedule created successfully');
       },
@@ -237,7 +237,7 @@ export class AdminDashboardComponent {
 
   submitAlterScheduleForm() {
     const body = {
-      numero_cedula: this.selectedUpdatepsaude.numero_cedula,
+      id_medico: this.selectedUpdatepsaude.id_medico,
       dia_semana: this.selectedDayOfWeek,
       periodo_manha_inicio: this.selectedMorningStart,
       periodo_manha_fim: this.selectedMorningEnd,
@@ -270,6 +270,7 @@ export class AdminDashboardComponent {
   fetchSchedules() {
     this.http.get<Schedule[]>('http://localhost:3001/api/schedules').subscribe(
       (response: Schedule[]) => {
+        console.log('Schedules:', response);
         this.schedules = response;
       },
       (error: any) => {
@@ -282,6 +283,7 @@ export class AdminDashboardComponent {
     this.http.get<medico[]>('http://localhost:3001/api/noSchedule').subscribe(
       (response: medico[]) => {
         this.doctorsWithNoSchedule = response;
+        console.log(response);
       },
       (error: any) => {
         console.log('Error fetching doctors without a full schedule:', error);
@@ -289,15 +291,16 @@ export class AdminDashboardComponent {
     );
   }
 
-  fetchAllDoctorsWithSchedule() {
-    this.http.get<medico[]>('http://localhost:3001/api/fetchdoctorswithschedule').subscribe(
-      (response: medico[]) => {
-        this.doctorswithSchedules = response;
+   fetchAllDoctorsWithSchedule() {
+     this.http.get<medico[]>('http://localhost:3001/api/fetchdoctorswithschedule').subscribe(
+     (response: medico[]) => {
+         this.doctorswithSchedules = response;
+         console.log(response);
       },
-      (error: any) => {
+       (error: any) => {
         console.log('Error fetching doctors with schedule:', error);
-      }
+       }
     );
-  }
+ }
 }
 
