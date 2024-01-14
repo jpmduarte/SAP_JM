@@ -46,9 +46,6 @@
     </div>
     <pagination-controls (pageChange)="p = $event"></pagination-controls>
   </div>
-  
-  <!-- Form Section -->
-  <!-- Form Section -->
 <div *ngIf="showFormPopup" class="form-container">
     <form>
       <!-- Informações Pessoais -->
@@ -56,6 +53,7 @@
         <h3>Informações Pessoais</h3>
         <br>
         <div class="form-field">
+            <span>{{pedidoAva[i].nome_completo}}</span>
           <label>Data de Nascimento:</label>
           <span>{{ pedidoAva[i].data_nascimento | date : "dd-MM-YYYY" }}</span>
           <br>
@@ -80,13 +78,52 @@
           <span>{{ pedidoAva[i].data_validade | date : "dd-MM-YYYY" }}</span>
         </div>
       </div>
-      <!-- ... Other sections ... -->
+      <div class="form-container">
+        <h3>Morada</h3>
+        <div class="form-field">
+            <label for="morada">Rua:</label>
+        </div>
+        <div class="form-field inline-field">
+            codigo-postal
+            localidade
+        </div>
+        <div class="form-field inline-field">
+            concelho
+            distrito
+        </div>
+      </div>
+      <div class="form-container">
+        <h3>Contacto</h3>
+        <div class="form-field inline-field">
+            telemovel
+            email
+        </div>
+      </div>
+      <div class="form-container">
+        <h3>Documentação Anexada</h3>
+        <div class="form-field">
+            files
+        </div>
+      </div>
+      <div class="form-container">
+        <div class="radio-group">
+            <label class="radio-option" for="multiuso">Multiuso: <!-- true = Sim, false = Não -->
+            </label>
+            <br>
+            <label class="radio-option" for="importacao">
+                Importação de veículo automóvel e outros: <!-- true = Sim, false = Não -->
+            </label>
+            <br>
+            <label class="radio-option" for="submissaoReavaliacaoSim">Reavaliação: <!-- true = Sim (se sim aparece a data a frente), false = Não -->
+            </label>
+        </div>   
+      </div>
       <div class="button-container">
         <button type="button" class="btn btn-success" (click)="openPopup('accepted')">Validar Pedido</button>
         <button type="button" class="btn btn-danger" (click)="openPopup('rejected')">Rejeitar Pedido</button>
       </div>
     </form>
-  </div>
+</div>
   
   <!-- Rejected Modal -->
   <div class="modal" *ngIf="rejected">
