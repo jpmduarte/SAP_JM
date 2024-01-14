@@ -1,203 +1,266 @@
 <!-- Header -->
 <header class="header">
-    <div class="app-name">
-      <h2>SAP-JM</h2>
-    </div>
-    <div class="user-info">
-      <h4 class="user-id">Dr.</h4>
-    </div>
-    <div class="profile">
-      <i class="material-icons">person</i>
-      <div class="logout-popup">
-        <button (click)="logout()">Logout</button>
-      </div>
-    </div>
-  </header>
-  
-  <!-- Table Section -->
-  <div *ngIf="show">
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th scope="col">Nº Processo</th>
-            <th scope="col">Nome</th>
-            <th scope="col">Nº Utente</th>
-            <th scope="col" (click)="sort('date')">Data de Submissão</th>
-            <th scope="col">Estado do Pedido</th>
-            <th scope="col">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let pedido of pedidoAva; let i = index" (click)="openFormPopup(i,pedido.id_utente)">
-            <td>{{ pedido.id_pedido }}</td>
-            <td>{{ pedido.nome_completo }}</td>
-            <td>{{ pedido.n_utente_saude }}</td>
-            <td>{{ pedido.data_submissao | date : "dd-MM-YYYY" }}</td>
-            <td>{{ pedido.estado_pedido }}</td>
-            <td>
-              <button type="button" class="btn btn-primary" (click)="openFormPopup(i,pedido.id_utente)">
-                Ver Pedido
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <pagination-controls (pageChange)="p = $event"></pagination-controls>
+  <div class="app-name">
+    <h2>SAP-JM</h2>
   </div>
-<div *ngIf="showFormPopup" class="form-container">
-    <form>
-      <!-- Informações Pessoais -->
-      <div class="form-container">
-        <h3>Informações Pessoais</h3>
-        <br>
-        <div class="form-field">
-            <span>{{pedidoAva[i].nome_completo}}</span>
-          <label>Data de Nascimento:</label>
-          <span>{{ pedidoAva[i].data_nascimento | date : "dd-MM-YYYY" }}</span>
-          <br>
-        </div>
-        <div class="form-field inline-field">
-            <br>
-          <label>Nº Identificação:</label>
-          <span>{{ pedidoAva[i].n_identificacao }}</span>
-          <br>
-          <br>
-          <label>Nº Utente:</label>
-          <span>{{ pedidoAva[i].n_utente_saude }}</span>
-          <br>
-          <br>
-          <label>NIF:</label>
-          <span>{{ pedidoAva[i].nif }}</span>
-          <br>
-          <br>
-        </div>
-        <div class="form-field">
-          <label>Data de Validade:</label>
-          <span>{{ pedidoAva[i].data_validade | date : "dd-MM-YYYY" }}</span>
-        </div>
-      </div>
-      <div class="form-container">
-        <h3>Morada</h3>
-        <div class="form-field">
-            <label for="morada">Rua:</label>
-        </div>
-        <div class="form-field inline-field">
-            codigo-postal
-            localidade
-        </div>
-        <div class="form-field inline-field">
-            concelho
-            distrito
-        </div>
-      </div>
-      <div class="form-container">
-        <h3>Contacto</h3>
-        <div class="form-field inline-field">
-            telemovel
-            email
-        </div>
-      </div>
-      <div class="form-container">
-        <h3>Documentação Anexada</h3>
-        <div class="form-field">
-            files
-        </div>
-      </div>
-      <div class="form-container">
-        <div class="radio-group">
-            <label class="radio-option" for="multiuso">Multiuso: <!-- true = Sim, false = Não -->
-            </label>
-            <br>
-            <label class="radio-option" for="importacao">
-                Importação de veículo automóvel e outros: <!-- true = Sim, false = Não -->
-            </label>
-            <br>
-            <label class="radio-option" for="submissaoReavaliacaoSim">Reavaliação: <!-- true = Sim (se sim aparece a data a frente), false = Não -->
-            </label>
-        </div>   
-      </div>
-      <div class="button-container">
-        <button type="button" class="btn btn-success" (click)="openPopup('accepted')">Validar Pedido</button>
-        <button type="button" class="btn btn-danger" (click)="openPopup('rejected')">Rejeitar Pedido</button>
-      </div>
-    </form>
+  <div class="user-info">
+    <h4 class="user-id">Dr.</h4>
+  </div>
+  <div class="profile">
+    <i class="material-icons">person</i>
+    <div class="logout-popup">
+      <button (click)="logout()">Logout</button>
+    </div>
+  </div>
+</header>
+
+<!-- Table Section -->
+<div *ngIf="show" class="main-container">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Nº Processo</th>
+          <th scope="col">Nome</th>
+          <th scope="col">Nº Utente</th>
+          <th scope="col" (click)="sort('date')">Data de Submissão</th>
+          <th scope="col">Estado do Pedido</th>
+          <th scope="col">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let pedido of pedidoAva; let i = index"
+          (click)="openFormPopup(i, pedido.id_utente)"
+        >
+          <td>{{ pedido.id_pedido }}</td>
+          <td>{{ pedido.nome_completo }}</td>
+          <td>{{ pedido.n_utente_saude }}</td>
+          <td>{{ pedido.data_submissao | date : "dd-MM-YYYY" }}</td>
+          <td>
+            {{ pedido.estado === '1' ? 'Pendente' : (pedido.estado === '2' ? 'Validado' : 'Rejeitado') }}
+          </td>
+          
+          <td>
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="openFormPopup(i, pedido.id_utente)"
+            >
+              Ver Pedido
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <pagination-controls (pageChange)="p = $event"></pagination-controls>
 </div>
-  
-  <!-- Rejected Modal -->
-  <div class="modal" *ngIf="rejected">
-    <div class="modal-content">
-      <span class="close" (click)="closeModal()">&times;</span>
-      <h2>Pedido Rejeitado</h2>
-      <p>
-        Acabou de rejeitar o pedido de junta médica. Descreva detalhadamente o que levou à sua rejeição bem como sugestões que o candidato possa considerar ao fazer um novo pedido.
-      </p>
-      <textarea class="form-control" id="rejectionReason" rows="3"></textarea>
-      <button type="button" class="btn btn-primary">Confirmar</button>
-      <button type="button" class="btn btn-secondary">Cancelar</button>
-    </div>
-  </div>
-  
-  <!-- Accepted Modal -->
-  <div class="modal" *ngIf="accepted">
-    <div class="modal-content">
-      <span class="close" (click)="closeModal()">&times;</span>
-      <h2>Pedido Aceite</h2>
-      <p>Acabou de aceitar o pedido de junta médica.</p>
+<div *ngIf="showFormPopup" class="form-container">
+  <form>
+    <!-- Informações Pessoais -->
+    <div class="form-container">
+      <h3>Informações Pessoais</h3>
       <br />
-      <h4>Atribuir Pré-Avaliação:</h4>
-      <input type="text" class="form-control" id="pre-avaliacao" />
-      <h4>Nota:</h4>
-      <textarea class="form-control" id="rejectionReason" rows="3"></textarea>
-      <br />
-      <button type="button" class="btn btn-primary">Confirmar</button>
-      <button type="button" class="btn btn-secondary">Cancelar</button>
+      <div class="form-field">
+        <label>Nome Completo:</label>
+        <span>{{ selectedPedido.nome_completo }}</span>
+        <br />
+        <label>Data de Nascimento:</label>
+        <span>{{ selectedPedido.data_nascimento | date : "dd-MM-YYYY" }}</span>
+        <br />
+      </div>
+      <div class="form-field inline-field">
+        <br />
+        <label>Nº Identificação:</label>
+        <span>{{ selectedPedido.n_identificacao }}</span>
+        <br />
+        <br />
+        <label>Nº Utente:</label>
+        <span>{{ selectedPedido.n_utente_saude }}</span>
+        <br />
+        <br />
+        <label>NIF:</label>
+        <span>{{ selectedPedido.nif }}</span>
+        <br />
+        <br />
+      </div>
+      <div class="form-field">
+        <label>Data de Validade:</label>
+        <span>{{ selectedPedido.data_validade | date : "dd-MM-YYYY" }}</span>
+      </div>
     </div>
+    <div class="form-container">
+      <h3>Morada</h3>
+      <div class="form-field">
+        <label for="morada">Rua:</label>
+        <span>{{ selectedPedido.rua }}</span>
+      </div>
+      <div class="form-field inline-field">
+        <label for="codigo-postal">codigo-postal: </label>
+        <span>{{ selectedPedido.codigo_postal }}</span>
+        <br />
+        <label for="localidade">localidade: </label>
+        <span>{{ selectedPedido.localidade }}</span>
+      </div>
+      <div class="form-field inline-field">
+        <label for="concelho">concelho: </label>
+        <span>{{ selectedPedido.concelho }}</span>
+        <br />
+        <label for="distrito">distrito: </label>
+        <span>{{ selectedPedido.distrito }}</span>
+      </div>
+    </div>
+    <div class="form-container">
+      <h3>Contacto</h3>
+      <div class="form-field inline-field">
+        <label for="telefone">telemovel: </label>
+        <span>{{ selectedPedido.telemovel }}</span>
+        <br />
+        <label for="email">email: </label>
+        <span>{{ selectedPedido.email }}</span>
+      </div>
+    </div>
+    <div class="form-container">
+      <h3>Documentação Anexada</h3>
+      <div class="form-field">
+        <label for="files">Ficheiros</label>
+        <span>{{ this.files }}</span>
+      </div>
+    </div>
+    <div class="form-container">
+      <div class="radio-group">
+        <label class="radio-option" for="multiuso">Multiuso:</label>
+        <span>{{ selectedPedido.multiuso ? "Sim" : "Não" }}</span>
+        <br />
+        <label class="radio-option" for="importacao"
+          >Importação de veículo automóvel e outros:</label
+        >
+        <span>{{ selectedPedido.importacao_veiculo ? "Sim" : "Não" }}</span>
+        <br />
+        <label class="radio-option" for="submissaoReavaliacaoSim"
+          >Reavaliação:</label
+        >
+        <span>{{
+          selectedPedido.submissao_reavaliacao
+            ? "Sim (data: " + selectedPedido.data_submissao_reavaliacao + ")"
+            : "Não"
+        }}</span>
+      </div>
+    </div>
+    <div class="button-container">
+      <button
+        type="button"
+        class="btn btn-success"
+        (click)="openPopup('accepted')"
+      >
+        Validar Pedido
+      </button>
+      <button
+        type="button"
+        class="btn btn-danger"
+        (click)="openPopup('rejected')"
+      >
+        Rejeitar Pedido
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Rejected Modal -->
+<div class="modal" *ngIf="rejected">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h2>Pedido Rejeitado</h2>
+    <p>
+      Acabou de rejeitar o pedido de junta médica. Descreva detalhadamente o que
+      levou à sua rejeição bem como sugestões que o candidato possa considerar
+      ao fazer um novo pedido.
+    </p>
+    <input
+      type="text"
+      [(ngModel)]="rejectForm.descricao"
+      class="form-control"
+      id="rejectionReason"
+      rows="3"
+    />
+    <button type="button" class="btn btn-primary" (click)="rejectPedido()">rejeitar</button>
+    <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
   </div>
-    <footer class="main">
-      <div class="sns-container box-2">
-        <div class="row">
+</div>
+
+<!-- Accepted Modal -->
+<div class="modal" *ngIf="accepted">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h2>Pedido Aceite</h2>
+    <p>Acabou de aceitar o pedido de junta médica.</p>
+    <br />
+    <h4>Atribuir Pré-Avaliação:</h4>
+    <input
+      type="text"
+      class="form-control"
+      id="pre-avaliacao"
+      [(ngModel)]="validateForm.nivel_invalidez"
+      name="pre-avaliacao"
+    />
+    <h4>Descrição:</h4>
+    <input
+      type="textarea"
+      [(ngModel)]="validateForm.descricao"
+      class="form-control"
+      id="rejectionReason"
+      rows="15"
+    />
+    <br />
+    <button type="button" class="btn btn-primary" (click)="validatePedido()">Confirmar</button>
+    <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
+  </div>
+</div>
+
+<footer class="main">
+  <div class="sns-container box-2">
+    <div class="row">
+      <div>
+        <a href="http://www.portugal.gov.pt/pt.aspx" target="_blank">
+          <img
+            class="logo-ms img-responsive"
+            src="https://www.sns.gov.pt/wp-content/uploads/2023/12/logotipo_RP.svg"
+            alt="Portal do Governo: Ministério da Saúde"
+          />
+        </a>
+      </div>
+      <div>
+        <a href="https://www.sns.gov.pt/" target="_blank">
+          <img
+            class="logo-ms ms2 img-responsive"
+            src="https://www.sns.gov.pt/wp-content/uploads/2020/04/logo_sns.svg"
+            alt="SNS Serviço Nacional de Saúde"
+          />
+        </a>
+      </div>
+      <div>
+        <a href="http://spms.min-saude.pt/" target="_blank">
+          <img
+            class="logo-ms ms2 img-responsive"
+            src="https://www.sns.gov.pt/wp-content/uploads/2016/02/LOGO-SPMS.png"
+            alt="SPMS Serviços Partilhados do Ministério da Saúde"
+          />
+        </a>
+      </div>
+      <div>
+        <div class="row footer-right">
           <div>
-            <a href="http://www.portugal.gov.pt/pt.aspx" target="_blank">
-              <img
-                class="logo-ms img-responsive"
-                src="https://www.sns.gov.pt/wp-content/uploads/2023/12/logotipo_RP.svg"
-                alt="Portal do Governo: Ministério da Saúde"
-              />
-            </a>
-          </div>
-          <div>
-            <a href="https://www.sns.gov.pt/" target="_blank">
-              <img
-                class="logo-ms ms2 img-responsive"
-                src="https://www.sns.gov.pt/wp-content/uploads/2020/04/logo_sns.svg"
-                alt="SNS Serviço Nacional de Saúde"
-              />
-            </a>
-          </div>
-          <div>
-            <a href="http://spms.min-saude.pt/" target="_blank">
-              <img
-                class="logo-ms ms2 img-responsive"
-                src="https://www.sns.gov.pt/wp-content/uploads/2016/02/LOGO-SPMS.png"
-                alt="SPMS Serviços Partilhados do Ministério da Saúde"
-              />
-            </a>
-          </div>
-          <div>
-            <div class="row footer-right">
-              <div>
-                <span>Desenvolvido por:</span>
-                <p>Diogo Pinheiro | João Duarte | Ruben Oliveira</p>
-              </div>
-            </div>
+            <span>Desenvolvido por:</span>
+            <p>Diogo Pinheiro | João Duarte | Ruben Oliveira</p>
           </div>
         </div>
-        <div class="f-note">© 2024 SAP_JM</div>
       </div>
-    </footer>
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
+    </div>
+    <div class="f-note">© 2024 SAP_JM</div>
+  </div>
+</footer>
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>

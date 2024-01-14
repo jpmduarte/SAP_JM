@@ -21,6 +21,41 @@ const pool = new Pool({
 });
 
 
+app.put("/api/validatePedido/:id_pedido", async (req, res) => {
+  try {
+    const { id_pedido } = req.params;
+    const { nivel_invalidez, descricao } = req.body;
+
+    const result = await pool.query(
+      `UPDATE pedido_primeira_avaliacao SET estado = 2, data_validacao = CURRENT_DATE, descricao = $2, valor_invalidez = $3 WHERE id_pedido = $1`,
+      [id_pedido, descricao, nivel_invalidez]
+    );
+
+    res.status(200).json({ message: "Pedido validado com sucesso" });
+  } catch (error) {
+    console.error("Error validating pedido:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+
+app.put("/api/rejectPedido/:id_pedido", async (req, res) => {
+  try {
+    const { id_pedido } = req.params;
+    const { descricao } = req.body;
+
+    const result = await pool.query(
+      `UPDATE pedido_primeira_avaliacao SET estado = 3, data_validacao = CURRENT_DATE, descricao = $2 WHERE id_pedido = $1`,
+      [id_pedido, descricao]
+    );
+
+    res.status(200).json({ message: "Pedido rejeitado com sucesso" });
+  } catch (error) {
+    console.error("Error rejecting pedido:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 
 app.get("/api/fetchpedidosJunta", async (req, res) => {
   try {

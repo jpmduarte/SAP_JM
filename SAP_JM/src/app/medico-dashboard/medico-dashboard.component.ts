@@ -21,6 +21,13 @@ export class MedicoDashboardComponent {
   pedidosJunta: any;
   pedidoAva: any = [];
   selectedPedido: any;
+  validateForm: any = {
+    descricao: '',
+    nivel_invalidez: '',
+  }
+  rejectForm: any ={
+    descricao: '',
+  };
   i: number = 0;
 
   constructor(private router: Router, private http: HttpClient,private activatedRoute: ActivatedRoute) {}
@@ -52,7 +59,6 @@ export class MedicoDashboardComponent {
   
   fetchPedidos() {
     const email = this.activatedRoute.snapshot.queryParams['email'];
-  
     this.http.get(`http://localhost:3001/api/fetchpedidosAvaliacao?email=${email}`).subscribe(
       (response:any) => {
         console.log('pedidos avaliacao' ,response);
@@ -70,7 +76,7 @@ export class MedicoDashboardComponent {
     // Set selectedPedido based on selectedIndex
     this.selectedPedido = this.pedidoAva[selectedIndex];
     console.log('Selected Pedido:', this.selectedPedido);
-    //this.fetchFiles(numeroUtente);
+    this.fetchFiles(this.selectedPedido.id_pedido);
     this.showFormPopup = true;
     }
 
@@ -88,6 +94,46 @@ export class MedicoDashboardComponent {
     );
   }
 
+  validatePedido(): void {
+    const params = { id_pedido: this.selectedPedido.id_pedido };
+    const body = {
+      descricao: this.validateForm.descricao,
+      nivel_invalidez: this.validateForm.nivel_invalidez,
+    };
+    console.log('body', body);
+    this.http
+    .put<any>(`http://localhost:3001/api/validatePedido/${this.selectedPedido.id_pedido}`, body)
+    .subscribe({
+      next: (data) => {
+        console.log(data);
+        this.fetchPedidos();
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+      },
+    });
+  
+  }
+  
+rejectPedido(): void {
+  
+  const body = {
+    descricao: this.rejectForm.descricao,
+  };
+  console.log('body', body);
+
+  this.http
+    .put<any>(`http://localhost:3001/api/rejectPedido/${this.selectedPedido.id_pedido}`, body,)
+    .subscribe({
+      next: (data) => {
+        console.log(data);
+        this.fetchPedidos();
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+      },
+    });
+}
 
 
   toggleFormPopup() {
@@ -107,6 +153,7 @@ export class MedicoDashboardComponent {
 }
 
 closeModal(): void {
+  this.showFormPopup = false;
     this.rejected = false;
     this.accepted = false;
 }
