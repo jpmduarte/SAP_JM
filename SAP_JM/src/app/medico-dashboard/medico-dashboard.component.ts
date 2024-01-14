@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-medico-dashboard',
@@ -9,18 +11,33 @@ import { Router } from '@angular/router';
 export class MedicoDashboardComponent {
   
   show = true;
+  files: File[] = [];
   showLogoutPopup = false;
   p: number = 1;
   showFormPopup = false;
   rejected: boolean = false;
   accepted: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
   logout(): void {
     this.showLogoutPopup = false;
     this.router.navigate(['/login']);
   }
+
+  fetchFiles(numeroUtente: string): void {
+    const params = new HttpParams().set('numero_utente', numeroUtente);
+  
+    this.http.get<any>('http://localhost:3001/api/files', { params }).subscribe({
+      next: (data) => {
+        this.files = data;
+      },
+      error: (error) => {
+        console.error('There was an error!', error);
+      },
+    });
+  }
+  
 
   toggleFormPopup() {
     this.showFormPopup = !this.showFormPopup;

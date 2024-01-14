@@ -4,6 +4,9 @@ const { Pool } = require("pg");
 const cors = require("cors");
 const axios = require("axios");
 const app = express();
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -736,6 +739,62 @@ app.put("/api/updateusers/:userId", (req, res) => {
       }
     );
   });
+});
+app.post('/api/file', upload.array('files', 5), async (req, res) => {
+  try {
+    const { numero_utente } = req.body;
+
+    // Assuming files are attached using the 'files' field
+    const fileBuffers = req.files.map(file => file.buffer);
+
+    const query = `
+      INSERT INTO documentos (id_pedido, conteudo)
+      VALUES (
+        (SELECT id_pedido FROM pedido_primeira_avaliacao WHERE id_utente = (SELECT id_utente FROM utentes WHERE numero_utente = $1)),
+        $2
+      )`;
+      
+    const values = [numero_utente, fileBuffers];
+
+    const result = await pool.query(query, values);
+
+    console.log("Files created successfully");
+    res.status(200).json({ message: "Files created successfully" });
+  } catch (error) {
+    console.error("Error executing insert query:", error);
+    let errorMessage = error.message;
+    res.status(500).json({ error: errorMessage });
+  }
+});
+
+app.get("/api/files", async (req, res) => {
+  try {
+    const { numero_utente } = req.query;
+
+    const query = `
+      SELECT conteudo
+      FROM documentos
+      WHERE id_pedido = (
+        SELECT id_pedido
+        FROM pedido_primeira_avaliacao
+        WHERE id_utente = (
+          SELECT id_utente
+          FROM utentes
+          WHERE numero_utente = $1
+        )
+      )`;
+      
+    const values = [numero_utente];
+
+    const result = await pool.query(query, values);
+
+    console.log("Files fetched successfully");
+    res.status(200).json({ message: "Files fetched successfully", data: result.rows });
+  } catch (error) {
+    console.error("Error executing query:", error);
+    let errorMessage = error.message;
+    res.status(500).json({ error: errorMessage });
+  }
 });
 
 app.listen(3001, () => {

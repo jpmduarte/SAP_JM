@@ -71,6 +71,8 @@ export class UtenteDashboardComponent {
         this.Current_numero_utente = response.numero_utente;
         this.handleUserInfoFromRNUserver();
         this.fetchUtenteUSF(this.Current_numero_utente);
+        this.postFiles(this.files, this.Current_numero_utente);
+
         
       },
       (error) => {
@@ -220,6 +222,28 @@ export class UtenteDashboardComponent {
       }
     );
   }
+// Angular service or component method
+postFiles(files: File[], numeroUtente: string) {
+  const formData = new FormData();
+
+  // Append each file to the FormData object
+  files.forEach((file, index) => {
+    formData.append(`files${index + 1}`, file);
+  });
+
+  // Append the numero_utente to the FormData object
+  formData.append('numero_utente', numeroUtente.toString());
+
+  this.http.post('http://localhost:3001/api/file', formData).subscribe(
+    (response) => {
+      console.log(response);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+}
+
   
  
   postUtenteUSF(usf_name: any) {
