@@ -19,6 +19,8 @@ export class UtenteDashboardComponent {
   showPreviousAssessmentField: boolean = false;
   showSuccessPopup = false;
   files: File[] = [];
+  pedidosAva: any = [];
+  pedidosJunta: any = [];
   primeiroPedido: any = {
     idUtente: '',
     idMedico: '',
@@ -43,6 +45,9 @@ export class UtenteDashboardComponent {
     dataSubmissaoReavaliacao: '',
     
   };
+
+
+
   UtenteUSF: any = {
     numero_utente: '',
     usf_name: '',
@@ -50,6 +55,7 @@ export class UtenteDashboardComponent {
 
   Current_numero_utente:string ='';
   isRejectedModalVisible: boolean = false;
+  isPendingModalVisible: boolean = false;
   isAcceptedModalVisible: boolean = false;
 
   
@@ -60,7 +66,8 @@ export class UtenteDashboardComponent {
   ngOnInit(): void {
     this.fetchNumeroUtenteAndUtenteUSF();
     this.fetchIDutente();
-    //this.fetchPedidos();
+    this.fetchPedidosAvaliacao();
+    this.fetchPedidosJunta();
   }
 
   fetchNumeroUtenteAndUtenteUSF() {
@@ -71,9 +78,6 @@ export class UtenteDashboardComponent {
         this.Current_numero_utente = response.numero_utente;
         this.handleUserInfoFromRNUserver();
         this.fetchUtenteUSF(this.Current_numero_utente);
-        this.postFiles(this.files, this.Current_numero_utente);
-
-        
       },
       (error) => {
         console.log(error);
@@ -96,6 +100,29 @@ export class UtenteDashboardComponent {
     );
   }
   
+  openModal(estado:string) {
+    if (estado == '1') {
+      this.isPendingModalVisible = true;
+    } else if (estado == "2") {
+      this.isAcceptedModalVisible = true;
+    }else{
+      this.isRejectedModalVisible = true;
+    }
+  }
+
+  fetchPedidosJunta() {
+    const email = this.activatedRoute.snapshot.queryParams['email'];
+  
+    this.http.get(`http://localhost:3001/api/fetchpedidosJunta?email=${email}`).subscribe(
+      (response:any) => {
+        console.log('pedido_junta: '+ response);
+        this.pedidosJunta = response.pedidos;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
 
   fetchIDutente() {
     const email = this.activatedRoute.snapshot.queryParams['email'];
@@ -199,6 +226,8 @@ export class UtenteDashboardComponent {
   submitForm() {
     this.showSuccessPopup = true;
     console.log('this is' + this.primeiroPedido);
+    console.log('Cena bue random '+this.primeiroPedido.numero_utente);
+    //this.postFiles(this.files, this.primeiroPedido.numero_utente);
     this.http.post('http://localhost:3001/api/pedidoAvaliacao', this.primeiroPedido).subscribe(
       (response :any) => {
         console.log(response);
@@ -210,18 +239,33 @@ export class UtenteDashboardComponent {
     );
   }
 
-  fetchPedidos() {
+  fetchPedidosAvaliacao() {
     const email = this.activatedRoute.snapshot.queryParams['email'];
   
-    this.http.get(`http://localhost:3001/api/pedidos?email=${email}`).subscribe(
-      (response) => {
+    this.http.get(`http://localhost:3001/api/fetchpedidosAvaliacao?email=${email}`).subscribe(
+      (response:any) => {
         console.log(response);
+        this.pedidosAva = response.pedidos;
       },
       (error) => {
         console.log(error);
       }
     );
   }
+
+  postJuntaMedica() {
+    console.log('this is' + this.pedidosAva);
+    this.http.post('http://localhost:3001/api/juntaMedica', this.pedidosAva).subscribe(
+      (response :any) => {
+        console.log(response);
+      },
+      (error) => {
+        this.errorMessage = error.error.error;
+        console.log(error);
+      }
+    );
+  }
+
 // Angular service or component method
 postFiles(files: File[], numeroUtente: string) {
   const formData = new FormData();
@@ -274,5 +318,6 @@ postFiles(files: File[], numeroUtente: string) {
   closeModal() {
     this.isRejectedModalVisible = false;
     this.isAcceptedModalVisible = false;
+    this.isPendingModalVisible = false;
   }
 }

@@ -1,195 +1,431 @@
 <header class="header">
-    <div class="app-name">
-        <h2>SAP-JM</h2>
+  <div class="app-name">
+    <h2>SAP-JM</h2>
+  </div>
+  <div class="user-info">
+    <h4 class="user-id">{{ primeiroPedido.numero_utente }}</h4>
+  </div>
+  <div class="profile">
+    <i class="material-icons">person</i>
+    <div class="logout-popup">
+      <button (click)="logout()">Logout</button>
     </div>
-    <div class="user-info">
-        <h4 class="user-id">{{ primeiroPedido.numero_utente }}</h4>
-    </div>
-    <div class="profile">
-        <i class="material-icons">person</i>
-        <div class="logout-popup">
-            <button (click)="logout()">Logout</button>
-        </div>
-    </div>
+  </div>
 </header>
+
 <div *ngIf="show" class="main-container">
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nº Processo</th>
-                    <th>Nome</th>
-                    <th>Estado</th>
-                    <th>Detalhes</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1001</td>
-                    <td>ABC</td>
-                    <td>Rejeitado</td>
-                    <td class="details" (click)="isRejectedModalVisible = true">Consultar detalhes</td>
-                </tr>
-                <tr>
-                    <td>1002</td>
-                    <td>ABC</td>
-                    <td>Aprovado</td>
-                    <td class="details" (click)="isAcceptedModalVisible = true">Consultar detalhes</td>
-                </tr>
-               
-            </tbody>
-        </table>
-    </div>
-    <button class="button-container" (click)="toggleFormPopup()">Efetuar Novo Pedido</button>
+  <div class="table-container">
+    <table>
+      <thead>
+        Pedidos de avaliação
+        <tr>
+          <th>Nº Processo</th>
+          <th>Nome</th>
+          <th>Estado</th>
+          <th>Detalhes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pedido of pedidosAva">
+          <td>{{ pedido.id_pedido }}</td>
+          <td>{{ pedido.nome_completo }}</td>
+          <td>
+            <ng-container *ngIf="pedido.estado === '1'; else otherStates">
+              Pendente
+            </ng-container>
+            <ng-template #otherStates>
+              <ng-container *ngIf="pedido.estado === '2'">
+                Aceite
+              </ng-container>
+              <ng-container *ngIf="pedido.estado === '3'">
+                Recusado
+              </ng-container>
+            </ng-template>
+          </td>
+          <td>
+            <button (click)="openModal(pedido.estado)">Detalhes</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <table>
+        <thead>
+          Pedidos de Junta medica
+          <tr>
+            <th>Nº Processo</th>
+            <th>Nome</th>
+            <th>Estado</th>
+            <th>Detalhes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pedido of pedidosJunta">
+            <td>{{ pedido.id_pedido_junta_medica }}</td>
+            <td>{{ pedido.nome_completo }}</td>
+            <td>
+              <ng-container *ngIf="pedido.estado_junta_medica === 1; else otherStates">
+                Pendente
+              </ng-container>
+              <ng-template #otherStates>
+                <ng-container *ngIf="pedido.estado_junta_medica === 2">
+                  Aceite
+                </ng-container>
+                <ng-container *ngIf="pedido.estado_junta_medica === 3">
+                  Recusado
+                </ng-container>
+              </ng-template>
+            </td>
+            <td>
+              <button (click)="openModal(pedido.estado_junta_medica)">Detalhes</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+  </div>
+  <button class="button-container" (click)="toggleFormPopup()">
+    Efetuar Novo Pedido
+  </button>
 </div>
 <div *ngIf="showFormPopup">
-    <div>
-        <form *ngIf="showFormPopup" class="form-container">
-            <h2>Preencha os campos abaixo para efetuar o Pedido de Junta Médica</h2>
- <!-- Informações Pessoais -->
-<div class="form-container">
-    <h3>Informações Pessoais</h3>
-    <div class="form-field">
-        <input [(ngModel)]="primeiroPedido.nomeCompleto" type="text" id="fullName" name="fullName" placeholder="Nome Completo" readonly>
-        <label for="birthDate">Data de Nascimento:</label>
-        <input [(ngModel)]="primeiroPedido.data_nascimento" type="date" id="birthDate" name="birthDate" readonly>
-    </div>
-    <!-- Informações Documento -->
-    <div class="form-field inline-field">
-        <input [(ngModel)]="primeiroPedido.nIdentificacao" type="text" id="nIdentificacao" name="nIdentificacao" placeholder="Nº Identificacao" readonly>
-        <input [(ngModel)]="primeiroPedido.numero_utente" type="text" id="nUtente" name="nUtente" placeholder="Nº de Utente" readonly>
-        <input [(ngModel)]="primeiroPedido.nif" type="text" id="nif" name="nif" placeholder="NIF" readonly>
-    </div>
-    <div class="form-field">
-        <label for="validade">Data de Validade:</label>
-        <input [(ngModel)]="primeiroPedido.data_validade" type="date" id="validade" name="validade" placeholder="Data de Validade" readonly>
-    </div>
-</div>
-<!-- Informações Morada -->
-<div class="form-container">
-    <h3>Morada</h3>
-    <div class="form-field">
-        <label for="morada">Rua:</label>
-        <input [(ngModel)]="primeiroPedido.rua" type="text" id="morada" name="morada" placeholder="Morada" readonly>
-    </div>
-    <div class="form-field inline-field">
-        <input [(ngModel)]="primeiroPedido.codigoPostal" type="text" name="codigoPostal" placeholder="Codigo Postal" readonly>
-        <input [(ngModel)]="primeiroPedido.localidade" type="text" id="localidade" name="localidade" placeholder="Localidade" readonly>
-    </div>
-    <div class="form-field inline-field">
-        <input [(ngModel)]="primeiroPedido.concelho" type="text" id="concelho" name="concelho" placeholder="Concelho" readonly>
-        <input [(ngModel)]="primeiroPedido.distrito" type="text" id="distrito" name="distrito" placeholder="Distrito" readonly>
-    </div>
-</div>
-<!-- Informações Contacto -->
-<div class="form-container">
-    <h3>Contacto</h3>
-    <div class="form-field inline-field">
-        <input [(ngModel)]="primeiroPedido.telemovel" class="contacto" type="text" name="telemovel" placeholder="Telemóvel">
-        <input [(ngModel)]="primeiroPedido.email" class="contacto" type="text" id="email" name="email" placeholder="E-mail">
-    </div>
-</div>
-<!-- Anexo Documentos -->
-<div class="form-container">
-    <h3>Anexar Documentação</h3>
-    <div class="form-field">
-        <input type="file" id="registosClinicos" name="registosClinicos" accept=".pdf" (change)="onFileChange($event)" multiple>
-        <div *ngFor="let file of files" class="document-item">
+  <div>
+    <form *ngIf="showFormPopup" class="form-container">
+      <h2>Preencha os campos abaixo para efetuar o Pedido de Junta Médica</h2>
+      <!-- Informações Pessoais -->
+      <div class="form-container">
+        <h3>Informações Pessoais</h3>
+        <div class="form-field">
+          <input
+            [(ngModel)]="primeiroPedido.nomeCompleto"
+            type="text"
+            id="fullName"
+            name="fullName"
+            placeholder="Nome Completo"
+            readonly
+          />
+          <label for="birthDate">Data de Nascimento:</label>
+          <input
+            [(ngModel)]="primeiroPedido.data_nascimento"
+            type="date"
+            id="birthDate"
+            name="birthDate"
+            readonly
+          />
+        </div>
+        <!-- Informações Documento -->
+        <div class="form-field inline-field">
+          <input
+            [(ngModel)]="primeiroPedido.nIdentificacao"
+            type="text"
+            id="nIdentificacao"
+            name="nIdentificacao"
+            placeholder="Nº Identificacao"
+            readonly
+          />
+          <input
+            [(ngModel)]="primeiroPedido.numero_utente"
+            type="text"
+            id="nUtente"
+            name="nUtente"
+            placeholder="Nº de Utente"
+            readonly
+          />
+          <input
+            [(ngModel)]="primeiroPedido.nif"
+            type="text"
+            id="nif"
+            name="nif"
+            placeholder="NIF"
+            readonly
+          />
+        </div>
+        <div class="form-field">
+          <label for="validade">Data de Validade:</label>
+          <input
+            [(ngModel)]="primeiroPedido.data_validade"
+            type="date"
+            id="validade"
+            name="validade"
+            placeholder="Data de Validade"
+            readonly
+          />
+        </div>
+      </div>
+      <!-- Informações Morada -->
+      <div class="form-container">
+        <h3>Morada</h3>
+        <div class="form-field">
+          <label for="morada">Rua:</label>
+          <input
+            [(ngModel)]="primeiroPedido.rua"
+            type="text"
+            id="morada"
+            name="morada"
+            placeholder="Morada"
+            readonly
+          />
+        </div>
+        <div class="form-field inline-field">
+          <input
+            [(ngModel)]="primeiroPedido.codigoPostal"
+            type="text"
+            name="codigoPostal"
+            placeholder="Codigo Postal"
+            readonly
+          />
+          <input
+            [(ngModel)]="primeiroPedido.localidade"
+            type="text"
+            id="localidade"
+            name="localidade"
+            placeholder="Localidade"
+            readonly
+          />
+        </div>
+        <div class="form-field inline-field">
+          <input
+            [(ngModel)]="primeiroPedido.concelho"
+            type="text"
+            id="concelho"
+            name="concelho"
+            placeholder="Concelho"
+            readonly
+          />
+          <input
+            [(ngModel)]="primeiroPedido.distrito"
+            type="text"
+            id="distrito"
+            name="distrito"
+            placeholder="Distrito"
+            readonly
+          />
+        </div>
+      </div>
+      <!-- Informações Contacto -->
+      <div class="form-container">
+        <h3>Contacto</h3>
+        <div class="form-field inline-field">
+          <input
+            [(ngModel)]="primeiroPedido.telemovel"
+            class="contacto"
+            type="text"
+            name="telemovel"
+            placeholder="Telemóvel"
+          />
+          <input
+            [(ngModel)]="primeiroPedido.email"
+            class="contacto"
+            type="text"
+            id="email"
+            name="email"
+            placeholder="E-mail"
+          />
+        </div>
+      </div>
+      <!-- Anexo Documentos -->
+      <div class="form-container">
+        <h3>Anexar Documentação</h3>
+        <div class="form-field">
+          <input
+            type="file"
+            id="registosClinicos"
+            name="registosClinicos"
+            accept=".pdf"
+            (change)="onFileChange($event)"
+            multiple
+          />
+          <div *ngFor="let file of files" class="document-item">
             <span (click)="openFile(file)">{{ file.name }}</span>
             <span (click)="removeFile(file)">&times;</span>
+          </div>
         </div>
-    </div>
+      </div>
+      <!-- Opção -->
+      <div class="form-container">
+        <div class="radio-group">
+          <p>
+            Vem solicitar a V.Exª, que ao abrigo do nº 1 do 3º do Decreto - Lei
+            nº 202/96, de 12 de Outubro, seja admitido a Junta Médica para
+            Avaliação do grau de incapacidade para efeito de:
+          </p>
+          <br />
+          <label class="radio-option" for="multiuso">
+            <input
+              [(ngModel)]="primeiroPedido.multiuso"
+              type="radio"
+              id="multiuso"
+              name="tipoPedido"
+              value="true"
+            />
+            Multiuso (Decreto-Lei nº 202/96, de 23 de Outubro com a redação dada
+            pelo Decreto-Lei nº 174/97, de 19 de Junho).
+          </label>
+          <label class="radio-option" for="importacao">
+            <input
+              [(ngModel)]="primeiroPedido.multiuso"
+              type="radio"
+              id="importacao"
+              name="tipoPedido"
+              value="false"
+            />
+            Importação de veículo automóvel e outros (Lei nº 22-A/2007 de 29 de
+            junho de 2007).
+          </label>
+        </div>
+        <br />
+        <div class="radio-group">
+          <p>
+            Comprometendo-se a ser portador de toda a informação clínica
+            respeitante à(s) doença(s) e/ou deficiência(s) que justifica(m) este
+            pedido.
+          </p>
+          <p>Informa ainda que:</p>
+          <br />
+          <label class="radio-option" for="submissaoReavaliacaoSim">
+            <input
+              [(ngModel)]="primeiroPedido.submissao_reavaliacao"
+              type="radio"
+              id="submissaoReavaliacaoSim"
+              name="submissionStatus"
+              value="sim"
+              (change)="onSubmissionStatusChange('sim')"
+            />
+            Já foi submetido em (data)
+            <input
+              [(ngModel)]="primeiroPedido.data_submissao_reavaliacao"
+              type="date"
+              name="dataSubmissaoReavaliacao"
+            />, pretendo uma reavaliação
+          </label>
+          <label class="radio-option" for="nuncaSubmetido">
+            <input
+              [(ngModel)]="primeiroPedido.submissao_reavaliacao"
+              type="radio"
+              id="nuncaSubmetido"
+              name="submissionStatus"
+              value="nao"
+              (change)="onSubmissionStatusChange('nao')"
+            />
+            Nunca foi submetido a Junta Médica de avaliação do grau de
+            incapacidade
+          </label>
+        </div>
+        <div class="form-group" *ngIf="showPreviousAssessmentField">
+          <p class="warning-message">
+            Aviso: Inclua o atestado médico anterior na seção "Anexar
+            Documentação".
+          </p>
+        </div>
+      </div>
+      <h3 *ngIf="errorMessage" class="error-message">{{ errorMessage }}</h3>
+      <button (click)="submitForm()">Submeter</button>
+    </form>
+  </div>
 </div>
-<!-- Opção -->
-<div class="form-container">
-    <div class="radio-group">
-        <p>Vem solicitar a V.Exª, que ao abrigo do nº 1 do 3º do Decreto - Lei nº 202/96, de 12 de Outubro, seja admitido a Junta Médica para Avaliação do grau de incapacidade para efeito de:</p>
-        <br>
-        <label class="radio-option" for="multiuso">
-            <input [(ngModel)]="primeiroPedido.multiuso" type="radio" id="multiuso" name="tipoPedido" value="true">
-            Multiuso (Decreto-Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto-Lei nº 174/97, de 19 de Junho).
-        </label>
-        <label class="radio-option" for="importacao">
-            <input [(ngModel)]="primeiroPedido.multiuso" type="radio" id="importacao" name="tipoPedido" value="false">
-            Importação de veículo automóvel e outros (Lei nº 22-A/2007 de 29 de junho de 2007).
-        </label>
-    </div>
-    <br>
-    <div class="radio-group">
-        <p>Comprometendo-se a ser portador de toda a informação clínica respeitante à(s) doença(s) e/ou deficiência(s) que justifica(m) este pedido.</p>
-        <p>Informa ainda que:</p>
-        <br>
-        <label class="radio-option" for="submissaoReavaliacaoSim">
-            <input [(ngModel)]="primeiroPedido.submissao_reavaliacao" type="radio" id="submissaoReavaliacaoSim" name="submissionStatus" value="sim" (change)="onSubmissionStatusChange('sim')">
-            Já foi submetido em (data) <input [(ngModel)]="primeiroPedido.data_submissao_reavaliacao" type="date" name="dataSubmissaoReavaliacao">, pretendo uma reavaliação
-        </label>
-        <label class="radio-option" for="nuncaSubmetido">
-            <input [(ngModel)]="primeiroPedido.submissao_reavaliacao" type="radio" id="nuncaSubmetido" name="submissionStatus" value="nao" (change)="onSubmissionStatusChange('nao')">
-            Nunca foi submetido a Junta Médica de avaliação do grau de incapacidade
-        </label>
-    </div>
-    <div class="form-group" *ngIf="showPreviousAssessmentField">
-        <p class="warning-message">Aviso: Inclua o atestado médico anterior na seção "Anexar Documentação".</p>
-    </div>               
-</div>
-<h3 *ngIf="errorMessage" class="error-message">{{ errorMessage }}</h3>
-<button (click)="submitForm()">Submeter</button>
-</form>
-</div>
-</div>
-<div class="modal" *ngIf="isRejectedModalVisible">
+<div *ngFor="let pedido of pedidosAva">
+  <div class="modal" *ngIf="isRejectedModalVisible">
     <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h2>Detalhes do Pedido Junta Médica:</h2>
-        <p><strong>Nome:</strong> Diogo Pinheiro</p>
-        <p><strong>Data de submissão:</strong> 01/01/2000</p>
-        <p><strong>Data de validação:</strong> 01/01/200</p>
-        <p class="rejected">Pedido Junta Médica Rejeitada ❌</p>
-        <h3>Descrição da inconformidade:</h3>
-        <p>Registos Clinicos não estão assinados.</p>
-        <button (click)="toggleFormPopup()">Novo Pedido</button>
+      <span class="close" (click)="closeModal()">&times;</span>
+      <h2>Detalhes do Pedido Junta Médica:</h2>
+      <p><strong>Nome:</strong> {{ pedido.nome_completo }}</p>
+      <p>
+        <strong>Data de submissão:</strong>
+        {{ pedido.data_submissao | date : "dd/MM/yyyy" }}
+      </p>
+      <p>
+        <strong>Data de validação:</strong>
+        {{ pedido.data_validacao | date : "dd/MM/yyyy" }}
+      </p>
+      <p class="rejected">Pedido Junta Médica Rejeitada ❌</p>
+      <h3>Descrição da inconformidade:</h3>
+      <p>{{ pedido.descricao }}</p>
+      <button (click)="toggleFormPopup()">Novo Pedido</button>
     </div>
+  </div>
 </div>
-<div class="modal" *ngIf="isAcceptedModalVisible">
+
+<div *ngFor="let pedido of pedidosAva">
+  <div class="modal" *ngIf="isPendingModalVisible">
     <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h2>Detalhes do Pedido Junta Médica:</h2>
-        <p><strong>Nome:</strong> </p>
-        <p><strong>Data de submissão:</strong> </p>
-        <p><strong>Data de validação:</strong> </p>
-        <h4>Resultado Pré-Avaliação: <strong>75%</strong></h4>
-        <p class="accepted">Pedido Junta Médica Aceite ✅</p>
-        <button>Finalizar pedido</button>
+      <span class="close" (click)="closeModal()">&times;</span>
+      <h2>Detalhes do Pedido Junta Médica:</h2>
+      <p><strong>Nome:</strong> {{ pedido.nome_completo }}</p>
+      <p>
+        <strong>Data de submissão:</strong>
+        {{ pedido.data_submissao | date : "dd/MM/yyyy" }}
+      </p>
+      <p class="pending">Pedido Junta Médica Pendente ⏳</p>
     </div>
+  </div>
+</div>
+
+<div *ngFor="let pedido of pedidosAva">
+  <div class="modal" *ngIf="isAcceptedModalVisible">
+    <div class="modal-content">
+      <span class="close" (click)="closeModal()">&times;</span>
+      <h2>Detalhes do Pedido Junta Médica:</h2>
+      <p><strong>Nome:</strong> {{ pedido.nome_completo }}</p>
+      <p>
+        <strong>Data de submissão:</strong>
+        {{ pedido.data_submissao | date : "dd/MM/yyyy" }}
+      </p>
+      <p>
+        <strong>Data de validação:</strong
+        >{{ pedido.data_validacao | date : "dd/MM/yyyy" }}
+      </p>
+      <h4>Resultado Pré-Avaliação:</h4>
+      <p>{{ pedido.valor_invalidez }} % </p>
+
+      <p class="accepted">Pedido Junta Médica Aceite ✅</p>
+      <button (click)="postJuntaMedica()">Finalizar pedido</button>\
+      <h3 *ngIf="errorMessage" class="error-message">{{ errorMessage }}</h3>
+    </div>
+  </div>
 </div>
 <footer class="main">
-    <div class="sns-container box-2">
-        <div class="row">
-            <div>
-                <a href="http://www.portugal.gov.pt/pt.aspx" target="_blank">
-                    <img class="logo-ms img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2023/12/logotipo_RP.svg" alt="Portal do Governo: Ministério da Saúde">
-                </a>
-            </div>
-            <div>
-                <a href="https://www.sns.gov.pt/" target="_blank">
-                    <img class="logo-ms ms2 img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2020/04/logo_sns.svg" alt="SNS Serviço Nacional de Saúde">
-                </a>
-            </div>
-            <div>
-                <a href="http://spms.min-saude.pt/" target="_blank">
-                    <img class="logo-ms ms2 img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2016/02/LOGO-SPMS.png" alt="SPMS Serviços Partilhados do Ministério da Saúde">
-                </a>
-            </div>
-            <div>
-                <div class="row footer-right">
-                    <div>
-                        <span>Desenvolvido por:</span>
-                        <p>Diogo Pinheiro | João Duarte | Ruben Oliveira</p>
-                    </div>
-                </div>
-            </div>
+  <div class="sns-container box-2">
+    <div class="row">
+      <div>
+        <a href="http://www.portugal.gov.pt/pt.aspx" target="_blank">
+          <img
+            class="logo-ms img-responsive"
+            src="https://www.sns.gov.pt/wp-content/uploads/2023/12/logotipo_RP.svg"
+            alt="Portal do Governo: Ministério da Saúde"
+          />
+        </a>
+      </div>
+      <div>
+        <a href="https://www.sns.gov.pt/" target="_blank">
+          <img
+            class="logo-ms ms2 img-responsive"
+            src="https://www.sns.gov.pt/wp-content/uploads/2020/04/logo_sns.svg"
+            alt="SNS Serviço Nacional de Saúde"
+          />
+        </a>
+      </div>
+      <div>
+        <a href="http://spms.min-saude.pt/" target="_blank">
+          <img
+            class="logo-ms ms2 img-responsive"
+            src="https://www.sns.gov.pt/wp-content/uploads/2016/02/LOGO-SPMS.png"
+            alt="SPMS Serviços Partilhados do Ministério da Saúde"
+          />
+        </a>
+      </div>
+      <div>
+        <div class="row footer-right">
+          <div>
+            <span>Desenvolvido por:</span>
+            <p>Diogo Pinheiro | João Duarte | Ruben Oliveira</p>
+          </div>
         </div>
-        <div class="f-note"> © 2024 SAP_JM</div>
+      </div>
     </div>
+    <div class="f-note">© 2024 SAP_JM</div>
+  </div>
 </footer>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  rel="stylesheet"
+/>

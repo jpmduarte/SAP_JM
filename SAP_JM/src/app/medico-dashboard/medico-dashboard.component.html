@@ -1,173 +1,166 @@
+<!-- Header -->
 <header class="header">
     <div class="app-name">
-        <h2>SAP-JM</h2>
+      <h2>SAP-JM</h2>
     </div>
     <div class="user-info">
-        <h4 class="user-id">Dr. </h4>
+      <h4 class="user-id">Dr.</h4>
     </div>
     <div class="profile">
-        <i class="material-icons">person</i>
-        <div class="logout-popup">
-            <button (click)="logout()">Logout</button>
-        </div>
+      <i class="material-icons">person</i>
+      <div class="logout-popup">
+        <button (click)="logout()">Logout</button>
+      </div>
     </div>
-</header>
-<div *ngIf="show">
+  </header>
+  
+  <!-- Table Section -->
+  <div *ngIf="show">
     <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th scope="col">Nº Processo</th>
-                    <th scope="col">Nome</th>
-                    <th scope="col">Nº Utente</th>
-                    <th scope="col" (click)="sort('date')">Data de Submissão</th>
-                    <th scope="col">Estado do Pedido</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr> <!-- *ngFor="let pedido of pedidos | paginate: { itemsPerPage: 5, currentPage: p }" -->
-                    <td>1</td>
-                    <td>Diogo</td>
-                    <td>123456789</td>
-                    <td>01/01/2000</td>
-                    <td (click)="toggleFormPopup()" class="status">Por Validar</td> <!-- (click)="showForm(pedido)" -->
-                </tr>
-            </tbody>
-        </table>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Nº Processo</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Nº Utente</th>
+            <th scope="col" (click)="sort('date')">Data de Submissão</th>
+            <th scope="col">Estado do Pedido</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pedido of pedidoAva; let i = index" (click)="openFormPopup(i,pedido.id_utente)">
+            <td>{{ pedido.id_pedido }}</td>
+            <td>{{ pedido.nome_completo }}</td>
+            <td>{{ pedido.n_utente_saude }}</td>
+            <td>{{ pedido.data_submissao | date : "dd-MM-YYYY" }}</td>
+            <td>{{ pedido.estado_pedido }}</td>
+            <td>
+              <button type="button" class="btn btn-primary" (click)="openFormPopup(i,pedido.id_utente)">
+                Ver Pedido
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <pagination-controls (pageChange)="p = $event"></pagination-controls>
-</div>
+  </div>
+  
+  <!-- Form Section -->
+  <!-- Form Section -->
 <div *ngIf="showFormPopup" class="form-container">
     <form>
-        <!-- Informações Pessoais -->
-        <div class="form-container">
-            <h3>Informações Pessoais</h3>
-            <div class="form-field">
-                <!-- <input [(ngModel)]="primeiroPedido.nome_completo" type="text" id="fullName" name="fullName" placeholder="Nome Completo" readonly> -->
-                <label for="birthDate">Data de Nascimento:</label>
-                <!-- <input [(ngModel)]="primeiroPedido.data_nascimento" type="date" id="birthDate" name="birthDate" readonly> -->
-            </div>
-            <!-- Informações Documento -->
-            <div class="form-field inline-field">
-                <!-- <input [(ngModel)]="primeiroPedido.n_identificacao" type="text" id="nIdentificacao" name="nIdentificacao" placeholder="Nº Identificacao" readonly>
-                <input [(ngModel)]="primeiroPedido.n_utente_saude" type="text" id="nUtente" name="nUtente" placeholder="Nº de Utente" readonly>
-                <input [(ngModel)]="primeiroPedido.nif" type="text" id="nif" name="nif" placeholder="NIF" readonly> -->
-            </div>
-            <div class="form-field">
-                <label for="validade">Data de Validade:</label>
-                <!-- <input [(ngModel)]="primeiroPedido.data_validade" type="date" id="validade" name="validade" placeholder="Data de Validade" readonly> -->
-            </div>
+      <!-- Informações Pessoais -->
+      <div class="form-container">
+        <h3>Informações Pessoais</h3>
+        <br>
+        <div class="form-field">
+          <label>Data de Nascimento:</label>
+          <span>{{ pedidoAva[i].data_nascimento | date : "dd-MM-YYYY" }}</span>
+          <br>
         </div>
-        <!-- Informações Morada -->
-        <div class="form-container">
-            <h3>Morada</h3>
-            <div class="form-field">
-                <label for="morada">Rua:</label>
-                <!-- <input [(ngModel)]="primeiroPedido.rua" type="text" id="morada" name="morada" placeholder="Morada" readonly> -->
-            </div>
-            <div class="form-field inline-field">
-                <!-- <input [(ngModel)]="primeiroPedido.codigo_postal" type="text" name="codigoPostal" placeholder="Codigo Postal" readonly>
-                <input [(ngModel)]="primeiroPedido.localidade" type="text" id="localidade" name="localidade" placeholder="Localidade" readonly> -->
-            </div>
-            <div class="form-field inline-field">
-                <!-- <input [(ngModel)]="primeiroPedido.concelho" type="text" id="concelho" name="concelho" placeholder="Concelho" readonly>
-                <input [(ngModel)]="primeiroPedido.distrito" type="text" id="distrito" name="distrito" placeholder="Distrito" readonly> -->
-            </div>
+        <div class="form-field inline-field">
+            <br>
+          <label>Nº Identificação:</label>
+          <span>{{ pedidoAva[i].n_identificacao }}</span>
+          <br>
+          <br>
+          <label>Nº Utente:</label>
+          <span>{{ pedidoAva[i].n_utente_saude }}</span>
+          <br>
+          <br>
+          <label>NIF:</label>
+          <span>{{ pedidoAva[i].nif }}</span>
+          <br>
+          <br>
         </div>
-        <!-- Informações Contacto -->
-        <div class="form-container">
-            <h3>Contacto</h3>
-            <div class="form-field inline-field">
-                <!-- <input [(ngModel)]="primeiroPedido.telemovel" class="contacto" type="text" name="telemovel" placeholder="Telemóvel">
-                <input [(ngModel)]="primeiroPedido.email" class="contacto" type="text" id="email" name="email" placeholder="E-mail"> -->
-            </div>
+        <div class="form-field">
+          <label>Data de Validade:</label>
+          <span>{{ pedidoAva[i].data_validade | date : "dd-MM-YYYY" }}</span>
         </div>
-        <!-- Anexo Documentos -->
-        <div class="form-container">
-            <h3>Documentação Anexada</h3>
-            <div class="form-field">
-                <!-- <div *ngFor="let file of files" class="document-item">
-                    <span (click)="openFile(file)">{{ file.name }}</span>
-                    <span (click)="removeFile(file)">&times;</span>
-                </div> -->
-            </div>
-        </div>
-        <!-- Opção -->
-        <div class="form-container">
-            <div class="radio-group">
-                <label class="radio-option" for="multiuso">Multiuso: <!-- true = Sim, false = Não -->
-                    <!-- <input [(ngModel)]="primeiroPedido.multiuso" type="radio" id="multiuso" name="tipoPedido" value="multiuso"> -->
-                </label>
-                <br>
-                <label class="radio-option" for="importacao">
-                    <!-- <input [(ngModel)]="primeiroPedido.importacao_veiculo" type="radio" id="importacao" name="tipoPedido" value="importacao"> -->
-                    Importação de veículo automóvel e outros: <!-- true = Sim, false = Não -->
-                </label>
-                <br>
-                <label class="radio-option" for="submissaoReavaliacaoSim">Reavaliação: <!-- true = Sim (se sim aparece a data a frente), false = Não -->
-                    <!-- <input [(ngModel)]="primeiroPedido.submissao_reavaliacao" type="radio" id="submissaoReavaliacaoSim" name="submissionStatus" value="sim" (change)="onSubmissionStatusChange('sim')"> -->
-                </label>
-            </div>   
-        </div>
-        <div class="button-container">
-            <button type="button" class="btn btn-success" (click)="openPopup('accepted')">Validar Pedido</button>
-            <button type="button" class="btn btn-danger" (click)="openPopup('rejected')">Rejeitar Pedido</button>
-        </div>
+      </div>
+      <!-- ... Other sections ... -->
+      <div class="button-container">
+        <button type="button" class="btn btn-success" (click)="openPopup('accepted')">Validar Pedido</button>
+        <button type="button" class="btn btn-danger" (click)="openPopup('rejected')">Rejeitar Pedido</button>
+      </div>
     </form>
-</div>
-<div class="modal" *ngIf="rejected">
+  </div>
+  
+  <!-- Rejected Modal -->
+  <div class="modal" *ngIf="rejected">
     <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h2>Pedido Rejeitado</h2>
-        <p>Acabou de rejeitar o pedido de junta médica. Descreva detalhadamente o que levou à sua rejeição bem como sugestões que o candidato possa considerar ao fazer um novo pedido.</p>
-        <textarea class="form-control" id="rejectionReason" rows="3"></textarea>
-        <button type="button" class="btn btn-primary">Confirmar</button>
-        <button type="button" class="btn btn-secondary">Cancelar</button>
+      <span class="close" (click)="closeModal()">&times;</span>
+      <h2>Pedido Rejeitado</h2>
+      <p>
+        Acabou de rejeitar o pedido de junta médica. Descreva detalhadamente o que levou à sua rejeição bem como sugestões que o candidato possa considerar ao fazer um novo pedido.
+      </p>
+      <textarea class="form-control" id="rejectionReason" rows="3"></textarea>
+      <button type="button" class="btn btn-primary">Confirmar</button>
+      <button type="button" class="btn btn-secondary">Cancelar</button>
     </div>
-</div>
-<div class="modal" *ngIf="accepted">
+  </div>
+  
+  <!-- Accepted Modal -->
+  <div class="modal" *ngIf="accepted">
     <div class="modal-content">
-        <span class="close" (click)="closeModal()">&times;</span>
-        <h2>Pedido Aceite</h2>
-        <p>Acabou de aceitar o pedido de junta médica.</p>
-        <br>
-        <h4>Atribuir Pré-Avaliação:</h4>
-        <input type="text" class="form-control" id="pre-avaliacao">
-        <h4>Nota:</h4>
-        <textarea class="form-control" id="rejectionReason" rows="3"></textarea>
-        <br>
-        <button type="button" class="btn btn-primary">Confirmar</button>
-        <button type="button" class="btn btn-secondary">Cancelar</button>
+      <span class="close" (click)="closeModal()">&times;</span>
+      <h2>Pedido Aceite</h2>
+      <p>Acabou de aceitar o pedido de junta médica.</p>
+      <br />
+      <h4>Atribuir Pré-Avaliação:</h4>
+      <input type="text" class="form-control" id="pre-avaliacao" />
+      <h4>Nota:</h4>
+      <textarea class="form-control" id="rejectionReason" rows="3"></textarea>
+      <br />
+      <button type="button" class="btn btn-primary">Confirmar</button>
+      <button type="button" class="btn btn-secondary">Cancelar</button>
     </div>
-</div>
-<footer class="main">
-    <div class="sns-container box-2">
+  </div>
+    <footer class="main">
+      <div class="sns-container box-2">
         <div class="row">
-            <div>
-                <a href="http://www.portugal.gov.pt/pt.aspx" target="_blank">
-                    <img class="logo-ms img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2023/12/logotipo_RP.svg" alt="Portal do Governo: Ministério da Saúde">
-                </a>
+          <div>
+            <a href="http://www.portugal.gov.pt/pt.aspx" target="_blank">
+              <img
+                class="logo-ms img-responsive"
+                src="https://www.sns.gov.pt/wp-content/uploads/2023/12/logotipo_RP.svg"
+                alt="Portal do Governo: Ministério da Saúde"
+              />
+            </a>
+          </div>
+          <div>
+            <a href="https://www.sns.gov.pt/" target="_blank">
+              <img
+                class="logo-ms ms2 img-responsive"
+                src="https://www.sns.gov.pt/wp-content/uploads/2020/04/logo_sns.svg"
+                alt="SNS Serviço Nacional de Saúde"
+              />
+            </a>
+          </div>
+          <div>
+            <a href="http://spms.min-saude.pt/" target="_blank">
+              <img
+                class="logo-ms ms2 img-responsive"
+                src="https://www.sns.gov.pt/wp-content/uploads/2016/02/LOGO-SPMS.png"
+                alt="SPMS Serviços Partilhados do Ministério da Saúde"
+              />
+            </a>
+          </div>
+          <div>
+            <div class="row footer-right">
+              <div>
+                <span>Desenvolvido por:</span>
+                <p>Diogo Pinheiro | João Duarte | Ruben Oliveira</p>
+              </div>
             </div>
-            <div>
-                <a href="https://www.sns.gov.pt/" target="_blank">
-                    <img class="logo-ms ms2 img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2020/04/logo_sns.svg" alt="SNS Serviço Nacional de Saúde">
-                </a>
-            </div>
-            <div>
-                <a href="http://spms.min-saude.pt/" target="_blank">
-                    <img class="logo-ms ms2 img-responsive" src="https://www.sns.gov.pt/wp-content/uploads/2016/02/LOGO-SPMS.png" alt="SPMS Serviços Partilhados do Ministério da Saúde">
-                </a>
-            </div>
-            <div>
-                <div class="row footer-right">
-                    <div>
-                        <span>Desenvolvido por:</span>
-                        <p>Diogo Pinheiro | João Duarte | Ruben Oliveira</p>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-        <div class="f-note"> © 2024 SAP_JM</div>
-    </div>
-</footer>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <div class="f-note">© 2024 SAP_JM</div>
+      </div>
+    </footer>
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />

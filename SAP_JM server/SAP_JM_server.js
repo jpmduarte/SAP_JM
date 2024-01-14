@@ -11,12 +11,66 @@ const upload = multer({ storage: storage });
 app.use(bodyParser.json());
 app.use(cors());
 
+
 const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "SAP_JM",
   password: "joaopaulo",
   port: 5432,
+});
+
+
+
+app.get("/api/fetchpedidosJunta", async (req, res) => {
+  try {
+    const email = req.query.email;
+    const result = await pool.query(
+      ` select id_perfil from users where email = $1 `,
+      [email]
+    );
+      console.log('result === ' + result.rows);
+    if (result.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Utente not found" });
+    }
+    const { id_perfil } = result.rows[0];
+
+    if (id_perfil == 2) //utente
+    {
+      const result = await pool.query(
+        `select * from pedido_junta_medica join pedido_primeira_avaliacao on pedido_junta_medica.id_pedido_avaliacao = pedido_primeira_avaliacao.id_pedido where id_utente = (select id_utente from utentes where id_user_utente = (select id_user from users where email = $1))`,
+        [email]
+      );
+      if (result.rows.length === 0) {
+        return res
+          .status(404)
+          .json({ success: false, error: "Utente sem pedidos de avaliação e/ou junta medica" });
+      }
+      const pedidos = result.rows;
+      res.status(200).json({ success: true, pedidos });
+    }
+    else if (id_perfil == 3) //medico
+    {
+      const result = await pool.query(
+        `select * from pedido_junta_medica join pedido_primeira_avaliacao on pedido_junta_medica.id_pedido_avaliacao = pedido_primeira_avaliacao.id_pedido where id_medico = (select id_medico from medicos where id_user_medico = (select id_user from users where email = $1))`,
+        [email]
+      );
+      if (result.rows.length === 0) {
+        return res
+          .status(404)
+          .json({ success: false, error: "medico sem pedidos " });
+      }
+      const pedidos = result.rows[0];
+      console.log(pedidos);
+      res.status(200).json({ success: true, pedidos});
+    }
+
+  } catch (error) {
+    console.error("Error fetching id_utente:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
 });
 
 app.post("/api/login", async (req, res) => {
@@ -139,6 +193,92 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+app.post("/api/juntaMedica", async (req, res) => {
+  try {
+    const pedidosAvaData = req.body[0];
+
+    // Insert into pedido_junta_medica
+    const result = await pool.query(
+      `INSERT INTO pedido_junta_medica (id_pedido_avaliacao, estado_junta_medica)
+       VALUES ($1, $2)
+       RETURNING id_pedido_junta_medica`,
+      [pedidosAvaData.id_pedido, 1]
+    );
+      const testForDups = await pool.query(
+        `SELECT * FROM pedido_junta_medica WHERE id_pedido_avaliacao = $1`,
+        [pedidosAvaData.id_pedido]
+      );
+      if (testForDups.rows.length > 1) {
+        return res.status(400).json({ success: false, error: "Já tem um pedido de junta médica pendente...." });
+      }
+
+    // Find id_grupo_medico
+    const id_grupo_medico = await pool.query(
+      `WITH MedicsInSameUSF AS (
+          SELECT
+              gm.id_grupo_medico,
+              uu.id_usf,
+              COUNT(DISTINCT m.id_medico) AS num_medics
+          FROM
+              grupos_medicos gm
+          JOIN medicos_grupos mg ON gm.id_grupo_medico = mg.id_grupo_medico
+          JOIN medicos m ON mg.id_medico = m.id_medico
+          JOIN medicoUSF mu ON m.id_medico = mu.id_medico
+          JOIN utenteUSF uu ON mu.id_USF = uu.id_USF
+          WHERE
+              uu.id_utente = $1
+          GROUP BY
+              gm.id_grupo_medico, uu.id_usf
+          HAVING
+              COUNT(DISTINCT uu.id_usf) = 1
+      ),
+      GroupsWithoutPrimeiraAvaliacao AS (
+          SELECT
+              gm.id_grupo_medico
+          FROM
+              grupos_medicos gm
+          LEFT JOIN medicos_grupos mg ON gm.id_grupo_medico = mg.id_grupo_medico
+          LEFT JOIN medicos m ON mg.id_medico = m.id_medico
+          LEFT JOIN pedido_primeira_avaliacao pa ON m.id_medico = pa.id_medico
+          WHERE
+              pa.id_medico IS NULL
+      ),
+      GroupPedidosCount AS (
+          SELECT
+              gm.id_grupo_medico,
+              COUNT(pjm.id_pedido_junta_medica) AS num_pedidos
+          FROM
+              GroupsWithoutPrimeiraAvaliacao gm
+          LEFT JOIN pedido_junta_medica pjm ON gm.id_grupo_medico = pjm.id_grupo_medico
+          GROUP BY
+              gm.id_grupo_medico
+      )
+      SELECT
+          mus.id_grupo_medico
+      FROM
+          MedicsInSameUSF mus
+      JOIN GroupPedidosCount gpc ON mus.id_grupo_medico = gpc.id_grupo_medico
+      ORDER BY
+          gpc.num_pedidos ASC
+      LIMIT 1;    
+      `, [pedidosAvaData.id_utente]
+    );
+
+    // Update pedido_junta_medica with id_grupo_medico
+    await pool.query(
+      `UPDATE pedido_junta_medica SET id_grupo_medico = $1 WHERE id_pedido_junta_medica = $2`,
+      [id_grupo_medico.rows[0].id_grupo_medico, result.rows[0].id_pedido_junta_medica]
+    );
+
+    res.status(200).json({ message: "Junta Médica data received successfully" });
+  } catch (error) {
+    console.error("Error processing Junta Médica data:", error);
+    let errorMessage = error.message || "Internal Server Error";
+    res.status(500).json({ error: errorMessage });
+  }
+});
+
+
 app.post("/api/pedidoAvaliacao", async (req, res) => {
   try {
     const {
@@ -224,8 +364,8 @@ app.post("/api/pedidoAvaliacao", async (req, res) => {
         `INSERT INTO pedido_primeira_avaliacao
         (id_utente, id_medico, estado,nome_completo, data_nascimento, n_identificacao, n_utente_saude, nif, data_validade,
         rua, codigo_postal, localidade, concelho, distrito, telemovel, email, multiuso,
-        importacao_veiculo, submissao_reavaliacao, data_submissao_reavaliacao)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20)
+        importacao_veiculo, submissao_reavaliacao, data_submissao_reavaliacao,data_submissao)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20,CURRENT_DATE)
         RETURNING id_pedido`,
         [
           idUtente,
@@ -297,43 +437,58 @@ JOIN usf ON utentes.numero_utente = $1
   }
 });
 
-app.get("/api/pedidos", async (req, res) => {
+app.get("/api/fetchpedidosAvaliacao", async (req, res) => {
   try {
     const email = req.query.email;
 
     const result = await pool.query(
-      `select id_utente from utentes join users on utentes.id_user_utente = users.id_user where email = $1`,
+      ` select id_perfil from users where email = $1 `,
       [email]
     );
+      console.log('result === ' + result.rows);
     if (result.rows.length === 0) {
       return res
         .status(404)
         .json({ success: false, error: "Utente not found" });
     }
+    const { id_perfil } = result.rows[0];
 
-    const { id_utente } = result.rows[0];
-    result1 = await pool.query(
-      `select * from pedido_primeira_avaliacao where id_utente = $1`,
-      [id_utente]
-    );
-    result2 = await pool.query(
-      ``, // query para pedidos de junta medica (pedido_junta_medica) logica a averiguar depois
-      [id_utente]
-    );
-
-    if (result1.rows.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, error: "No pedidos found for the utente" });
+    if (id_perfil == 2) 
+    {
+      const result = await pool.query(
+        `select * from pedido_primeira_avaliacao where id_utente = (select id_utente from utentes where id_user_utente = (select id_user from users where email = $1))`,
+        [email]
+      );
+      if (result.rows.length === 0) {
+        return res
+          .status(404)
+          .json({ success: false, error: "Utente sem pedidos de avaliação e/ou junta medica" });
+      }
+      const pedidos = result.rows;
+      res.status(200).json({ success: true, pedidos });
+    } 
+    else if (id_perfil == 3) 
+    {
+      const result = await pool.query(
+        `select * from pedido_primeira_avaliacao where id_medico = (select id_medico from medicos where id_user_medico = (select id_user from users where email = $1))`,
+        [email]
+      );
+      if (result.rows.length === 0) {
+        return res
+          .status(404)
+          .json({ success: false, error: "medico sem pedidos " });
+      }
+      const pedidos = result.rows;
+      console.log(pedidos);
+      res.status(200).json({ success: true, pedidos });
     }
-
-    const pedidoInfo = result.rows[0];
-    res.status(200).json({ success: true, pedidoInfo });
-  } catch (error) {
-    console.error("Error fetching pedidos:", error);
+   
+    }
+    catch (error) {
+    console.error("Error fetching id_utente:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
-}); //  incompleto falta a query para pedidos de junta medica (pedido_junta_medica)
+}); 
 
 app.get("/api/numeroUtente", async (req, res) => {
   try {
@@ -743,6 +898,7 @@ app.put("/api/updateusers/:userId", (req, res) => {
 app.post('/api/file', upload.array('files', 5), async (req, res) => {
   try {
     const { numero_utente } = req.body;
+    console.log(req.body);
 
     // Assuming files are attached using the 'files' field
     const fileBuffers = req.files.map(file => file.buffer);
@@ -776,7 +932,7 @@ app.get("/api/files", async (req, res) => {
       SELECT conteudo
       FROM documentos
      where id_pedido = $1
-      )`;
+      `;
       
     const values = [id_pedido1];
 
@@ -790,6 +946,8 @@ app.get("/api/files", async (req, res) => {
     res.status(500).json({ error: errorMessage });
   }
 });
+
+
 
 app.listen(3001, () => {
   console.log("Server is listening on port 3001.");
