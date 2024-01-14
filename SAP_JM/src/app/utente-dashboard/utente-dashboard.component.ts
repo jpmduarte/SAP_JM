@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./utente-dashboard.component.css'],
 })
 export class UtenteDashboardComponent {
-
+  errorMessage = '';
   show = true;
   showLogoutPopup = false;
   showFormPopup = false;
@@ -198,10 +198,11 @@ export class UtenteDashboardComponent {
     this.showSuccessPopup = true;
     console.log('this is' + this.primeiroPedido);
     this.http.post('http://localhost:3001/api/pedidoAvaliacao', this.primeiroPedido).subscribe(
-      (response) => {
+      (response :any) => {
         console.log(response);
       },
       (error) => {
+        this.errorMessage = error.error.error;
         console.log(error);
       }
     );

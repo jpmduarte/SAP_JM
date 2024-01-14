@@ -154,19 +154,18 @@ app.post("/api/pedidoAvaliacao", async (req, res) => {
       telemovel,
       email,
       multiuso,
-      importacaoVeiculo,
       submissao_reavaliacao,
-      dataSubmissaoReavaliacao,
+      data_submissao_reavaliacao,
     } = req.body;
     console.log(req.body);
     // Perform validation or additional logic if needed
-    var multiuso1;
     var importacaoVeiculo1;
     var submissaoReavaliacao1;
     var dataSubmissaoReavaliacao1;
-    
-    submissao_reavaliacao == "false" ? (dataSubmissaoReavaliacao1 = null) : (dataSubmissaoReavaliacao1 = dataSubmissaoReavaliacao);
-  
+    multiuso ==  'false' ? (importacaoVeiculo1 = true) : (importacaoVeiculo1 = false);
+    submissao_reavaliacao == "nao" ? (dataSubmissaoReavaliacao1 = null) : (dataSubmissaoReavaliacao1 = data_submissao_reavaliacao);
+    submissao_reavaliacao == "nao" ? (submissaoReavaliacao1 = false) : (submissaoReavaliacao1 = true);
+    submissao_reavaliacao == 'sim' ? dataSubmissaoReavaliacao1 = data_submissao_reavaliacao : dataSubmissaoReavaliacao1 = null;
     const client = await pool.connect();
     try {
       // Fetch id_utente from utente table based on numero_utente
@@ -209,6 +208,14 @@ app.post("/api/pedidoAvaliacao", async (req, res) => {
 
       const { id_medico } = availableDoctorsResult.rows[0];
 
+      const checkForOtherRequests = await client.query(
+        `SELECT * FROM pedido_primeira_avaliacao WHERE id_utente = $1 and estado = '1'`,
+        [idUtente]
+      );
+        results = checkForOtherRequests.rows;
+        if (results.length > 0) {
+          return res.status(400).json({ success: false, error: "Já tem um pedido de avaliação pendente...." });
+        }
       // Insert the data into the pedido_primeira_avaliacao table
       const result = await client.query(
         `INSERT INTO pedido_primeira_avaliacao
@@ -234,9 +241,9 @@ app.post("/api/pedidoAvaliacao", async (req, res) => {
           distrito,
           telemovel,
           email,
-          multiuso1,
+          multiuso,
           importacaoVeiculo1,
-          submissao_reavaliacao,
+          submissaoReavaliacao1,
           dataSubmissaoReavaliacao1,
         ]
       );

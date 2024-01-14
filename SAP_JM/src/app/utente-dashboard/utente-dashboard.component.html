@@ -106,11 +106,11 @@
         <p>Vem solicitar a V.Exª, que ao abrigo do nº 1 do 3º do Decreto - Lei nº 202/96, de 12 de Outubro, seja admitido a Junta Médica para Avaliação do grau de incapacidade para efeito de:</p>
         <br>
         <label class="radio-option" for="multiuso">
-            <input [(ngModel)]="primeiroPedido.multiuso" type="radio" id="multiuso" name="tipoPedido" value="multiuso">
+            <input [(ngModel)]="primeiroPedido.multiuso" type="radio" id="multiuso" name="tipoPedido" value="true">
             Multiuso (Decreto-Lei nº 202/96, de 23 de Outubro com a redação dada pelo Decreto-Lei nº 174/97, de 19 de Junho).
         </label>
         <label class="radio-option" for="importacao">
-            <input [(ngModel)]="primeiroPedido.importacao_veiculo" type="radio" id="importacao" name="tipoPedido" value="importacao">
+            <input [(ngModel)]="primeiroPedido.multiuso" type="radio" id="importacao" name="tipoPedido" value="false">
             Importação de veículo automóvel e outros (Lei nº 22-A/2007 de 29 de junho de 2007).
         </label>
     </div>
@@ -132,6 +132,7 @@
         <p class="warning-message">Aviso: Inclua o atestado médico anterior na seção "Anexar Documentação".</p>
     </div>               
 </div>
+<h3 *ngIf="errorMessage" class="error-message">{{ errorMessage }}</h3>
 <button (click)="submitForm()">Submeter</button>
 </form>
 </div>

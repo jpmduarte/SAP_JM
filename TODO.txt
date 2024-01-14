@@ -1,4 +1,3 @@
--> Endpoint para pedidods de primeira avaliação  (maisomenos)
 -> endpoint para enviar documentos
 -> endpoint para receber documentos
 -> enpoint para pedidos de junta medica
