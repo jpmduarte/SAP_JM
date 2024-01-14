@@ -25,7 +25,7 @@ export class UtenteDashboardComponent {
     estado: '',
     descricao: '',
     nomeCompleto: '',
-    data_nascimento:Date,
+    data_nascimento: Date,
     nIdentificacao: '',
     numero_utente: '',
     nif: '',
@@ -39,8 +39,8 @@ export class UtenteDashboardComponent {
     email: '',
     multiuso: false,
     importacaoVeiculo: false,
-    submissaoReavaliacao: false,
-    dataSubmissaoReavaliacao:Date,
+    submissao_reavaliacao: false,
+    dataSubmissaoReavaliacao: '',
     
   };
   UtenteUSF: any = {

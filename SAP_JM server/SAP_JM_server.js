@@ -139,13 +139,13 @@ app.post("/api/register", async (req, res) => {
 app.post("/api/pedidoAvaliacao", async (req, res) => {
   try {
     const {
-      numeroUtente,
+      idUtente,
       nomeCompleto,
-      dataNascimento,
+      data_nascimento: dataNascimento,
       nIdentificacao,
-      nUtenteSaude,
+      numero_utente,
       nif,
-      dataValidade,
+      data_validade: dataValidade,
       rua,
       codigoPostal,
       localidade,
@@ -155,27 +155,33 @@ app.post("/api/pedidoAvaliacao", async (req, res) => {
       email,
       multiuso,
       importacaoVeiculo,
-      submissaoReavaliacao,
+      submissao_reavaliacao,
       dataSubmissaoReavaliacao,
     } = req.body;
-
+    console.log(req.body);
     // Perform validation or additional logic if needed
-
+    var multiuso1;
+    var importacaoVeiculo1;
+    var submissaoReavaliacao1;
+    var dataSubmissaoReavaliacao1;
+    
+    submissao_reavaliacao == "false" ? (dataSubmissaoReavaliacao1 = null) : (dataSubmissaoReavaliacao1 = dataSubmissaoReavaliacao);
+  
     const client = await pool.connect();
     try {
       // Fetch id_utente from utente table based on numero_utente
       const utenteResult = await client.query(
-        "SELECT id_utente, id_USF FROM utenteUSF WHERE id_utente IN (SELECT id_utente FROM utentes WHERE numero_utente = $1)",
-        [numeroUtente]
+        "SELECT id_USF FROM utenteUSF WHERE id_utente  = $1",
+        [idUtente]
       );
-
+      console.log(utenteResult.rows);
       if (utenteResult.rows.length === 0) {
         return res
           .status(404)
           .json({ success: false, error: "Utente not found" });
       }
 
-      const { id_utente, id_USF } = utenteResult.rows[0];
+     const id_USF = utenteResult.rows[0];
 
       // Fetch available doctors in the same USF
       const availableDoctorsResult = await client.query(
@@ -189,7 +195,7 @@ app.post("/api/pedidoAvaliacao", async (req, res) => {
         ORDER BY num_requests ASC
         LIMIT 1;
         `,
-        [id_USF]
+        [idUtente]
       );
 
       if (availableDoctorsResult.rows.length === 0) {
@@ -203,21 +209,22 @@ app.post("/api/pedidoAvaliacao", async (req, res) => {
 
       const { id_medico } = availableDoctorsResult.rows[0];
 
-      // Insert the data into the pedido_primeira_avaliacao tabelas
+      // Insert the data into the pedido_primeira_avaliacao table
       const result = await client.query(
         `INSERT INTO pedido_primeira_avaliacao
-        (id_utente, id_medico, nome_completo, data_nascimento, n_identificacao, n_utente_saude, nif, data_validade,
+        (id_utente, id_medico, estado,nome_completo, data_nascimento, n_identificacao, n_utente_saude, nif, data_validade,
         rua, codigo_postal, localidade, concelho, distrito, telemovel, email, multiuso,
         importacao_veiculo, submissao_reavaliacao, data_submissao_reavaliacao)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19,$20)
         RETURNING id_pedido`,
         [
-          id_utente,
+          idUtente,
           id_medico,
+          1,
           nomeCompleto,
           dataNascimento,
           nIdentificacao,
-          nUtenteSaude,
+          numero_utente,
           nif,
           dataValidade,
           rua,
@@ -227,10 +234,10 @@ app.post("/api/pedidoAvaliacao", async (req, res) => {
           distrito,
           telemovel,
           email,
-          multiuso,
-          importacaoVeiculo,
-          submissaoReavaliacao,
-          dataSubmissaoReavaliacao,
+          multiuso1,
+          importacaoVeiculo1,
+          submissao_reavaliacao,
+          dataSubmissaoReavaliacao1,
         ]
       );
 
