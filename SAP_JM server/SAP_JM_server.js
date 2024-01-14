@@ -2,9 +2,8 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 const cors = require("cors");
-const axios = require("axios"); 
+const axios = require("axios");
 const app = express();
-
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -21,7 +20,7 @@ app.post("/api/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await pool.query(
-      "SELECT id_perfil FROM users WHERE email = $1 AND password = $2",
+      "SELECT id_perfil FROM users WHERE email = $1 AND password = $2 AND estadoDeAtividade = 1",
       [email, password]
     );
     if (user.rows.length === 0) {
@@ -53,7 +52,8 @@ app.get("/api/users", async (req, res) => {
   FROM users
   JOIN perfis ON users.id_perfil = perfis.id_perfil
   LEFT JOIN utentes ON users.id_user = utentes.id_user_utente
-  LEFT JOIN medicos ON users.id_user = medicos.id_user_medico;
+  LEFT JOIN medicos ON users.id_user = medicos.id_user_medico
+  WHERE users.estadodeatividade = 1;
   
     `);
 
@@ -136,10 +136,10 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-app.post('/submit/pedidoAvaliacao', async (req, res) => {
+app.post("/api/pedidoAvaliacao", async (req, res) => {
   try {
     const {
-      numeroUtente, // assuming you receive this in the request
+      numeroUtente,
       nomeCompleto,
       dataNascimento,
       nIdentificacao,
@@ -156,7 +156,7 @@ app.post('/submit/pedidoAvaliacao', async (req, res) => {
       multiuso,
       importacaoVeiculo,
       submissaoReavaliacao,
-      dataSubmissaoReavaliacao
+      dataSubmissaoReavaliacao,
     } = req.body;
 
     // Perform validation or additional logic if needed
@@ -165,12 +165,14 @@ app.post('/submit/pedidoAvaliacao', async (req, res) => {
     try {
       // Fetch id_utente from utente table based on numero_utente
       const utenteResult = await client.query(
-        'SELECT id_utente, id_USF FROM utenteUSF WHERE id_utente IN (SELECT id_utente FROM utentes WHERE numero_utente = $1)',
+        "SELECT id_utente, id_USF FROM utenteUSF WHERE id_utente IN (SELECT id_utente FROM utentes WHERE numero_utente = $1)",
         [numeroUtente]
       );
 
       if (utenteResult.rows.length === 0) {
-        return res.status(404).json({ success: false, error: 'Utente not found' });
+        return res
+          .status(404)
+          .json({ success: false, error: "Utente not found" });
       }
 
       const { id_utente, id_USF } = utenteResult.rows[0];
@@ -186,16 +188,22 @@ app.post('/submit/pedidoAvaliacao', async (req, res) => {
         GROUP BY m.id_medico
         ORDER BY num_requests ASC
         LIMIT 1;
-        `,[id_USF]
+        `,
+        [id_USF]
       );
 
       if (availableDoctorsResult.rows.length === 0) {
-        return res.status(404).json({ success: false, error: 'No available doctors in the same USF' });
+        return res
+          .status(404)
+          .json({
+            success: false,
+            error: "No available doctors in the same USF",
+          });
       }
 
       const { id_medico } = availableDoctorsResult.rows[0];
 
-      // Insert the data into the pedido_primeira_avaliacao table
+      // Insert the data into the pedido_primeira_avaliacao tabelas
       const result = await client.query(
         `INSERT INTO pedido_primeira_avaliacao
         (id_utente, id_medico, nome_completo, data_nascimento, n_identificacao, n_utente_saude, nif, data_validade,
@@ -203,9 +211,27 @@ app.post('/submit/pedidoAvaliacao', async (req, res) => {
         importacao_veiculo, submissao_reavaliacao, data_submissao_reavaliacao)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19)
         RETURNING id_pedido`,
-        [id_utente, id_medico, nomeCompleto, dataNascimento, nIdentificacao, nUtenteSaude, nif, dataValidade,
-          rua, codigoPostal, localidade, concelho, distrito, telemovel, email, multiuso,
-          importacaoVeiculo, submissaoReavaliacao, dataSubmissaoReavaliacao]
+        [
+          id_utente,
+          id_medico,
+          nomeCompleto,
+          dataNascimento,
+          nIdentificacao,
+          nUtenteSaude,
+          nif,
+          dataValidade,
+          rua,
+          codigoPostal,
+          localidade,
+          concelho,
+          distrito,
+          telemovel,
+          email,
+          multiuso,
+          importacaoVeiculo,
+          submissaoReavaliacao,
+          dataSubmissaoReavaliacao,
+        ]
       );
 
       const pedidoId = result.rows[0].id_pedido;
@@ -217,38 +243,56 @@ app.post('/submit/pedidoAvaliacao', async (req, res) => {
       client.release();
     }
   } catch (error) {
-    console.error('Error submitting pedidoAvaliacao:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    console.error("Error submitting pedidoAvaliacao:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
 
-app.post('/api/utenteUSF', async (req, res) => {
+app.post("/api/utenteUSF", async (req, res) => {
   try {
-    const { id_utente, id_USF } = req.body;
-    const result = await pool.query(
-      'INSERT INTO utenteUSF (id_utente, id_USF) VALUES ($1, $2) RETURNING *',
-      [id_utente, id_USF]
+    const { numero_utente, usf_name } = req.body;
+    const checkForDups = await pool.query(
+      `SELECT * FROM utenteUSF WHERE id_utente IN (SELECT id_utente FROM utentes WHERE numero_utente = $1) AND id_USF IN (SELECT id_USF FROM usf WHERE nomeusf = $2)`,
+      [numero_utente, usf_name]
     );
+    if (checkForDups.rows.length > 0) {
+      return ;
+      }
+    
+
+    const result = await pool.query(
+      `
+      INSERT INTO utenteusf (id_utente, id_usf)
+SELECT utentes.id_utente, usf.id_usf
+FROM utentes
+JOIN usf ON utentes.numero_utente = $1
+   AND usf.nomeusf = $2;
+
+      `,
+      [numero_utente, usf_name]
+    );
+
     const insertedUtenteUSF = result.rows[0];
     res.status(201).json({ success: true, utenteUSF: insertedUtenteUSF });
   } catch (error) {
-    console.error('Error creating utenteUSF:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    console.error("Error creating utenteUSF:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
 
-app.get('/api/pedidos', async (req, res) => {
+app.get("/api/pedidos", async (req, res) => {
   try {
-   
-    const email = req.query.email; 
-   
+    const email = req.query.email;
+
     const result = await pool.query(
       `select id_utente from utentes join users on utentes.id_user_utente = users.id_user where email = $1`,
       [email]
     );
-      if (result.rows.length === 0) {
-        return res.status(404).json({ success: false, error: 'Utente not found' });
-      }
+    if (result.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Utente not found" });
+    }
 
     const { id_utente } = result.rows[0];
     result1 = await pool.query(
@@ -261,90 +305,95 @@ app.get('/api/pedidos', async (req, res) => {
     );
 
     if (result1.rows.length === 0) {
-      return res.status(404).json({ success: false, error: 'No pedidos found for the utente' });
+      return res
+        .status(404)
+        .json({ success: false, error: "No pedidos found for the utente" });
     }
 
     const pedidoInfo = result.rows[0];
     res.status(200).json({ success: true, pedidoInfo });
   } catch (error) {
-    console.error('Error fetching pedidos:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    console.error("Error fetching pedidos:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
-}); //  incompleto falta a query para pedidos de junta medica (pedido_junta_medica) 
+}); //  incompleto falta a query para pedidos de junta medica (pedido_junta_medica)
 
-app.get('/api/numeroUtente', async (req, res) => {
-
+app.get("/api/numeroUtente", async (req, res) => {
   try {
-    const email = req.query.email; 
+    const email = req.query.email;
     const result = await pool.query(
       `select numero_utente from utentes join users on utentes.id_user_utente = users.id_user where email = $1`,
       [email]
     );
-      if (result.rows.length === 0) {
-        return res.status(404).json({ success: false, error: 'Utente not found' });
-      }
+    if (result.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Utente not found" });
+    }
 
     const { numero_utente } = result.rows[0];
-    res.status(200).json({ success: true, numero_utente});
-  }
-  catch (error) {
-    console.error('Error fetching numero_utente:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    res.status(200).json({ success: true, numero_utente });
+  } catch (error) {
+    console.error("Error fetching numero_utente:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
 
-app.get('/api/utenteID', async (req, res) => {
-  
-    try {
-      const email = req.query.email; 
-      const result = await pool.query(
-        `select id_utente from utentes join users on utentes.id_user_utente = users.id_user where email = $1`,
-        [email]
-      );
-        if (result.rows.length === 0) {
-          return res.status(404).json({ success: false, error: 'Utente not found' });
-        }
-  
-      const { id_utente } = result.rows[0];
-      res.status(200).json({ success: true, id_utente});
+app.get("/api/utenteID", async (req, res) => {
+  try {
+    const email = req.query.email;
+    const result = await pool.query(
+      `select id_utente from utentes join users on utentes.id_user_utente = users.id_user where email = $1`,
+      [email]
+    );
+    if (result.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Utente not found" });
     }
-    catch (error) {
-      console.error('Error fetching id_utente:', error);
-      res.status(500).json({ success: false, error: 'Internal Server Error' });
-    }
+
+    const { id_utente } = result.rows[0];
+    res.status(200).json({ success: true, id_utente });
+  } catch (error) {
+    console.error("Error fetching id_utente:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
-);
+});
 
-
-app.post('/api/createemployee', async (req, res) => {
+app.post("/api/createemployee", async (req, res) => {
   try {
     const { email, password, numero_cedula, nome_medico } = req.body;
 
     // Check if email is duplicated
     const checkEmailDuplicate = await pool.query(
-      'SELECT email FROM users WHERE email = $1',
+      "SELECT email FROM users WHERE email = $1",
       [email]
     );
 
     if (checkEmailDuplicate.rows.length > 0) {
-      return res.status(400).json({ success: false, error: 'Email already registered' });
+      return res
+        .status(400)
+        .json({ success: false, error: "Email already registered" });
     }
 
     // Inserting into the 'users' table
     const userResult = await pool.query(
-      'INSERT INTO users (id_perfil, email, password) VALUES (3, $1, $2) RETURNING id_user',
+      "INSERT INTO users (id_perfil, email, password) VALUES (3, $1, $2) RETURNING id_user",
       [email, password]
     );
 
     const id_user = userResult.rows[0].id_user;
 
     // Calling the 'loadmedico' API using axios.get
-    const medicoData = await axios.get('http://localhost:3002/api/loadmedico', { params: { nome: nome_medico, numero_cedula: numero_cedula } });
+    const medicoData = await axios.get("http://localhost:3002/api/loadmedico", {
+      params: { nome: nome_medico, numero_cedula: numero_cedula },
+    });
 
     if (medicoData.data.length === 0) {
-      await pool.query( 'DELETE FROM users WHERE id_user = $1', [id_user] );
-      return res.status(404).json({ success: false, error: 'Medico data not found' });
-
+      await pool.query("DELETE FROM users WHERE id_user = $1", [id_user]);
+      return res
+        .status(404)
+        .json({ success: false, error: "Medico data not found" });
     }
 
     // Assuming medicoData is an array, you might need to adjust accordingly
@@ -353,58 +402,66 @@ app.post('/api/createemployee', async (req, res) => {
 
     // Inserting into the 'medicos' table
     const medicoResult = await pool.query(
-      'INSERT INTO medicos (id_user_medico, numero_cedula, nome) VALUES ($1, $2, $3) RETURNING id_medico',
+      "INSERT INTO medicos (id_user_medico, numero_cedula, nome) VALUES ($1, $2, $3) RETURNING id_medico",
       [id_user, newnumero_cedula, newnome_medico]
     );
 
     const id_medico = medicoResult.rows[0].id_medico;
-    console.log(medicoData)
+    console.log(medicoData);
 
     // Fetching the id_usf based on the data from the 'loadmedico' API
     const getUSF = await pool.query(
-      'SELECT id_usf FROM usf WHERE nomeusf = $1',
+      "SELECT id_usf FROM usf WHERE nomeusf = $1",
       [medicoData.data[0].usf_name]
     );
 
     const id_usf = getUSF.rows[0].id_usf;
-      console.log(id_usf);
+    console.log(id_usf);
     // Inserting into the 'usfmedico' table
     await pool.query(
-      'INSERT INTO medicousf (id_usf, id_medico) VALUES ($1, $2)',
+      "INSERT INTO medicousf (id_usf, id_medico) VALUES ($1, $2)",
       [id_usf, id_medico]
     );
 
     // Sending a success response
-    res.status(200).json({ success: true, error: 'Employee created successfully' });
+    res
+      .status(200)
+      .json({ success: true, error: "Employee created successfully" });
   } catch (error) {
-    console.error('Error creating employee:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    console.error("Error creating employee:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
 
-app.get('/api/loadusf', async (req, res) => {
+app.get("/api/loadusf", async (req, res) => {
   try {
     // Obter todas as USFs do servidor RNU
-    const rnuUsfs = await axios.get('http://localhost:3002/api/loadusf');
-    
+    const rnuUsfs = await axios.get("http://localhost:3002/api/loadusf");
+
     // Verificar e inserir as USFs ausentes no servidor SAP
     for (const rnuUsf of rnuUsfs.data) {
-      const existingUsf = await pool.query('SELECT * FROM usf WHERE nomeusf = $1', [rnuUsf.nome_usf]);
-      
+      const existingUsf = await pool.query(
+        "SELECT * FROM usf WHERE nomeusf = $1",
+        [rnuUsf.nome_usf]
+      );
+
       if (existingUsf.rows.length === 0) {
         // A USF não existe no servidor SAP, então insira
-        await pool.query('INSERT INTO usf (nomeusf) VALUES ($1)', [rnuUsf.nome_usf]);
+        await pool.query("INSERT INTO usf (nomeusf) VALUES ($1)", [
+          rnuUsf.nome_usf,
+        ]);
       }
     }
     console.log(rnuUsfs.data);
 
-    res.status(200).json({ success: true, message: 'Load USFs completed successfully' });
+    res
+      .status(200)
+      .json({ success: true, message: "Load USFs completed successfully" });
   } catch (error) {
-    console.error('Error loading USFs:', error);
-    res.status(500).json({ success: false, error: 'Internal Server Error' });
+    console.error("Error loading USFs:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 });
-
 
 app.get("/api/schedules", (req, res) => {
   const query = `
@@ -435,17 +492,24 @@ app.get("/api/schedules", (req, res) => {
   });
 });
 
-
-function diasemanastr(int)
-{
-    switch (int)
-    {
-        case 1: return "Segunda-feira"; break;
-        case 2: return "Terça-feira"; break;
-        case 3: return "Quarta-feira"; break;
-        case 4: return "Quinta-feira"; break;
-        case 5: return "Sexta-feira"; break;
-    }
+function diasemanastr(int) {
+  switch (int) {
+    case 1:
+      return "Segunda-feira";
+      break;
+    case 2:
+      return "Terça-feira";
+      break;
+    case 3:
+      return "Quarta-feira";
+      break;
+    case 4:
+      return "Quinta-feira";
+      break;
+    case 5:
+      return "Sexta-feira";
+      break;
+  }
 }
 
 app.get("/api/noSchedule", (req, res) => {
@@ -505,10 +569,10 @@ app.post("/api/createschedule", (req, res) => {
 
   console.log(req.body);
   const dayOfWeek = parseInt(dia_semana);
-  const morningStartTime = (periodo_manha_inicio);
-  const morningEndTime = (periodo_manha_fim);
-  const afternoonStartTime = (periodo_tarde_inicio);
-  const afternoonEndTime = (periodo_tarde_fim);
+  const morningStartTime = periodo_manha_inicio;
+  const morningEndTime = periodo_manha_fim;
+  const afternoonStartTime = periodo_tarde_inicio;
+  const afternoonEndTime = periodo_tarde_fim;
   const insertQuery = `insert into horarios (id_medico,dia_semana,hora_inicio_manha,hora_fim_manha,hora_inicio_tarde,hora_fim_tarde) values ($1, $2, $3::time , $4::time , $5::time , $6::time)`;
   const insertValues = [
     id_profissionalsaude,
@@ -532,8 +596,8 @@ app.post("/api/createschedule", (req, res) => {
 });
 
 app.put("/api/alterschedule", (req, res) => {
-  const { 
-    id_medico,
+  const {
+    numero_cedula,
     dia_semana,
     periodo_manha_inicio,
     periodo_manha_fim,
@@ -542,20 +606,24 @@ app.put("/api/alterschedule", (req, res) => {
   } = req.body;
   console.log(req.body);
 
- pool.query(
+  pool.query(
     `UPDATE horarios
-    hora_inicio_manha = $2::time,
-    hora_fim_manha = $3::time,
-    hora_inicio_tarde = $4::time,
-    hora_fim_tarde = $5::time
-    WHERE id_medico = $6 and dia_semana = $1`,
+    SET 
+      hora_inicio_manha = $2::time,
+      hora_fim_manha = $3::time,
+      hora_inicio_tarde = $4::time,
+      hora_fim_tarde = $5::time
+    FROM medicos
+    WHERE horarios.id_medico = medicos.id_medico
+      AND horarios.dia_semana = $1
+      AND medicos.numero_cedula = $6;`,
     [
-      dia_semana,
+      parseInt(dia_semana),
       periodo_manha_inicio,
       periodo_manha_fim,
       periodo_tarde_inicio,
       periodo_tarde_fim,
-      id_medico,
+      numero_cedula,
     ],
     (error, result) => {
       if (error) {
@@ -570,8 +638,91 @@ app.put("/api/alterschedule", (req, res) => {
   );
 });
 
+app.put("/api/deactivateusers/:userId", (req, res) => {
+  const userId = req.params.userId;
 
+  pool.query(
+    "UPDATE users SET estadoDeAtividade = 0 WHERE id_user = $1",
+    [userId],
+    (error, result) => {
+      if (error) {
+        console.error("Error executing update query:", error);
+        let errorMessage = error.message;
+        res.status(500).json({ error: errorMessage });
+      } else {
+        console.log("User state changed successfully");
+        res.status(200).json({ message: "User state changed successfully" });
+      }
+    }
+  );
+});
 
+app.put("/api/updateusers/:userId", (req, res) => {
+  const userId = req.params.userId;
+  const { email, password, nome, perfil } = req.body;
+  console.log(req.body);
+  let id_perfil;
+  if (perfil == "utente") {
+    id_perfil = 2;
+  } else if (perfil == "medico") {
+    id_perfil = 3;
+  }
+
+  console.log(id_perfil);
+
+  pool.query("BEGIN", (beginError) => {
+    if (beginError) {
+      console.error("Error starting transaction:", beginError);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    const updateTable = id_perfil === 2 ? "utentes" : "medicos";
+    const idColumn = id_perfil === 2 ? "id_user_utente" : "id_user_medico";
+
+    pool.query(
+      "UPDATE users SET email = $1, password = $2 WHERE id_user = $3",
+      [email, password, userId],
+      (updateUsersError, result) => {
+        if (updateUsersError) {
+          console.error("Error updating users table:", updateUsersError);
+          pool.query("ROLLBACK", () => {
+            console.log("Rollback transaction");
+            res.status(500).json({ error: "Internal Server Error" });
+          });
+        } else {
+          pool.query(
+            `UPDATE ${updateTable} SET nome = $1 WHERE ${idColumn} = $2`,
+            [nome, userId],
+            (updateRelatedTableError, result) => {
+              if (updateRelatedTableError) {
+                console.error(
+                  "Error updating related table:",
+                  updateRelatedTableError
+                );
+                pool.query("ROLLBACK", () => {
+                  console.log("Rollback transaction");
+                  res.status(500).json({ error: "Internal Server Error" });
+                });
+              } else {
+                pool.query("COMMIT", (commitError) => {
+                  if (commitError) {
+                    console.error("Error committing transaction:", commitError);
+                    res.status(500).json({ error: "Internal Server Error" });
+                  } else {
+                    console.log("Tables updated successfully");
+                    res
+                      .status(200)
+                      .json({ message: "Tables updated successfully" });
+                  }
+                });
+              }
+            }
+          );
+        }
+      }
+    );
+  });
+});
 
 app.listen(3001, () => {
   console.log("Server is listening on port 3001.");

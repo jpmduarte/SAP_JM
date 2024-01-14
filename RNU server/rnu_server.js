@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const { Pool } = require("pg");
 const cors = require("cors");
 const app = express();
+const axios = require('axios');
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -53,22 +54,25 @@ app.get("/api/userinfo", async (req, res) => {
   }
 });
 
-app.get("/api/usfUtente", async (req, res) => {
+app.get("/api/utenteusf", async (req, res) => {
   try {
+    //given numero Utente return usf name 
+    const numero_utente1 = req.query.numero_utente;
+    const numero_utente = numero_utente1.toString();
+    console.log(numero_utente + ' é este o numero' );
     const query = `
-    SELECT usfutente.id_utente, usf.nome_usf
-    FROM usfutente
-    JOIN usf ON usfutente.id_usf = usf.id_usf;    
+    SELECT usf.nome_usf AS usf_name from usf join usfutente on usf.id_usf = usfutente.id_usf join utente on usfutente.id_utente = utente.id_utente where utente.numero_utente = $1;
     `;
+    const values = [numero_utente];
 
-    const result = await pool.query(query);
-
+    const result = await pool.query(query, values);
+    console.log(result.rows);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: "No USFutente data found" });
     }
-
-    const usfUtenteData = result.rows;
-    return res.json(usfUtenteData);
+    const usfUtenteData = result.rows[0];
+    console.log(usfUtenteData.usf_name);
+    return res.json(usfUtenteData.usf_name);
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ error: "Internal Server Error" });

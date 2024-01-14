@@ -6,7 +6,7 @@ interface User {
   id_user: number;
   nome: string;
   email: string;
-  nomeperfil: string;
+  perfil: string;
   password: string;
 }
 interface Employee {
@@ -141,9 +141,9 @@ export class AdminDashboardComponent {
 
   deleteUser(user: User): void {
     const userId = user.id_user;
-    this.http.put(`/api/deactivateusers/${userId}`, {}).subscribe(
+    this.http.put(`http://localhost:3001/api/deactivateusers/${userId}`, {}).subscribe(
       () => {
-        console.log('User deleted successfully');
+        console.log('User state changed  successfully');
         this.fetchUsers();
       },
       (error: any) => {
@@ -177,14 +177,14 @@ export class AdminDashboardComponent {
   submitUpdateForm() {
     if (this.selectedUserToUpdate) {
       const userId = this.selectedUserToUpdate.id_user;
-      const { nome, nomeperfil, email, password } = this.selectedUserToUpdate;
+      const { nome, perfil, email, password } = this.selectedUserToUpdate;
       const body = {
         nome: nome,
-        nomeperfil: nomeperfil,
+        perfil: perfil,
         email: email,
         password: password,
       };
-      this.http.put(`/api/updateusers/${userId}`, body).subscribe(
+      this.http.put(`http://localhost:3001/api/updateusers/${userId}`, body).subscribe(
         () => {
           console.log('User updated successfully');
         },
@@ -237,7 +237,7 @@ export class AdminDashboardComponent {
 
   submitAlterScheduleForm() {
     const body = {
-      id_medico: this.selectedUpdatepsaude.id_medico,
+      numero_cedula: this.selectedUpdatepsaude.numero_cedula,
       dia_semana: this.selectedDayOfWeek,
       periodo_manha_inicio: this.selectedMorningStart,
       periodo_manha_fim: this.selectedMorningEnd,
@@ -247,7 +247,7 @@ export class AdminDashboardComponent {
 
     console.log(body);
 
-    this.http.put('/api/alterschedule', body).subscribe(
+    this.http.put('http://localhost:3001/api/alterschedule', body).subscribe(
       () => {
         console.log('Schedule updated successfully');
       },

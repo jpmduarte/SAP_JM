@@ -41,34 +41,37 @@ export class UtenteDashboardComponent {
     importacaoVeiculo: false,
     submissaoReavaliacao: false,
     dataSubmissaoReavaliacao:Date,
+    
   };
   UtenteUSF: any = {
-    id_utnete: '',
-    nome_usf: ''
+    numero_utente: '',
+    usf_name: '',
   };
 
   Current_numero_utente:string ='';
   isRejectedModalVisible: boolean = false;
   isAcceptedModalVisible: boolean = false;
 
+  
+
   constructor(private router: Router, private http: HttpClient,private activatedRoute: ActivatedRoute,) {}
   
 
   ngOnInit(): void {
-    this.fetchNumeroUtente();
+    this.fetchNumeroUtenteAndUtenteUSF();
     this.fetchIDutente();
     //this.fetchPedidos();
-    //this.fetchUtenteUSF();
   }
-  fetchNumeroUtente() {
+
+  fetchNumeroUtenteAndUtenteUSF() {
     const email = this.activatedRoute.snapshot.queryParams['email'];
+  
     this.http.get(`http://localhost:3001/api/numeroUtente?email=${email}`).subscribe(
       (response: any) => {
-        console.log(response);
         this.Current_numero_utente = response.numero_utente;
         this.handleUserInfoFromRNUserver();
-        console.log(this.Current_numero_utente);
-      
+        this.fetchUtenteUSF(this.Current_numero_utente);
+        
       },
       (error) => {
         console.log(error);
@@ -76,11 +79,27 @@ export class UtenteDashboardComponent {
     );
   }
 
+  fetchUtenteUSF(numero_utente: string) {
+    console.log(numero_utente + " yo yo yo ");
+  
+    this.http.get(`http://localhost:3002/api/utenteusf?numero_utente=${numero_utente}`).subscribe(
+      (response) => {
+        console.log(response);
+        this.UtenteUSF.usf_name = response;
+        this.postUtenteUSF(response);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+  
+
   fetchIDutente() {
     const email = this.activatedRoute.snapshot.queryParams['email'];
     this.http.get(`http://localhost:3001/api/utenteID?email=${email}`).subscribe(
       (response: any) => {
-        console.log(response);
+  
         this.primeiroPedido.idUtente = response.id_utente;
       
       },
@@ -92,7 +111,6 @@ export class UtenteDashboardComponent {
 
   handleUserInfoFromRNUserver() {
     const numero_utente = this.Current_numero_utente
-    console.log(numero_utente);
 
     const url = `http://localhost:3002/api/userinfo?numero_utente=${numero_utente}`;
   
@@ -178,7 +196,8 @@ export class UtenteDashboardComponent {
 
   submitForm() {
     this.showSuccessPopup = true;
-    this.http.post('http://localhost:3001/api/submit/pedidoAvaliacao', this.primeiroPedido).subscribe(
+    console.log('this is' + this.primeiroPedido);
+    this.http.post('http://localhost:3001/api/pedidoAvaliacao', this.primeiroPedido).subscribe(
       (response) => {
         console.log(response);
       },
@@ -201,24 +220,13 @@ export class UtenteDashboardComponent {
     );
   }
   
-  fetchUtenteUSF() {
-    this.http.get('http://localhost:3002/api/utenteUSF').subscribe(
-      (response) => {
-        console.log(response);
-        this.UtenteUSF = response;
-
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-  postUtenteUSF() {
+ 
+  postUtenteUSF(usf_name: any) {
     const utenteUSFData = {
-      id_utente: this.UtenteUSF.id_utente, 
-      id_USF: this.UtenteUSF.id_USF, 
+      numero_utente: this.Current_numero_utente, 
+      usf_name: usf_name,
     };
-  
+    console.log(utenteUSFData.numero_utente + " " + utenteUSFData.usf_name);
     this.http.post('http://localhost:3001/api/utenteUSF', utenteUSFData).subscribe(
       (response) => {
         console.log(response);

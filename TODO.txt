@@ -1,0 +1,7 @@
+-> Endpoint para pedidods de primeira avaliação  (maisomenos)
+-> endpoint para enviar documentos
+-> endpoint para receber documentos
+-> enpoint para pedidos de junta medica
+-> endpoint para dar fetch nos pedidos tanto de junta medica como de primeira avaliacao do utilizador
+-> endpoint para dar fetch nos pedidos tanto de junta medica como de primeira avaliacao do medico
+-> juntas medicas dinamicas se der tempo que duvido senao estaticas na db 

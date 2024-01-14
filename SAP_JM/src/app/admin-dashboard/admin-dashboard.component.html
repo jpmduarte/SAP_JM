@@ -21,16 +21,40 @@
   <div class="create-employee-form" *ngIf="showCreateEmployeeForm">
     <form (ngSubmit)="submitCreateEmployeeForm()">
       <label for="name">Nome:</label>
-      <input type="text" id="name" name="name" placeholder="Nome Completo" [(ngModel)]="employeeData.nome_medico" />
+      <input
+        type="text"
+        id="name"
+        name="name"
+        placeholder="Nome Completo"
+        [(ngModel)]="employeeData.nome_medico"
+      />
 
       <label for="email">Email:</label>
-      <input type="text" id="email" name="email" placeholder="E-mail" [(ngModel)]="employeeData.email" />
+      <input
+        type="text"
+        id="email"
+        name="email"
+        placeholder="E-mail"
+        [(ngModel)]="employeeData.email"
+      />
 
       <label for="password">Password:</label>
-      <input type="password" id="password" name="password" placeholder="Password" [(ngModel)]="employeeData.password" />
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Password"
+        [(ngModel)]="employeeData.password"
+      />
 
       <label for="numero_cedula">Número cedula:</label>
-      <input type="text" id="numero_cedula" name="numero_cedula" placeholder="Número Cedula" [(ngModel)]="employeeData.numero_cedula" />
+      <input
+        type="text"
+        id="numero_cedula"
+        name="numero_cedula"
+        placeholder="Número Cedula"
+        [(ngModel)]="employeeData.numero_cedula"
+      />
 
       <button type="submit">Criar</button>
       <p *ngIf="errorMessage" class="error-message">{{ errorMessage }}</p>
@@ -38,56 +62,75 @@
   </div>
   <div class="users" *ngIf="showUsersTable">
     <table class="table">
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Id</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody *ngFor="let user of users">
-            <tr>
-                <td>{{ user.nome }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.nomeperfil }}</td>
-                <td>{{ user.id_user }}</td>
-                <td>
-                    <button class="action-button delete-button">Delete</button> <!-- (click)="deleteUser(user)" -->
-                    <button class="action-button update-button" (click)="updateUser(user)">Update</button>
-                    <div class="confirmation-options" *ngIf="selectedUser"> <!-- *ngIf="selectedUser === user" -->
-                        <button class="confirm-button">Confirmar</button><!-- (click)="deleteUser(user)" -->
-                        <button class="cancel-button" (click)="cancelDelete()">Cancelar</button>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Id</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let user of users">
+        <tr>
+          <td>{{ user.nome }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.perfil }}</td>
+          <td>{{ user.id_user }}</td>
+          <td>
+            <button
+              class="action-button delete-button"
+              (click)="deleteUser(user)"
+            >
+              Delete
+            </button>
+            <button
+              class="action-button update-button"
+              (click)="updateUser(user)"
+            >
+              Update
+            </button>
+            <div class="confirmation-options" *ngIf="selectedUser">
+              <!-- *ngIf="selectedUser === user" -->
+              <button class="confirm-button" (click)="deleteUser(user)">
+                Confirmar
+              </button>
+              <button class="cancel-button" (click)="cancelDelete()">
+                Cancelar
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
   <div class="overlay" *ngIf="selectedUserToUpdate"></div>
   <div class="update-form" *ngIf="selectedUserToUpdate">
     <h2>Atualizar Informação</h2>
-    <form (submit)="submitUpdateForm()">
+    <form >
       <label for="name">Nome:</label>
       <input
         type="text"
         id="name"
         name="name"
-      /><!-- [(ngModel)]="selectedUserToUpdate.nome" -->
+        [(ngModel)]="selectedUserToUpdate.nome"
+      />
       <label for="email">Email:</label>
       <input
         type="text"
         id="email"
         name="email"
-      /><!-- [(ngModel)]="selectedUserToUpdate.email" -->
+        [(ngModel)]="selectedUserToUpdate.email"
+      />
       <label for="password">Password:</label>
       <input
         type="text"
         id="password"
         name="password"
-      /><!-- [(ngModel)]="selectedUserToUpdate.password" -->
-      <button type="submit">Update</button>
+        [(ngModel)]="selectedUserToUpdate.password"
+
+      />
+      <button type="submit"  (click)="submitUpdateForm()">Update</button>
       <button type="button" (click)="cancelUpdate()">Cancel</button>
     </form>
   </div>
@@ -104,9 +147,15 @@
       <tbody>
         <tr *ngFor="let schedule of schedules">
           <td>{{ schedule.schedule.nome }}</td>
-              <td>{{ schedule.schedule.dia_semana }}</td>
-              <td>{{ schedule.schedule.periodo_manha_inicio }} - {{ schedule.schedule.periodo_manha_fim }}</td>
-              <td>{{ schedule.schedule.periodo_tarde_inicio }} - {{ schedule.schedule.periodo_tarde_fim }}</td>
+          <td>{{ schedule.schedule.dia_semana }}</td>
+          <td>
+            {{ schedule.schedule.periodo_manha_inicio }} -
+            {{ schedule.schedule.periodo_manha_fim }}
+          </td>
+          <td>
+            {{ schedule.schedule.periodo_tarde_inicio }} -
+            {{ schedule.schedule.periodo_tarde_fim }}
+          </td>
         </tr>
       </tbody>
     </table>
@@ -114,7 +163,13 @@
       <p>Sem horários disponívies.</p>
     </ng-template>
     <h3>Médicos com horário incompleto</h3>
-    <table class="table" *ngIf=" doctorsWithNoSchedule.length > 0; else noDoctorsWithNoScheduleTemplate">
+    <table
+      class="table"
+      *ngIf="
+        doctorsWithNoSchedule.length > 0;
+        else noDoctorsWithNoScheduleTemplate
+      "
+    >
       <thead>
         <tr>
           <th>Nome</th>
@@ -125,7 +180,7 @@
       <tbody>
         <tr *ngFor="let doctor of doctorsWithNoSchedule">
           <td>{{ doctor.nome }}</td>
-              <td>{{ doctor.numero_cedula }}</td>
+          <td>{{ doctor.numero_cedula }}</td>
           <td>
             <button class="create-button" (click)="createschedule(doctor)">
               Criar Horário
@@ -138,7 +193,10 @@
       <p>0 Médicos sem horário.</p>
     </ng-template>
     <h3>Médicos com Horário</h3>
-    <table class="table"*ngIf="doctorswithSchedules.length > 0; else noDoctorsTemplate">
+    <table
+      class="table"
+      *ngIf="doctorswithSchedules.length > 0; else noDoctorsTemplate"
+    >
       <thead>
         <tr>
           <th>Nome</th>
@@ -149,7 +207,7 @@
       <tbody>
         <tr *ngFor="let doctor of doctorswithSchedules">
           <td>{{ doctor.nome }}</td>
-              <td>{{ doctor.numero_cedula }}</td>
+          <td>{{ doctor.numero_cedula }}</td>
           <td>
             <button class="alter-button" (click)="alterschedule(doctor)">
               Alterar Horário
@@ -176,29 +234,46 @@
       </select>
 
       <label for="morningStart">Morning Start:</label>
-      <select id="morningStart" name="morningStart" [(ngModel)]="selectedMorningStart">
+      <select
+        id="morningStart"
+        name="morningStart"
+        [(ngModel)]="selectedMorningStart"
+      >
         <option *ngFor="let time of ScheduleTimes" [value]="time">
           {{ time }}
         </option>
       </select>
 
       <label for="morningEnd">Morning End:</label>
-      <select id="morningEnd" name="morningEnd" [(ngModel)]="selectedMorningEnd">
+      <select
+        id="morningEnd"
+        name="morningEnd"
+        [(ngModel)]="selectedMorningEnd"
+      >
         <option *ngFor="let time of ScheduleTimes" [value]="time">
           {{ time }}
         </option>
       </select>
 
       <label for="afternoonStart">Afternoon Start:</label>
-      <select id="afternoonStart" name="afternoonStart" [(ngModel)]="selectedAfternoonStart">
+      <select
+        id="afternoonStart"
+        name="afternoonStart"
+        [(ngModel)]="selectedAfternoonStart"
+      >
         <option *ngFor="let time of ScheduleTimes" [value]="time">
           {{ time }}
         </option>
       </select>
 
       <label for="afternoonEnd">Afternoon End:</label>
-      <select id="afternoonEnd" name="afternoonEnd" [(ngModel)]="selectedAfternoonEnd">
-        <option *ngFor="let time of ScheduleTimes" [value]="time">{{ time }}
+      <select
+        id="afternoonEnd"
+        name="afternoonEnd"
+        [(ngModel)]="selectedAfternoonEnd"
+      >
+        <option *ngFor="let time of ScheduleTimes" [value]="time">
+          {{ time }}
         </option>
       </select>
 
@@ -221,28 +296,44 @@
       </select>
 
       <label for="morningStart">Morning Shift Start:</label>
-      <select id="morningStart" name="morningStart" [(ngModel)]="selectedMorningStart">
+      <select
+        id="morningStart"
+        name="morningStart"
+        [(ngModel)]="selectedMorningStart"
+      >
         <option value="">Select start time</option>
         <option *ngFor="let time of ScheduleTimes" [value]="time">
           {{ time }}
         </option>
       </select>
       <label for="morningEnd">Morning Shift End:</label>
-      <select id="morningEnd" name="morningEnd" [(ngModel)]="selectedMorningEnd">
+      <select
+        id="morningEnd"
+        name="morningEnd"
+        [(ngModel)]="selectedMorningEnd"
+      >
         <option value="">Select end time</option>
         <option *ngFor="let time of ScheduleTimes" [value]="time">
           {{ time }}
         </option>
       </select>
       <label for="afternoonStart">Afternoon Shift Start:</label>
-      <select id="afternoonStart" name="afternoonStart" [(ngModel)]="selectedAfternoonStart">
+      <select
+        id="afternoonStart"
+        name="afternoonStart"
+        [(ngModel)]="selectedAfternoonStart"
+      >
         <option value="">Select start time</option>
         <option *ngFor="let time of ScheduleTimes" [value]="time">
           {{ time }}
         </option>
       </select>
       <label for="afternoonEnd">Afternoon Shift End:</label>
-      <select id="afternoonEnd" name="afternoonEnd" [(ngModel)]="selectedAfternoonEnd">
+      <select
+        id="afternoonEnd"
+        name="afternoonEnd"
+        [(ngModel)]="selectedAfternoonEnd"
+      >
         <option value="">Select end time</option>
         <option *ngFor="let time of ScheduleTimes" [value]="time">
           {{ time }}
