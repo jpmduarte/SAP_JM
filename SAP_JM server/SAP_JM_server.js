@@ -769,22 +769,16 @@ app.post('/api/file', upload.array('files', 5), async (req, res) => {
 
 app.get("/api/files", async (req, res) => {
   try {
-    const { numero_utente } = req.query;
+    const { id_pedido } = req.query;
+    id_pedido1 = parseInt(id_pedido);
 
     const query = `
       SELECT conteudo
       FROM documentos
-      WHERE id_pedido = (
-        SELECT id_pedido
-        FROM pedido_primeira_avaliacao
-        WHERE id_utente = (
-          SELECT id_utente
-          FROM utentes
-          WHERE numero_utente = $1
-        )
+     where id_pedido = $1
       )`;
       
-    const values = [numero_utente];
+    const values = [id_pedido1];
 
     const result = await pool.query(query, values);
 

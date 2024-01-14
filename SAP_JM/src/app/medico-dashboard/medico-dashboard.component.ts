@@ -25,8 +25,8 @@ export class MedicoDashboardComponent {
     this.router.navigate(['/login']);
   }
 
-  fetchFiles(numeroUtente: string): void {
-    const params = new HttpParams().set('numero_utente', numeroUtente);
+  fetchFiles(id_pedido: string): void {
+    const params = new HttpParams().set('id_pedido', id_pedido);
   
     this.http.get<any>('http://localhost:3001/api/files', { params }).subscribe({
       next: (data) => {
