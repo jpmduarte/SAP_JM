@@ -1,15 +1,21 @@
+
+--------------------------------
 criar utente 
 
-pinhero@gmail.com
+pinheiro@gmail.com
 numero_utente: 123456789
+------------------------------
 
 criar medico
 
 cedula: 145657999
 nome: Andre Sousa
-
+--------------
 primeiro medico a receber pedido 
-
+medico que recebe o pedido 
 jorge@medico.pt
 joaopauloQ1
-
+---------------------------
+login admin
+admin@admin.pt 
+admin

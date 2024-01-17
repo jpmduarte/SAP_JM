@@ -78,6 +78,7 @@ export class MedicoDashboardComponent {
     console.log('Selected Pedido:', this.selectedPedido);
     this.fetchFiles(this.selectedPedido.id_pedido);
     this.showFormPopup = true;
+    this.show = false;
     }
 
   fetchPedidosJunta() {

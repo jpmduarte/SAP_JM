@@ -305,3 +305,48 @@ textarea.form-control {
 .btn-secondary:hover {
     background-color: #545b62;
 }
+
+.modal-content input[type=textarea] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-container h3 {
+    margin-bottom: 1em;
+    color: #333333;
+}
+
+.form-container {
+    background-color: #fff;
+    padding: 1px;
+    border-radius: 5px;
+    box-shadow: none;
+    max-width: 900px;
+    margin: 30px auto;
+}
+
+.radio-group {
+    display: block;
+    margin-bottom: 15px;
+}
+
+.form-field {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #e5e5e5;
+    box-sizing: border-box;
+}
+
+
+
+.form-field label {
+    display: block;
+    margin-bottom: 5px;
+}
